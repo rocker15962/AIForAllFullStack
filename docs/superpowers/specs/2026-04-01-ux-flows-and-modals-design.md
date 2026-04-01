@@ -98,3 +98,63 @@ Each existing screen gets a Note placed to its right documenting:
 | User Management | Admin nav | "Delete" button | Confirm Dialog |
 | Category Management | Admin nav | "Delete" button | Confirm Dialog |
 | Create/Edit Course | Course Management | "Save" | Toast + redirect to Course Management |
+
+## Error & Edge Case Handling
+
+### New Reusable Components for Error States
+
+#### 1. Empty State (reusable component)
+
+- Centered layout: icon (64px, neutral circle bg) + title + description + optional CTA button
+- Usage: search/filter no results, no courses in My Learning, no badges, empty admin lists
+- Icon and text customizable via instance overrides
+
+#### 2. Error State (reusable component)
+
+- Centered layout: error icon (64px, red circle bg) + "Something went wrong" + description + "Try Again" primary button
+- Usage: API load failures on any page (Course Discovery, Admin Dashboard, etc.)
+
+#### 3. FormInput Error State (reusable component)
+
+- Label + input with red border (error color) + red error message below
+- Usage: required field validation, invalid YouTube URL, profile form errors
+
+#### 4. Video Unavailable (reusable component)
+
+- 16:9 placeholder (640x360): neutral background + video-off icon + "Video Unavailable" title + description
+- Usage: YouTube video removed or restricted in Course Learning page
+
+#### 5. Alert Banner (reusable component)
+
+- Horizontal bar: red background (#fef2f2) + alert icon + message + close button
+- Usage: OAuth login failure on Login Page, authorization denied
+
+### Error Handling by Page
+
+| Page | Error Scenario | UI Response |
+|------|---------------|-------------|
+| **Login Page** | OAuth fails | AlertBanner at top of card |
+| | User denies authorization | AlertBanner "Authorization was denied" |
+| **Course Discovery** | API load fails | ErrorState with Retry |
+| | Search/filter returns nothing | EmptyState "No results found" + Clear Filters |
+| **Course Learning** | YouTube video removed | VideoUnavailable placeholder |
+| | No quiz questions | "No quiz available" message + mark complete |
+| | Quiz submission fails | Error Toast, preserve user answers |
+| **My Learning** | No in-progress courses | EmptyState "Start your first course" |
+| | No completed courses | EmptyState "Complete a course to see it here" |
+| | No badges | EmptyState "Earn badges by completing courses" |
+| **Profile** | Avatar upload fails | Error Toast |
+| | Save fails | Error Toast, preserve form data |
+| | Validation error | FormInput red border + error message |
+| **Admin Dashboard** | No data | StatCards show 0, empty chart |
+| | Analytics API fails | ErrorState with Retry |
+| **Course Management** | No courses | EmptyState "Create your first course" |
+| | Delete fails | Error Toast |
+| | Search no results | EmptyState |
+| **User Management** | Delete fails | Error Toast |
+| | Search no results | EmptyState |
+| **Category Management** | Delete in-use item | Error Toast "Cannot delete: used by X courses" |
+| | Reorder fails | Error Toast, revert order |
+| **Create/Edit Course** | Required fields empty | FormInput error state |
+| | Invalid YouTube URL | FormInput error + format hint |
+| | Save fails | Error Toast, preserve form data |
