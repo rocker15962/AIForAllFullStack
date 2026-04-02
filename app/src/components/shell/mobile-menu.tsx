@@ -1,0 +1,60 @@
+'use client'
+
+import Link from 'next/link'
+import { X, LogOut } from 'lucide-react'
+import { Logo } from './logo'
+import { mockUser } from '@/lib/mock-data'
+import type { NavigationItem } from '@/types'
+
+interface MobileMenuProps {
+  navLinks: NavigationItem[]
+  isOpen: boolean
+  onClose: () => void
+}
+
+export function MobileMenu({ navLinks, isOpen, onClose }: MobileMenuProps) {
+  if (!isOpen) return null
+
+  return (
+    <nav className="fixed inset-0 z-50 bg-white dark:bg-zinc-900">
+      <div className="flex h-14 items-center justify-between border-b border-zinc-200 px-4 dark:border-zinc-700">
+        <Logo />
+        <button onClick={onClose} aria-label="close">
+          <X className="h-6 w-6 text-zinc-600 dark:text-zinc-400" />
+        </button>
+      </div>
+
+      <div className="flex flex-col p-4">
+        {navLinks.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            onClick={onClose}
+            className="border-b border-zinc-100 py-3 text-base font-medium text-zinc-700 dark:border-zinc-800 dark:text-zinc-300"
+          >
+            {link.label}
+          </Link>
+        ))}
+
+        <Link
+          href="/profile"
+          onClick={onClose}
+          className="border-b border-zinc-100 py-3 text-base font-medium text-zinc-700 dark:border-zinc-800 dark:text-zinc-300"
+        >
+          個人資料
+        </Link>
+      </div>
+
+      <div className="absolute right-0 bottom-0 left-0 border-t border-zinc-200 p-4 dark:border-zinc-700">
+        <div className="mb-3">
+          <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{mockUser.name}</p>
+          <p className="text-xs text-zinc-500">{mockUser.email}</p>
+        </div>
+        <button className="flex items-center gap-2 text-sm text-red-500">
+          <LogOut className="h-4 w-4" />
+          登出
+        </button>
+      </div>
+    </nav>
+  )
+}
