@@ -1,0 +1,203 @@
+🌐 [English](README.md) | **繁體中文**
+
+# AI for All — 全端 AI 教育平台
+
+非營利 AI 教育平台，透過與 YouTube 創作者合作，提供結構化的 AI 學習體驗。使用者可以觀看教學影片、完成問答測驗、追蹤學習進度並獲得完課徽章。
+
+## 技術選型
+
+### 前端：Next.js + TypeScript
+
+| 技術 | 用途 | 選擇理由 |
+|------|------|----------|
+| **Next.js (App Router)** | SSR/SSG 框架 | SSR/SSG 支援最完善，React 生態系最大，TypeScript 一等公民。課程頁面 SSG 搞定 SEO，後台頁面 CSR，渲染策略按需搭配 |
+| **React** | UI 元件庫 | 生態系最成熟、人才供應最多，大型專案案例最豐富 |
+| **TypeScript** | 型別安全 | 大型專案必備，前後端（Go 也是強型別）一致的型別安全策略 |
+| **shadcn/ui** | UI 元件庫 | 非 npm 套件，原始碼複製到專案完全可客製化。基於 Radix UI（accessibility）+ Tailwind CSS，目前最流行的 React UI 方案 |
+| **Tailwind CSS** | 樣式系統 | shadcn/ui 原生搭配，utility-first 開發速度快，支援 dark mode，與設計 token 直接整合 |
+| **TanStack Query** | 資料獲取 | 處理伺服器資料的標準方案（快取、重新獲取、載入/錯誤狀態），與 Go API 搭配完美 |
+| **Zustand** | 狀態管理 | 輕量的客戶端狀態管理（篩選條件、UI 狀態），API 簡潔、TypeScript 友善 |
+| **React Hook Form + Zod** | 表單處理 | 表單邏輯 + 驗證 schema，效能好且型別安全 |
+| **Recharts** | 圖表 | 後台管理的趨勢圖和統計圖表，React 生態中最成熟 |
+| **Lucide React** | 圖示 | 輕量一致的圖示庫，與 shadcn/ui 整合良好 |
+
+### 後端：Go
+
+| 技術 | 用途 | 選擇理由 |
+|------|------|----------|
+| **Go** | 後端語言 | 極致的效能與並發處理能力，goroutine 天生適合高並發場景。編譯為單一 binary，部署簡單、記憶體消耗低。語言刻意設計簡潔，長期維護成本最低 |
+| **Gin** | Web 框架 | Go 生態中最流行的 Web 框架，效能極高，社群最大，學習資源與中介軟體生態最豐富 |
+| **sqlc** | 資料存取 | SQL-first 方式：撰寫原生 SQL，自動生成型別安全的 Go 程式碼。效能最高、零魔法、學 SQL 就是學真正的技能 |
+| **OAuth2 + JWT** | 認證 | Google/Facebook OAuth 登入後發 JWT token，無狀態驗證。水平擴展時不需 session store |
+
+### 基礎設施
+
+| 技術 | 用途 | 選擇理由 |
+|------|------|----------|
+| **PostgreSQL** | 主資料庫 | 最全能的開源資料庫。內建全文搜尋（課程搜尋）、JSON 欄位、優秀的並發處理。免費託管方案多 |
+| **Redis** | 快取 | 課程列表快取、rate limiting。未來可作為消息佇列使用 |
+| **Docker Compose** | 部署 | 一鍵啟動全部服務，`git clone` + `docker compose up` 即可運行完整環境 |
+| **GitHub Actions** | CI/CD | 與 GitHub 專案天然整合，自動測試和建置 |
+
+### 為什麼選 Next.js 而非 Nuxt 或 SvelteKit？
+
+- **SEO 對教育平台至關重要** — 課程頁面是自然流量的主要入口，Next.js 的 SSG/ISR 能完美處理
+- **React 生態系最大** — shadcn/ui、TanStack Query、Zustand 等工具都是 React 生態的產物
+- **TypeScript 一等公民** — 整個框架和生態系以 TS 為核心設計
+- Nuxt 3 (Vue) 生態系約 React 的 1/3，大型專案案例較少
+- SvelteKit 效能最好但生態系最小，不符合「成熟生態系優先」的需求
+
+### 為什麼選 Go 而非 Node.js 或 Python？
+
+本專案以長遠發展為考量，目標是支撐 10 萬以上使用者的大型教育平台。
+
+**Go vs Node.js (TypeScript)**
+- Go 的並發模型（goroutine）在高流量下效能遠超 Node.js 的單執行緒事件循環
+- 編譯為單一 binary，Docker image 可小至 ~20MB（Node.js 通常 200MB+）
+- Go 的 dependency 管理簡潔穩定，不像 npm 生態那樣頻繁出現 breaking changes
+- 代價是前後端使用不同語言，無法共用型別定義
+
+**Go vs Python (Django/FastAPI)**
+- Go 的效能在同等硬體下可達 Python 的 10-50 倍
+- Python 的 GIL 限制了真正的並行處理能力
+- Python 在 AI/ML 生態系上有壓倒性優勢，但本專案的 AI 功能非優先需求
+- 未來如需 AI 功能，可用 Go 主服務 + Python AI 微服務的業界標準架構
+
+## 架構
+
+```
+                    docker compose up
+┌──────────────────────────────────────────────────────┐
+│                   Docker Compose                      │
+│                                                       │
+│  ┌─────────────────┐     ┌──────────────────────┐    │
+│  │   Next.js 前端   │────▶│    Go API Server      │    │
+│  │   (port 3000)    │     │    (Gin + sqlc)       │    │
+│  └─────────────────┘     │    (port 8080)        │    │
+│                           └──────┬──────────┬─────┘    │
+│                                  │          │           │
+│                           ┌──────▼──┐  ┌───▼────┐     │
+│                           │PostgreSQL│  │ Redis  │     │
+│                           │ (5432)   │  │ (6379) │     │
+│                           └─────────┘  └────────┘     │
+└──────────────────────────────────────────────────────┘
+```
+
+## 專案結構
+
+```
+AIForAllFullStack/
+├── frontend/                    # Next.js 前端
+│   ├── src/
+│   │   ├── app/                 # 頁面路由 (App Router)
+│   │   ├── components/          # UI 元件
+│   │   ├── contexts/            # React Context (Auth)
+│   │   ├── lib/                 # 工具函式
+│   │   └── types/               # TypeScript 型別
+│   ├── Dockerfile
+│   └── package.json
+├── backend/                     # Go API Server
+│   ├── cmd/server/              # 進入點
+│   ├── internal/
+│   │   ├── handler/             # HTTP handlers
+│   │   ├── middleware/          # JWT 驗證、CORS、rate limiting
+│   │   ├── service/             # 業務邏輯層
+│   │   └── repository/         # 資料存取層 (sqlc 生成)
+│   ├── db/
+│   │   ├── migrations/          # SQL migration
+│   │   ├── queries/             # sqlc 查詢
+│   │   └── seed.sql             # 種子資料
+│   ├── Dockerfile
+│   └── go.mod
+├── docker-compose.yml           # 一鍵啟動
+├── .env.example                 # 環境變數範本
+├── Makefile                     # 常用指令
+├── PRODUCT_ROADMAP.md           # 產品路線圖（English）
+├── PRODUCT_ROADMAP.zh-TW.md     # 產品路線圖（繁體中文）
+└── docs/                        # 技術文件
+```
+
+## 功能
+
+- YouTube 影片內嵌播放
+- 課後問答系統（單選題與簡答題）
+- 使用者註冊與登入（Google/Facebook OAuth）
+- 學習進度追蹤與完課徽章
+- 按工具分類（ChatGPT、Midjourney、Cursor 等）
+- 按技能分類（寫文案、生圖、寫程式等）
+- 課程難度標註（初階、中階、高階）
+- 課程搜尋與篩選
+- 後台管理系統（課程、使用者、分類管理）
+
+## 設計系統
+
+- 主色：`cyan` — 按鈕、連結、重點強調
+- 輔色：`amber` — 標籤、徽章、完成指示
+- 中性色：`zinc` — 背景、文字、邊框
+- 字型：DM Sans（標題/內文）、JetBrains Mono（程式碼）
+
+## 後端架構：3-Layer Clean
+
+Go 後端採用 3-Layer Clean Architecture — Go 社群最主流的分層模式。每一層各司其職，透過 interface 溝通，確保可測試性與關注點分離。
+
+```
+HTTP Request
+    │
+    ▼
+┌─────────────────────┐
+│  Handler             │  解析 HTTP → 呼叫 Service → 回傳 JSON
+│  • 不含業務邏輯      │  • 不直接碰 DB
+└──────────┬──────────┘
+           │ 呼叫 service interface
+           ▼
+┌─────────────────────┐
+│  Service             │  純業務邏輯
+│  • 不知道 HTTP       │  • 透過 repository interface 存取資料（不依賴具體實作）
+└──────────┬──────────┘
+           │ 呼叫 repository interface
+           ▼
+┌─────────────────────┐
+│  Repository          │  資料存取（sqlc 生成）
+│  • 不含業務邏輯      │  • 實作 service 定義的 interface
+└─────────────────────┘
+```
+
+**核心原則**：Service 定義 interface，Repository 實作它。這實現了依賴反轉 — 每一層可以獨立測試，實作可以替換（例如：unit test 用 mock repository，integration test 用真實 PostgreSQL）。
+
+## Production-Ready 考量
+
+14 個面向的 production readiness 評估：
+
+- 🟢 本地 / Docker Compose 可完成 — 不需要外部服務
+- 🟡 暫時本地方案，之後可升級外部服務
+- 🔴 需要外部服務 — 初期不納入範圍
+
+| # | 面向 | 範圍 | 說明 |
+|---|------|------|------|
+| 1 | 專案結構重組 | 🟢 | Monolith → 前後端分離 frontend/ + backend/ |
+| 2 | Go 後端架構 | 🟢 | 3-Layer Clean（Handler → Service → Repository） |
+| 3 | 資料庫設計 | 🟢 | PostgreSQL + golang-migrate 版本化遷移 |
+| 4 | API 設計 | 🟢 | RESTful、版本化 (/api/v1/)、統一回應格式 |
+| 5 | 認證與授權 | 🟡 | 本地 Email/Password + JWT；未來可接 OAuth2 |
+| 6 | 快取層 | 🟢 | Redis 課程列表快取、rate limiting |
+| 7 | 前端調整 | 🟢 | TanStack Query、Zustand、shadcn/ui、Zod |
+| 8 | 測試策略 | 🟢 | Go unit + integration（testcontainers-go）；前端 Vitest |
+| 9 | Docker 化 | 🟢 | Go multi-stage build（~20MB）、4 服務 compose + health check |
+| 10 | CI/CD | 🟡 | GitHub Actions（lint → test → build） |
+| 11 | 安全性 | 🟢 | CORS、rate limiting、input sanitization、安全 headers |
+| 12 | 可觀測性 | 🟡 | 本地 structured logging + request ID；可升級 Prometheus/Grafana |
+| 13 | 程式碼品質 | 🟢 | golangci-lint、gofmt、ESLint、Prettier、pre-commit hooks |
+| 14 | 文件 | 🟢 | README、ADR、Swagger/OpenAPI |
+
+## 實作階段
+
+分為 6 個循序階段，後端優先：
+
+| 階段 | 名稱 | 核心交付物 |
+|------|------|-----------|
+| 1 | 基礎設施 + Go 骨架 | Docker Compose、Go 專案骨架、PostgreSQL 遷移、sqlc、health check、Makefile |
+| 2 | 認證系統 | JWT 認證流程、auth/admin middleware、rate limiting |
+| 3 | 核心 API | 課程瀏覽、進度追蹤、搜尋/篩選/分頁、Redis 快取 |
+| 4 | 管理員 API | 儀表板統計、課程/使用者/分類管理 |
+| 5 | 前端改造 | app/ → frontend/、移除 SQLite、接 Go API |
+| 6 | 品質保證 | 測試覆蓋、CI/CD、Swagger 文件、linting、README 完善 |
