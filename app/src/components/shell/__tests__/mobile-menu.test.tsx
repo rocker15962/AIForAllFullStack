@@ -55,4 +55,14 @@ describe('MobileMenu', () => {
     expect(screen.getByRole('link', { name: '探索課程' })).toHaveAttribute('href', '/courses')
     expect(screen.getByRole('link', { name: '我的學習' })).toHaveAttribute('href', '/my-learning')
   })
+
+  it('calls onClose when backdrop is clicked', async () => {
+    const user = userEvent.setup()
+    const onClose = vi.fn()
+    render(<MobileMenu navLinks={navLinks} isOpen={true} onClose={onClose} />)
+
+    const backdrop = screen.getByTestId('mobile-menu-backdrop')
+    await user.click(backdrop)
+    expect(onClose).toHaveBeenCalledOnce()
+  })
 })
