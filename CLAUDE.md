@@ -6,14 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 AI for All is a nonprofit AI education platform that partners with YouTube creators. Users watch embedded tutorial videos, complete quizzes, and track learning progress. The platform is bilingual (English + Traditional Chinese / 繁體中文).
 
-**Current state**: Next.js frontend prototype with SQLite in `app/`. The Go backend, PostgreSQL, Redis, and Docker infrastructure have not been built yet.
+**Current state**: Next.js frontend prototype with SQLite in `frontend/`. The Go backend, PostgreSQL, Redis, and Docker infrastructure have not been built yet.
 
 **Target architecture**: Next.js frontend (`frontend/`) + Go API server (`backend/`) + PostgreSQL + Redis, all orchestrated via Docker Compose. See `PRODUCT_ROADMAP.md` for the full 6-phase plan.
 
 ## Commands
 
 ```bash
-cd app
+cd frontend
 npm install              # Install dependencies (first time)
 npm run dev              # Start dev server (port 3000)
 npm run build            # Production build
@@ -119,7 +119,7 @@ main ─────────────────────── (prod
 
 ### Pre-commit Hooks (husky + lint-staged)
 
-husky lives at git root (`AIForAllFullStack/.husky/`), but Next.js is in `app/`. The pre-commit hook `cd app` before running checks.
+husky lives at git root (`AIForAllFullStack/.husky/`), but Next.js is in `frontend/`. The pre-commit hook `cd frontend` before running checks.
 
 Pre-commit runs:
 1. **lint-staged**: ESLint `--fix` + Prettier `--write` on staged `.ts`/`.tsx` files; Prettier on `.json`/`.md`/`.css`
@@ -177,7 +177,7 @@ If any step fails, the commit is blocked.
 - **Neutral**: `zinc` — backgrounds, text, borders
 - **Fonts**: DM Sans (headings/body), JetBrains Mono (code)
 - **Dark mode**: All components must support `dark:` variants
-- Design tokens defined as CSS custom properties in `app/src/app/globals.css`
+- Design tokens defined as CSS custom properties in `frontend/src/app/globals.css`
 - Visual designs in `AIForAll.pen` — open with Pencil MCP tools
 
 ## Architecture
@@ -185,7 +185,7 @@ If any step fails, the commit is blocked.
 ### Current: Single-tier frontend
 
 ```
-app/src/
+frontend/src/
 ├── app/              # Next.js App Router pages (9 routes)
 │   ├── api/          # API routes (SQLite-backed, to be replaced by Go API)
 │   ├── courses/      # /courses and /courses/[id]
@@ -216,7 +216,7 @@ Redis      → Cache + rate limiting (port 6379)
 The Go backend follows 3-Layer Clean Architecture: Handler (HTTP parsing) → Service (business logic, defines interfaces) → Repository (data access, implements interfaces). Service defines the interface, Repository implements it — enabling dependency inversion for testing.
 
 ### Data Model
-7 entities: User, Course, Question, Tool, Skill, Progress, Creator. Full field definitions and relationships are in `PRODUCT_ROADMAP.md` Section 2. All TypeScript types are defined in `app/src/types/index.ts`.
+7 entities: User, Course, Question, Tool, Skill, Progress, Creator. Full field definitions and relationships are in `PRODUCT_ROADMAP.md` Section 2. All TypeScript types are defined in `frontend/src/types/index.ts`.
 
 ## Language
 
@@ -227,10 +227,9 @@ The Go backend follows 3-Layer Clean Architecture: Handler (HTTP parsing) → Se
 ## Gotchas
 
 - **Gitignored work dirs**: `docs/superpowers/` (design specs) and `.claude/` (plans) are gitignored — don't `git add` them
-- **Working directory matters**: All `npm` commands must run from `app/`, not the repo root. husky pre-commit hook handles this automatically with `cd app`.
-- **SQLite auto-init**: The database (`app/data/aiforall.db`) is auto-created on first `npm run dev`. No manual setup needed.
+- **Working directory matters**: All `npm` commands must run from `frontend/`, not the repo root. husky pre-commit hook handles this automatically with `cd frontend`.
+- **SQLite auto-init**: The database (`frontend/data/aiforall.db`) is auto-created on first `npm run dev`. No manual setup needed.
 - **No `.env` required**: Current prototype has no environment variables. This will change when OAuth and PostgreSQL are added.
-- **`app/` will become `frontend/`**: Phase 1 of the roadmap renames `app/` to `frontend/` and adds `backend/`. Existing `app/` paths will change.
 - **Root `package.json`**: A minimal `package.json` exists at the git root solely for husky's `prepare` script. It is NOT the app's package.json.
 
 ## Important Files
@@ -238,6 +237,6 @@ The Go backend follows 3-Layer Clean Architecture: Handler (HTTP parsing) → Se
 - `PRODUCT_ROADMAP.md` — Complete product spec with 6 development phases, data model, API endpoints, success criteria
 - `README.md` — Tech stack rationale, architecture diagram, production readiness evaluation
 - `AIForAll.pen` — Visual design file (open with Pencil MCP tools)
-- `app/src/types/index.ts` — All TypeScript type definitions (source of truth for data shapes)
-- `app/src/lib/db.ts` — Current SQLite schema (reference for PostgreSQL migration design)
-- `app/src/app/globals.css` — Design tokens and color scale definitions
+- `frontend/src/types/index.ts` — All TypeScript type definitions (source of truth for data shapes)
+- `frontend/src/lib/db.ts` — Current SQLite schema (reference for PostgreSQL migration design)
+- `frontend/src/app/globals.css` — Design tokens and color scale definitions
