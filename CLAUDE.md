@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 AI for All is a nonprofit AI education platform that partners with YouTube creators. Users watch embedded tutorial videos, complete quizzes, and track learning progress. The platform is bilingual (English + Traditional Chinese / 繁體中文).
 
-**Current state**: Next.js frontend prototype with SQLite in `frontend/`. The Go backend, PostgreSQL, Redis, and Docker infrastructure have not been built yet.
+**Current state**: Next.js frontend in `frontend/`, Go backend scaffold in `backend/`, Docker Compose orchestrating all 4 services (frontend, backend, PostgreSQL, Redis).
 
 **Target architecture**: Next.js frontend (`frontend/`) + Go API server (`backend/`) + PostgreSQL + Redis, all orchestrated via Docker Compose. See `PRODUCT_ROADMAP.md` for the full 6-phase plan.
 
@@ -30,6 +30,27 @@ npm run quality          # Full suite: lint + type-check + format:check + test
 ```
 
 Run `npm run quality` before merging any feature branch.
+
+### Backend (Go)
+
+```bash
+cd backend
+go build ./cmd/server     # Build backend binary
+go test ./...             # Run Go tests
+```
+
+### Docker Compose (from repo root)
+
+```bash
+make dev                  # Start all 4 services (frontend, backend, PostgreSQL, Redis)
+make stop                 # Stop all services
+make clean                # Stop + remove volumes
+make migrate              # Run database migrations
+make migrate-down         # Rollback last migration
+make sqlc                 # Regenerate sqlc code
+make health               # Quick health check
+make logs                 # Follow all service logs
+```
 
 ## Feature Development Lifecycle
 
@@ -228,8 +249,9 @@ The Go backend follows 3-Layer Clean Architecture: Handler (HTTP parsing) → Se
 
 - **Gitignored work dirs**: `docs/superpowers/` (design specs) and `.claude/` (plans) are gitignored — don't `git add` them
 - **Working directory matters**: All `npm` commands must run from `frontend/`, not the repo root. husky pre-commit hook handles this automatically with `cd frontend`.
-- **SQLite auto-init**: The database (`frontend/data/aiforall.db`) is auto-created on first `npm run dev`. No manual setup needed.
-- **No `.env` required**: Current prototype has no environment variables. This will change when OAuth and PostgreSQL are added.
+- **Docker required**: `make dev` (or `docker compose up --build`) starts the full stack. PostgreSQL and Redis run in containers. First Go build in Docker on macOS is slow (~15 min) due to Linux emulation; subsequent builds are cached.
+- **Go tooling on host**: `sqlc generate` runs on the host machine (not in Docker) so generated files are available for IDE support. Install with `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest`.
+- **`.env.example`**: Copy to `.env` if needed. Docker Compose hardcodes dev values, so `.env` is not required for local development.
 - **Root `package.json`**: A minimal `package.json` exists at the git root solely for husky's `prepare` script. It is NOT the app's package.json.
 
 ## Important Files
