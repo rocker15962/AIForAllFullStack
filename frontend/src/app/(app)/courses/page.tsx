@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { SlidersHorizontal } from 'lucide-react'
 import { SearchBar, FilterSidebar, CourseGrid } from '@/components/course-discovery'
 
@@ -33,12 +34,39 @@ interface CourseItem {
   questionCount: number
 }
 
+async function fetchTools(): Promise<Tool[]> {
+  const res = await fetch(`${API_URL}/api/v1/tools`)
+  if (!res.ok) return []
+  const data = (await res.json()) as { tools: Tool[] }
+  return data.tools || []
+}
+
+async function fetchSkills(): Promise<Skill[]> {
+  const res = await fetch(`${API_URL}/api/v1/skills`)
+  if (!res.ok) return []
+  const data = (await res.json()) as { skills: Skill[] }
+  return data.skills || []
+}
+
+async function fetchCourses(params: {
+  search: string
+  toolId: string | null
+  skillId: string | null
+  difficulty: string | null
+}): Promise<{ courses: CourseItem[]; total: number }> {
+  const searchParams = new URLSearchParams()
+  if (params.search) searchParams.set('search', params.search)
+  if (params.toolId) searchParams.set('tool_id', params.toolId)
+  if (params.skillId) searchParams.set('skill_id', params.skillId)
+  if (params.difficulty) searchParams.set('difficulty', params.difficulty)
+
+  const res = await fetch(`${API_URL}/api/v1/courses?${searchParams.toString()}`)
+  if (!res.ok) return { courses: [], total: 0 }
+  const data = (await res.json()) as { courses: CourseItem[]; total: number }
+  return { courses: data.courses || [], total: data.total || 0 }
+}
+
 export default function CoursesPage() {
-  const [courses, setCourses] = useState<CourseItem[]>([])
-  const [tools, setTools] = useState<Tool[]>([])
-  const [skills, setSkills] = useState<Skill[]>([])
-  const [_total, setTotal] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
 
   // Filter state
@@ -47,56 +75,24 @@ export default function CoursesPage() {
   const [skillId, setSkillId] = useState<string | null>(null)
   const [difficulty, setDifficulty] = useState<string | null>(null)
 
-  // Fetch tools and skills once
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const [toolsRes, skillsRes] = await Promise.all([
-          fetch(`${API_URL}/api/v1/tools`),
-          fetch(`${API_URL}/api/v1/skills`),
-        ])
-        if (toolsRes.ok) {
-          const data = await toolsRes.json()
-          setTools(data.tools || [])
-        }
-        if (skillsRes.ok) {
-          const data = await skillsRes.json()
-          setSkills(data.skills || [])
-        }
-      } catch {
-        // Silently handle — empty filters
-      }
-    }
-    fetchCategories()
-  }, [])
+  // TanStack Query: fetch tools and skills (cached, fetched once)
+  const { data: tools = [] } = useQuery({
+    queryKey: ['tools'],
+    queryFn: fetchTools,
+  })
 
-  // Fetch courses when filters change
-  const fetchCourses = useCallback(async () => {
-    setIsLoading(true)
-    try {
-      const params = new URLSearchParams()
-      if (search) params.set('search', search)
-      if (toolId) params.set('tool_id', toolId)
-      if (skillId) params.set('skill_id', skillId)
-      if (difficulty) params.set('difficulty', difficulty)
+  const { data: skills = [] } = useQuery({
+    queryKey: ['skills'],
+    queryFn: fetchSkills,
+  })
 
-      const res = await fetch(`${API_URL}/api/v1/courses?${params.toString()}`)
-      if (res.ok) {
-        const data = await res.json()
-        setCourses(data.courses || [])
-        setTotal(data.total || 0)
-      }
-    } catch {
-      setCourses([])
-      setTotal(0)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [search, toolId, skillId, difficulty])
+  // TanStack Query: fetch courses (re-fetches when filters change)
+  const { data: courseData, isLoading } = useQuery({
+    queryKey: ['courses', search, toolId, skillId, difficulty],
+    queryFn: () => fetchCourses({ search, toolId, skillId, difficulty }),
+  })
 
-  useEffect(() => {
-    fetchCourses()
-  }, [fetchCourses])
+  const courses = courseData?.courses ?? []
 
   // Build name lookup maps
   const toolNames: Record<string, string> = {}

@@ -6,6 +6,10 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { QuestionEditor } from './question-editor'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { courseFormSchema } from '@/lib/schemas'
 import type { Difficulty, Question } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
@@ -137,26 +141,14 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
   async function handleSave(status: 'draft' | 'published') {
     setError(null)
 
-    if (!form.title.trim()) {
-      setError('Title is required')
+    // Validate with Zod
+    const result = courseFormSchema.safeParse(form)
+    if (!result.success) {
+      const firstError = result.error.issues[0]
+      setError(firstError?.message || 'Validation failed')
       return
     }
-    if (!form.description.trim()) {
-      setError('Description is required')
-      return
-    }
-    if (!form.youtubeUrl.trim()) {
-      setError('YouTube URL is required')
-      return
-    }
-    if (!form.toolId) {
-      setError('Tool is required')
-      return
-    }
-    if (!form.skillId) {
-      setError('Skill is required')
-      return
-    }
+
     if (!accessToken) {
       setError('Not authenticated')
       return
@@ -201,7 +193,7 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
 
   const videoId = extractYouTubeId(form.youtubeUrl)
 
-  const inputClasses =
+  const selectClasses =
     'w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-zinc-900 transition-colors outline-none focus:border-cyan-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-cyan-500'
 
   return (
@@ -226,24 +218,25 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
           </p>
         </div>
         <div className="flex shrink-0 gap-3">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => handleSave('draft')}
             disabled={isSaving}
-            className="flex items-center gap-2 rounded-lg border border-zinc-200 px-4 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
+            className="flex items-center gap-2 rounded-lg border-zinc-200 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:border-zinc-600 dark:text-zinc-300"
           >
             {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
             Save Draft
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => handleSave('published')}
             disabled={isSaving}
-            className="flex items-center gap-2 rounded-lg bg-cyan-500 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cyan-600 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-lg bg-cyan-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-cyan-600 disabled:opacity-60"
           >
             {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
             Publish
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -261,43 +254,43 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
         </h2>
 
         <div className="flex flex-col gap-6">
-          {/* Title */}
+          {/* Title — shadcn/ui Input */}
           <label className="flex flex-col gap-1.5">
             <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Title</span>
-            <input
+            <Input
               type="text"
               value={form.title}
               onChange={(e) => handleChange('title', e.target.value)}
               placeholder="e.g. ChatGPT Basics: Learn AI Conversations"
-              className={inputClasses}
+              className="h-10 rounded-lg border-zinc-200 bg-zinc-50 px-3 text-sm text-zinc-900 focus-visible:border-cyan-400 focus-visible:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus-visible:border-cyan-500"
             />
           </label>
 
-          {/* Description */}
+          {/* Description — shadcn/ui Textarea */}
           <label className="flex flex-col gap-1.5">
             <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Description
             </span>
-            <textarea
+            <Textarea
               value={form.description}
               onChange={(e) => handleChange('description', e.target.value)}
               placeholder="Describe what students will learn..."
               rows={4}
-              className={inputClasses}
+              className="rounded-lg border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-zinc-900 focus-visible:border-cyan-400 focus-visible:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus-visible:border-cyan-500"
             />
           </label>
 
-          {/* YouTube URL */}
+          {/* YouTube URL — shadcn/ui Input */}
           <label className="flex flex-col gap-1.5">
             <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
               YouTube Video URL
             </span>
-            <input
+            <Input
               type="url"
               value={form.youtubeUrl}
               onChange={(e) => handleChange('youtubeUrl', e.target.value)}
               placeholder="https://youtube.com/watch?v=..."
-              className={inputClasses}
+              className="h-10 rounded-lg border-zinc-200 bg-zinc-50 px-3 text-sm text-zinc-900 focus-visible:border-cyan-400 focus-visible:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus-visible:border-cyan-500"
             />
           </label>
 
@@ -329,7 +322,7 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
               <select
                 value={form.toolId}
                 onChange={(e) => handleChange('toolId', e.target.value)}
-                className={inputClasses}
+                className={selectClasses}
               >
                 <option value="">Select tool</option>
                 {tools.map((t) => (
@@ -345,7 +338,7 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
               <select
                 value={form.skillId}
                 onChange={(e) => handleChange('skillId', e.target.value)}
-                className={inputClasses}
+                className={selectClasses}
               >
                 <option value="">Select skill</option>
                 {skills.map((s) => (
@@ -363,7 +356,7 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
               <select
                 value={form.difficulty}
                 onChange={(e) => handleChange('difficulty', e.target.value)}
-                className={inputClasses}
+                className={selectClasses}
               >
                 {difficulties.map((d) => (
                   <option key={d.value} value={d.value}>

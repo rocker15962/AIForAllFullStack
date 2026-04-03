@@ -1,8 +1,9 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useEffect, useCallback } from 'react'
 import type { ReactNode } from 'react'
 import type { User } from '@/types'
+import { useAuthStore } from '@/stores/auth-store'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
@@ -18,9 +19,14 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [accessToken, setAccessToken] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const {
+    user,
+    accessToken,
+    isLoading,
+    setAuth: storeSetAuth,
+    clearAuth,
+    setLoading,
+  } = useAuthStore()
 
   const fetchUser = useCallback(async (token: string): Promise<User | null> => {
     try {
@@ -47,18 +53,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const data = (await res.json()) as { accessToken: string }
         const fetchedUser = await fetchUser(data.accessToken)
         if (fetchedUser) {
-          setAccessToken(data.accessToken)
-          setUser(fetchedUser)
+          storeSetAuth(data.accessToken, fetchedUser)
         }
       } catch {
         // No valid session — stay as guest
       } finally {
-        setIsLoading(false)
+        setLoading(false)
       }
     }
 
     restoreSession()
-  }, [fetchUser])
+  }, [fetchUser, storeSetAuth, setLoading])
 
   const login = useCallback((redirect?: string) => {
     const redirectPath = redirect || window.location.pathname
@@ -74,14 +79,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       // Clear state even if request fails
     }
-    setUser(null)
-    setAccessToken(null)
-  }, [])
+    clearAuth()
+  }, [clearAuth])
 
-  const setAuth = useCallback(async (token: string, fetchedUser: User) => {
-    setAccessToken(token)
-    setUser(fetchedUser)
-  }, [])
+  const setAuth = useCallback(
+    (token: string, fetchedUser: User) => {
+      storeSetAuth(token, fetchedUser)
+    },
+    [storeSetAuth],
+  )
 
   return (
     <AuthContext.Provider value={{ user, accessToken, isLoading, login, logout, setAuth }}>
