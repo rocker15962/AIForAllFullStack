@@ -15,3 +15,6 @@ node_modules/
 # Backend build artifacts
 backend/tmp/
 backend/server
+
+# User uploads
+backend/uploads/

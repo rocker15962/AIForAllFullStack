@@ -24,14 +24,38 @@ export default function ProfilePage() {
   const [avatarPreview, setAvatarPreview] = useState<string>('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
-    if (!file) return
+    if (!file || !accessToken || !user) return
+
+    // Show local preview immediately
     const reader = new FileReader()
-    reader.onloadend = () => {
-      setAvatarPreview(reader.result as string)
-    }
+    reader.onloadend = () => setAvatarPreview(reader.result as string)
     reader.readAsDataURL(file)
+
+    // Upload to backend
+    const formData = new FormData()
+    formData.append('avatar', file)
+
+    try {
+      const res = await fetch(`${API_URL}/api/v1/my/avatar`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${accessToken}` },
+        body: formData,
+      })
+      if (res.ok) {
+        const data = (await res.json()) as { avatarUrl: string }
+        const fullUrl = `${API_URL}${data.avatarUrl}`
+        setAvatarPreview(fullUrl)
+        setAuth(accessToken, { ...user, avatarUrl: fullUrl })
+        setMessage({ type: 'success', text: 'Avatar updated' })
+      } else {
+        const body = await res.json().catch(() => ({ error: 'Upload failed' }))
+        setMessage({ type: 'error', text: (body as { error?: string }).error || 'Upload failed' })
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Failed to upload avatar' })
+    }
   }
 
   const authHeaders = useCallback((): HeadersInit => {

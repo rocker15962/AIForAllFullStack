@@ -189,6 +189,34 @@ func (q *Queries) GetUserInProgress(ctx context.Context, userID uuid.UUID) ([]Ge
 	return items, nil
 }
 
+const updateUserAvatar = `-- name: UpdateUserAvatar :one
+UPDATE users
+SET avatar_url = $1, last_active_at = NOW()
+WHERE id = $2
+RETURNING id, name, email, avatar_url, provider, is_admin, created_at, last_active_at
+`
+
+type UpdateUserAvatarParams struct {
+	AvatarUrl string    `json:"avatar_url"`
+	ID        uuid.UUID `json:"id"`
+}
+
+func (q *Queries) UpdateUserAvatar(ctx context.Context, arg UpdateUserAvatarParams) (User, error) {
+	row := q.db.QueryRow(ctx, updateUserAvatar, arg.AvatarUrl, arg.ID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.AvatarUrl,
+		&i.Provider,
+		&i.IsAdmin,
+		&i.CreatedAt,
+		&i.LastActiveAt,
+	)
+	return i, err
+}
+
 const updateUserProfile = `-- name: UpdateUserProfile :one
 UPDATE users
 SET name = $1, last_active_at = NOW()

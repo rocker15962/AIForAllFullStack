@@ -2,7 +2,10 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -189,5 +192,57 @@ func (h *UserHandler) GetStats(c *gin.Context) {
 		"inProgress": counts.InProgressCount,
 		"completed":  counts.CompletedCount,
 		"badges":     counts.CompletedCount, // badges = completed courses
+	})
+}
+
+func (h *UserHandler) UploadAvatar(c *gin.Context) {
+	userID := c.MustGet(middleware.ContextKeyUserID).(uuid.UUID)
+
+	file, err := c.FormFile("avatar")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "avatar file is required"})
+		return
+	}
+
+	// Validate file size (max 2MB)
+	if file.Size > 2*1024*1024 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "file too large (max 2MB)"})
+		return
+	}
+
+	// Validate file type
+	ext := filepath.Ext(file.Filename)
+	allowed := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".webp": true}
+	if !allowed[ext] {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "only jpg, png, webp allowed"})
+		return
+	}
+
+	// Save file
+	uploadDir := "uploads/avatars"
+	os.MkdirAll(uploadDir, 0755)
+
+	filename := fmt.Sprintf("%s%s", userID.String(), ext)
+	savePath := filepath.Join(uploadDir, filename)
+
+	if err := c.SaveUploadedFile(file, savePath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save file"})
+		return
+	}
+
+	// Build URL and update DB
+	avatarURL := fmt.Sprintf("/uploads/avatars/%s", filename)
+
+	user, err := h.queries.UpdateUserAvatar(c.Request.Context(), repository.UpdateUserAvatarParams{
+		AvatarUrl: avatarURL,
+		ID:        userID,
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update avatar"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"avatarUrl": user.AvatarUrl,
 	})
 }

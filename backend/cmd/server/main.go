@@ -124,6 +124,10 @@ func main() {
 	my.GET("/stats", userHandler.GetStats)
 	my.GET("/profile", userHandler.GetProfile)
 	my.PUT("/profile", userHandler.UpdateProfile)
+	my.POST("/avatar", userHandler.UploadAvatar)
+
+	// Static file serving for uploads
+	r.Static("/uploads", "./uploads")
 
 	// HTTP server with graceful shutdown
 	srv := &http.Server{

@@ -36,3 +36,9 @@ UPDATE users
 SET name = $1, last_active_at = NOW()
 WHERE id = $2
 RETURNING *;
+
+-- name: UpdateUserAvatar :one
+UPDATE users
+SET avatar_url = $1, last_active_at = NOW()
+WHERE id = $2
+RETURNING *;
