@@ -8,6 +8,29 @@ vi.mock('next/navigation', () => ({
   usePathname: () => '/courses',
 }))
 
+const mockLogin = vi.fn()
+const mockLogout = vi.fn()
+
+vi.mock('@/contexts/auth-context', () => ({
+  useAuth: () => ({
+    user: {
+      id: '1',
+      name: 'Demo User',
+      email: 'demo@test.com',
+      avatarUrl: '',
+      provider: 'google',
+      isAdmin: false,
+      createdAt: '',
+      lastActiveAt: '',
+    },
+    accessToken: 'test-token',
+    isLoading: false,
+    login: mockLogin,
+    logout: mockLogout,
+    setAuth: vi.fn(),
+  }),
+}))
+
 const navLinks: NavigationItem[] = [
   { label: '探索課程', href: '/courses' },
   { label: '我的學習', href: '/my-learning' },
@@ -26,7 +49,7 @@ describe('TopNav', () => {
     expect(screen.getByText('我的學習')).toBeInTheDocument()
   })
 
-  it('renders user menu trigger', () => {
+  it('renders user menu when authenticated', () => {
     render(<TopNav navLinks={navLinks} />)
     expect(screen.getByText('Demo User')).toBeInTheDocument()
   })
@@ -49,8 +72,7 @@ describe('TopNav', () => {
 
     await user.click(screen.getByRole('button', { name: /menu/i }))
 
-    // MobileMenu should render the same nav links
     const allExplorLinks = screen.getAllByText('探索課程')
-    expect(allExplorLinks.length).toBeGreaterThanOrEqual(2) // desktop + mobile
+    expect(allExplorLinks.length).toBeGreaterThanOrEqual(2)
   })
 })
