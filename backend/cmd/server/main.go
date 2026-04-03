@@ -81,6 +81,7 @@ func main() {
 	authHandler := handler.NewAuthHandler(authService, os.Getenv("FRONTEND_URL"))
 	courseHandler := handler.NewCourseHandler(courseService)
 	categoryHandler := handler.NewCategoryHandler(queries, queries)
+	userHandler := handler.NewUserHandler(queries)
 
 	// Gin setup
 	r := gin.Default()
@@ -114,6 +115,19 @@ func main() {
 	api.GET("/courses/:id/recommended", courseHandler.Recommended)
 	api.POST("/courses/:id/submit", middleware.Auth(authService), courseHandler.Submit)
 	api.POST("/courses/:id/complete", middleware.Auth(authService), courseHandler.Complete)
+
+	// User routes (all require auth)
+	my := api.Group("/my", middleware.Auth(authService))
+	my.GET("/progress", userHandler.GetProgress)
+	my.GET("/completed", userHandler.GetCompleted)
+	my.GET("/badges", userHandler.GetBadges)
+	my.GET("/stats", userHandler.GetStats)
+	my.GET("/profile", userHandler.GetProfile)
+	my.PUT("/profile", userHandler.UpdateProfile)
+	my.POST("/avatar", userHandler.UploadAvatar)
+
+	// Static file serving for uploads
+	r.Static("/uploads", "./uploads")
 
 	// HTTP server with graceful shutdown
 	srv := &http.Server{
