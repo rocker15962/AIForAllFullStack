@@ -1,0 +1,5 @@
+DROP TYPE IF EXISTS question_type CASCADE;
+DROP TYPE IF EXISTS progress_status CASCADE;
+DROP TYPE IF EXISTS course_status CASCADE;
+DROP TYPE IF EXISTS auth_provider CASCADE;
+DROP TYPE IF EXISTS difficulty_level CASCADE;
