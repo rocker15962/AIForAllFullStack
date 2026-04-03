@@ -48,7 +48,6 @@ export function QuizSection({ courseId, questions }: QuizSectionProps) {
     let result: FeedbackData
 
     if (user && accessToken) {
-      // Authenticated: call API
       try {
         const res = await fetch(`${API_URL}/api/v1/courses/${courseId}/submit`, {
           method: 'POST',
@@ -70,7 +69,6 @@ export function QuizSection({ courseId, questions }: QuizSectionProps) {
         result = { correct: false, correctAnswer: '', explanation: '網路錯誤' }
       }
     } else {
-      // Guest: simple local validation
       result = {
         correct: currentQuestion.type === 'multiple_choice' ? selectedAnswer === 'a' : true,
         correctAnswer: '',
@@ -85,7 +83,6 @@ export function QuizSection({ courseId, questions }: QuizSectionProps) {
 
   const handleNext = useCallback(async () => {
     if (isLast) {
-      // Complete
       if (user && accessToken) {
         try {
           await fetch(`${API_URL}/api/v1/courses/${courseId}/complete`, {
@@ -107,7 +104,7 @@ export function QuizSection({ courseId, questions }: QuizSectionProps) {
 
   if (questions.length === 0) {
     return (
-      <div className="rounded-xl border border-zinc-200 p-6 text-center dark:border-zinc-700">
+      <div className="rounded-xl border border-zinc-200 p-8 text-center dark:border-zinc-700">
         <p className="text-sm text-zinc-500">此課程尚無測驗題目</p>
       </div>
     )
@@ -128,41 +125,55 @@ export function QuizSection({ courseId, questions }: QuizSectionProps) {
   }
 
   return (
-    <div className="rounded-xl border border-zinc-200 p-6 dark:border-zinc-700">
-      <QuizProgress current={currentIndex + 1} total={questions.length} />
+    <div>
+      {/* Quiz header */}
+      <div className="flex items-center justify-between border-b border-zinc-200 py-4 dark:border-zinc-700">
+        <span className="text-base font-semibold text-zinc-700 dark:text-zinc-300">Quiz</span>
+        <span className="text-sm text-zinc-500">
+          Question {currentIndex + 1} / {questions.length}
+        </span>
+      </div>
 
-      {state === 'answering' && currentQuestion && (
-        <>
-          {currentQuestion.type === 'multiple_choice' && currentQuestion.options ? (
-            <QuestionMC
-              question={currentQuestion.question}
-              options={currentQuestion.options}
-              selectedAnswer={selectedAnswer || null}
-              onSelect={setSelectedAnswer}
-              onSubmit={handleSubmit}
-              disabled={false}
-            />
-          ) : (
-            <QuestionSA
-              question={currentQuestion.question}
-              answer={selectedAnswer}
-              onChange={setSelectedAnswer}
-              onSubmit={handleSubmit}
-              disabled={false}
-            />
-          )}
-        </>
-      )}
+      {/* Segmented progress bar */}
+      <div className="py-4">
+        <QuizProgress current={answers.length} total={questions.length} />
+      </div>
 
-      {state === 'feedback' && feedback && (
-        <AnswerFeedback
-          correct={feedback.correct}
-          correctAnswer={feedback.correctAnswer}
-          explanation={feedback.explanation}
-          onNext={handleNext}
-          isLast={isLast}
-        />
-      )}
+      {/* Quiz card */}
+      <div className="rounded-xl border border-zinc-200 bg-white p-8 dark:border-zinc-700 dark:bg-zinc-800">
+        {state === 'answering' && currentQuestion && (
+          <>
+            {currentQuestion.type === 'multiple_choice' && currentQuestion.options ? (
+              <QuestionMC
+                question={currentQuestion.question}
+                options={currentQuestion.options}
+                selectedAnswer={selectedAnswer || null}
+                onSelect={setSelectedAnswer}
+                onSubmit={handleSubmit}
+                disabled={false}
+              />
+            ) : (
+              <QuestionSA
+                question={currentQuestion.question}
+                answer={selectedAnswer}
+                onChange={setSelectedAnswer}
+                onSubmit={handleSubmit}
+                disabled={false}
+              />
+            )}
+          </>
+        )}
+
+        {state === 'feedback' && feedback && (
+          <AnswerFeedback
+            correct={feedback.correct}
+            correctAnswer={feedback.correctAnswer}
+            explanation={feedback.explanation}
+            onNext={handleNext}
+            isLast={isLast}
+          />
+        )}
+      </div>
     </div>
   )
 }
