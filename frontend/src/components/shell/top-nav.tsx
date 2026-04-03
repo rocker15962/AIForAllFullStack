@@ -7,6 +7,8 @@ import { Menu } from 'lucide-react'
 import { Logo } from './logo'
 import { UserMenu } from './user-menu'
 import { MobileMenu } from './mobile-menu'
+import { LoginButton } from './login-button'
+import { useAuth } from '@/contexts/auth-context'
 import type { NavigationItem } from '@/types'
 
 interface TopNavProps {
@@ -16,6 +18,7 @@ interface TopNavProps {
 export function TopNav({ navLinks }: TopNavProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
+  const { user, isLoading } = useAuth()
 
   return (
     <header className="flex h-14 items-center border-b border-zinc-200 bg-white px-4 md:px-10 dark:border-zinc-700 dark:bg-zinc-900">
@@ -38,7 +41,7 @@ export function TopNav({ navLinks }: TopNavProps) {
       </nav>
 
       <div className="hidden md:block">
-        <UserMenu />
+        {isLoading ? null : user ? <UserMenu /> : <LoginButton />}
       </div>
 
       <div className="ml-auto md:hidden">
