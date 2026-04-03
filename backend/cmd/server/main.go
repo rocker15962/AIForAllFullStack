@@ -81,6 +81,14 @@ func main() {
 	// Gin setup
 	r := gin.Default()
 
+	// Global middleware
+	frontendURL := os.Getenv("FRONTEND_URL")
+	if frontendURL == "" {
+		frontendURL = "http://localhost:3000"
+	}
+	r.Use(middleware.CORS(frontendURL))
+	r.Use(middleware.RateLimit(rdb))
+
 	api := r.Group("/api/v1")
 	api.GET("/health", healthHandler.Check)
 
