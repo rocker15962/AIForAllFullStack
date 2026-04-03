@@ -22,6 +22,35 @@ func NewUserHandler(queries *repository.Queries) *UserHandler {
 	return &UserHandler{queries: queries}
 }
 
+func (h *UserHandler) resolveToolName(ctx interface{ Value(interface{}) interface{} }, toolID uuid.UUID) string {
+	tool, err := h.queries.GetToolByID(ctx.(interface {
+		Value(interface{}) interface{}
+		Deadline() (time.Time, bool)
+		Done() <-chan struct{}
+		Err() error
+	}), toolID)
+	if err != nil {
+		return ""
+	}
+	return tool.Name
+}
+
+func (h *UserHandler) getToolName(c *gin.Context, toolID uuid.UUID) string {
+	tool, err := h.queries.GetToolByID(c.Request.Context(), toolID)
+	if err != nil {
+		return ""
+	}
+	return tool.Name
+}
+
+func (h *UserHandler) getSkillName(c *gin.Context, skillID uuid.UUID) string {
+	skill, err := h.queries.GetSkillByID(c.Request.Context(), skillID)
+	if err != nil {
+		return ""
+	}
+	return skill.Name
+}
+
 func (h *UserHandler) GetProgress(c *gin.Context) {
 	userID := c.MustGet(middleware.ContextKeyUserID).(uuid.UUID)
 
@@ -42,17 +71,17 @@ func (h *UserHandler) GetProgress(c *gin.Context) {
 		}
 
 		items[i] = gin.H{
-			"id":             r.ID.String(),
-			"courseId":       r.CourseID.String(),
-			"title":          r.Title,
-			"thumbnailUrl":   r.ThumbnailUrl,
-			"difficulty":     string(r.Difficulty),
-			"toolId":         r.ToolID.String(),
-			"skillId":        r.SkillID.String(),
-			"progress":       progressPct,
+			"id":              r.ID.String(),
+			"courseId":        r.CourseID.String(),
+			"courseTitle":     r.Title,
+			"courseThumbnail": r.ThumbnailUrl,
+			"difficulty":      string(r.Difficulty),
+			"toolName":        h.getToolName(c, r.ToolID),
+			"skillName":       h.getSkillName(c, r.SkillID),
+			"progress":        progressPct,
 			"currentQuestion": answeredCount,
 			"totalQuestions":  r.TotalQuestions,
-			"lastAccessedAt": r.LastAccessedAt.Format(time.RFC3339),
+			"lastAccessedAt":  r.LastAccessedAt.Format(time.RFC3339),
 		}
 	}
 
@@ -81,16 +110,16 @@ func (h *UserHandler) GetCompleted(c *gin.Context) {
 		}
 
 		items[i] = gin.H{
-			"id":           r.ID.String(),
-			"courseId":     r.CourseID.String(),
-			"title":        r.Title,
-			"thumbnailUrl": r.ThumbnailUrl,
-			"difficulty":   string(r.Difficulty),
-			"toolId":       r.ToolID.String(),
-			"skillId":      r.SkillID.String(),
-			"score":        score,
-			"totalQuestions": r.TotalQuestions,
-			"completedAt":  completedAt,
+			"id":              r.ID.String(),
+			"courseId":        r.CourseID.String(),
+			"courseTitle":     r.Title,
+			"courseThumbnail": r.ThumbnailUrl,
+			"difficulty":      string(r.Difficulty),
+			"toolName":        h.getToolName(c, r.ToolID),
+			"skillName":       h.getSkillName(c, r.SkillID),
+			"score":           score,
+			"totalQuestions":  r.TotalQuestions,
+			"completedAt":     completedAt,
 		}
 	}
 
@@ -115,7 +144,7 @@ func (h *UserHandler) GetBadges(c *gin.Context) {
 		items[i] = gin.H{
 			"id":           r.ID.String(),
 			"courseId":     r.CourseID.String(),
-			"title":        r.Title,
+			"courseTitle":  r.Title,
 			"thumbnailUrl": r.ThumbnailUrl,
 			"earnedAt":     earnedAt,
 		}
@@ -191,7 +220,7 @@ func (h *UserHandler) GetStats(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"inProgress": counts.InProgressCount,
 		"completed":  counts.CompletedCount,
-		"badges":     counts.CompletedCount, // badges = completed courses
+		"badges":     counts.CompletedCount,
 	})
 }
 
@@ -204,13 +233,11 @@ func (h *UserHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	// Validate file size (max 2MB)
 	if file.Size > 2*1024*1024 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "file too large (max 2MB)"})
 		return
 	}
 
-	// Validate file type
 	ext := filepath.Ext(file.Filename)
 	allowed := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".webp": true}
 	if !allowed[ext] {
@@ -218,7 +245,6 @@ func (h *UserHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	// Save file
 	uploadDir := "uploads/avatars"
 	os.MkdirAll(uploadDir, 0755)
 
@@ -230,7 +256,6 @@ func (h *UserHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	// Build URL and update DB
 	avatarURL := fmt.Sprintf("/uploads/avatars/%s", filename)
 
 	user, err := h.queries.UpdateUserAvatar(c.Request.Context(), repository.UpdateUserAvatarParams{
