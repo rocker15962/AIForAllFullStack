@@ -13,6 +13,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/handler"
+	"github.com/rocker15962/AIForAllFullStack/backend/internal/middleware"
+	"github.com/rocker15962/AIForAllFullStack/backend/internal/repository"
+	"github.com/rocker15962/AIForAllFullStack/backend/internal/service"
 )
 
 func main() {
@@ -59,13 +62,35 @@ func main() {
 	}
 	log.Println("Connected to Redis")
 
+	// Repository
+	queries := repository.New(pool)
+
+	// Services
+	authService := service.NewAuthService(
+		queries,
+		os.Getenv("GOOGLE_CLIENT_ID"),
+		os.Getenv("GOOGLE_CLIENT_SECRET"),
+		os.Getenv("GOOGLE_REDIRECT_URL"),
+		os.Getenv("JWT_SECRET"),
+	)
+
+	// Handlers
+	healthHandler := handler.NewHealthHandler(pool, rdb)
+	authHandler := handler.NewAuthHandler(authService, os.Getenv("FRONTEND_URL"))
+
 	// Gin setup
 	r := gin.Default()
 
-	healthHandler := handler.NewHealthHandler(pool, rdb)
-
 	api := r.Group("/api/v1")
 	api.GET("/health", healthHandler.Check)
+
+	// Auth routes
+	auth := api.Group("/auth")
+	auth.GET("/google/login", authHandler.GoogleLogin)
+	auth.GET("/google/callback", authHandler.GoogleCallback)
+	auth.POST("/refresh", authHandler.Refresh)
+	auth.POST("/logout", authHandler.Logout)
+	auth.GET("/me", middleware.Auth(authService), authHandler.Me)
 
 	// HTTP server with graceful shutdown
 	srv := &http.Server{
