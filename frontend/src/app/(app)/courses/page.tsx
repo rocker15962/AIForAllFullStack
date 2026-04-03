@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { SearchBar, FilterChips, CourseGrid } from '@/components/course-discovery'
+import { SlidersHorizontal } from 'lucide-react'
+import { SearchBar, FilterSidebar, CourseGrid } from '@/components/course-discovery'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
@@ -36,8 +37,9 @@ export default function CoursesPage() {
   const [courses, setCourses] = useState<CourseItem[]>([])
   const [tools, setTools] = useState<Tool[]>([])
   const [skills, setSkills] = useState<Skill[]>([])
-  const [total, setTotal] = useState(0)
+  const [_total, setTotal] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
 
   // Filter state
   const [search, setSearch] = useState('')
@@ -106,120 +108,70 @@ export default function CoursesPage() {
     skillNames[s.id] = s.name
   }
 
-  const clearAll = () => {
-    setSearch('')
-    setToolId(null)
-    setSkillId(null)
-    setDifficulty(null)
-  }
+  const activeFilterCount = [toolId, skillId, difficulty].filter(Boolean).length
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-      <h1 className="mb-6 text-2xl font-bold text-zinc-900 dark:text-zinc-100">探索課程</h1>
-
-      {/* Search */}
-      <div className="mb-4">
-        <SearchBar value={search} onChange={setSearch} />
+    <div className="px-6 py-8 sm:px-10">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">探索課程</h1>
+        <p className="mt-2 text-[15px] text-zinc-500">找到適合你的 AI 課程，開始你的學習之旅</p>
       </div>
 
-      {/* Filters (desktop) */}
-      <div className="mb-4 hidden sm:block">
-        <FilterChips
-          tools={tools}
-          skills={skills}
-          selectedToolId={toolId}
-          selectedSkillId={skillId}
-          selectedDifficulty={difficulty}
-          onToolChange={setToolId}
-          onSkillChange={setSkillId}
-          onDifficultyChange={setDifficulty}
-          onClearAll={clearAll}
-        />
-      </div>
-
-      {/* Filter button (mobile) */}
-      <div className="mb-4 sm:hidden">
-        <MobileFilterButton
-          activeCount={[toolId, skillId, difficulty].filter(Boolean).length}
-          tools={tools}
-          skills={skills}
-          selectedToolId={toolId}
-          selectedSkillId={skillId}
-          selectedDifficulty={difficulty}
-          onToolChange={setToolId}
-          onSkillChange={setSkillId}
-          onDifficultyChange={setDifficulty}
-          onClearAll={clearAll}
-        />
-      </div>
-
-      {/* Results count */}
-      {!isLoading && (
-        <p className="mb-4 text-sm text-zinc-500">
-          顯示 {courses.length} 堂課程{total > courses.length ? `（共 ${total} 堂）` : ''}
-        </p>
-      )}
-
-      {/* Grid */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+      {/* Body: Sidebar + Main Content */}
+      <div className="flex gap-8">
+        {/* Sidebar (desktop) */}
+        <div className="hidden lg:block">
+          <div className="mb-6">
+            <SearchBar value={search} onChange={setSearch} />
+          </div>
+          <FilterSidebar
+            tools={tools}
+            skills={skills}
+            selectedToolId={toolId}
+            selectedSkillId={skillId}
+            selectedDifficulty={difficulty}
+            onToolChange={setToolId}
+            onSkillChange={setSkillId}
+            onDifficultyChange={setDifficulty}
+          />
         </div>
-      ) : (
-        <CourseGrid courses={courses} toolNames={toolNames} skillNames={skillNames} />
-      )}
-    </div>
-  )
-}
 
-// Simple mobile filter button + bottom sheet
-function MobileFilterButton({
-  activeCount,
-  tools,
-  skills,
-  selectedToolId,
-  selectedSkillId,
-  selectedDifficulty,
-  onToolChange,
-  onSkillChange,
-  onDifficultyChange,
-  onClearAll,
-}: {
-  activeCount: number
-  tools: { id: string; name: string }[]
-  skills: { id: string; name: string }[]
-  selectedToolId: string | null
-  selectedSkillId: string | null
-  selectedDifficulty: string | null
-  onToolChange: (id: string | null) => void
-  onSkillChange: (id: string | null) => void
-  onDifficultyChange: (v: string | null) => void
-  onClearAll: () => void
-}) {
-  const [open, setOpen] = useState(false)
+        {/* Main Content */}
+        <div className="min-w-0 flex-1">
+          {/* Mobile: search + filter button */}
+          <div className="mb-4 flex gap-2 lg:hidden">
+            <div className="flex-1">
+              <SearchBar value={search} onChange={setSearch} />
+            </div>
+            <button
+              onClick={() => setMobileFilterOpen(true)}
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              篩選
+              {activeFilterCount > 0 && (
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500 text-xs text-white">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </div>
 
-  const difficulties = [
-    { id: 'beginner', name: '初級' },
-    { id: 'intermediate', name: '中級' },
-    { id: 'advanced', name: '進階' },
-  ]
+          {/* Grid */}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+            </div>
+          ) : (
+            <CourseGrid courses={courses} toolNames={toolNames} skillNames={skillNames} />
+          )}
+        </div>
+      </div>
 
-  return (
-    <>
-      <button
-        onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
-      >
-        篩選
-        {activeCount > 0 && (
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500 text-xs text-white">
-            {activeCount}
-          </span>
-        )}
-      </button>
-
-      {open && (
-        <div className="fixed inset-0 z-50" onClick={() => setOpen(false)}>
+      {/* Mobile filter drawer */}
+      {mobileFilterOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden" onClick={() => setMobileFilterOpen(false)}>
           <div className="absolute inset-0 bg-black/30" />
           <div
             className="absolute right-0 bottom-0 left-0 max-h-[70vh] overflow-y-auto rounded-t-2xl bg-white p-6 dark:bg-zinc-800"
@@ -229,76 +181,34 @@ function MobileFilterButton({
               <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">篩選</h3>
               <button
                 onClick={() => {
-                  onClearAll()
-                  setOpen(false)
+                  setToolId(null)
+                  setSkillId(null)
+                  setDifficulty(null)
                 }}
                 className="text-sm text-zinc-500"
               >
                 清除
               </button>
             </div>
-
-            {/* Tools */}
-            {tools.length > 0 && (
-              <div className="mb-4">
-                <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">工具</p>
-                <div className="flex flex-wrap gap-2">
-                  {tools.map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => onToolChange(selectedToolId === t.id ? null : t.id)}
-                      className={`rounded-full px-3 py-1 text-xs ${selectedToolId === t.id ? 'bg-cyan-100 text-cyan-700' : 'bg-zinc-100 text-zinc-600'}`}
-                    >
-                      {t.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Skills */}
-            {skills.length > 0 && (
-              <div className="mb-4">
-                <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">技能</p>
-                <div className="flex flex-wrap gap-2">
-                  {skills.map((s) => (
-                    <button
-                      key={s.id}
-                      onClick={() => onSkillChange(selectedSkillId === s.id ? null : s.id)}
-                      className={`rounded-full px-3 py-1 text-xs ${selectedSkillId === s.id ? 'bg-cyan-100 text-cyan-700' : 'bg-zinc-100 text-zinc-600'}`}
-                    >
-                      {s.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Difficulty */}
-            <div className="mb-6">
-              <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">難度</p>
-              <div className="flex flex-wrap gap-2">
-                {difficulties.map((d) => (
-                  <button
-                    key={d.id}
-                    onClick={() => onDifficultyChange(selectedDifficulty === d.id ? null : d.id)}
-                    className={`rounded-full px-3 py-1 text-xs ${selectedDifficulty === d.id ? 'bg-cyan-100 text-cyan-700' : 'bg-zinc-100 text-zinc-600'}`}
-                  >
-                    {d.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
+            <FilterSidebar
+              tools={tools}
+              skills={skills}
+              selectedToolId={toolId}
+              selectedSkillId={skillId}
+              selectedDifficulty={difficulty}
+              onToolChange={setToolId}
+              onSkillChange={setSkillId}
+              onDifficultyChange={setDifficulty}
+            />
             <button
-              onClick={() => setOpen(false)}
-              className="w-full rounded-lg bg-cyan-500 py-3 text-sm font-medium text-white"
+              onClick={() => setMobileFilterOpen(false)}
+              className="mt-6 w-full rounded-lg bg-cyan-500 py-3 text-sm font-medium text-white"
             >
               套用
             </button>
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }
