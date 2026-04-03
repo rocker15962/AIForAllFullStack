@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { ArrowLeft, Camera, User as UserIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/auth-context'
@@ -21,6 +21,18 @@ export default function ProfilePage() {
   const [name, setName] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [avatarPreview, setAvatarPreview] = useState<string>('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setAvatarPreview(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
 
   const authHeaders = useCallback((): HeadersInit => {
     if (!accessToken) return {}
@@ -134,9 +146,9 @@ export default function ProfilePage() {
         {/* Avatar section */}
         <div className="relative h-[50px]">
           <div className="absolute -top-10 left-8 h-20 w-20 rounded-full border-4 border-white bg-zinc-200 dark:border-zinc-800 dark:bg-zinc-700">
-            {user.avatarUrl ? (
+            {avatarPreview || user.avatarUrl ? (
               <img
-                src={user.avatarUrl}
+                src={avatarPreview || user.avatarUrl}
                 alt={user.name}
                 className="h-full w-full rounded-full object-cover"
                 referrerPolicy="no-referrer"
@@ -147,9 +159,20 @@ export default function ProfilePage() {
               </div>
             )}
           </div>
-          <div className="absolute top-4 left-[88px] flex h-7 w-7 items-center justify-center rounded-full bg-cyan-500">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleAvatarChange}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute top-4 left-[88px] flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-cyan-500 transition-colors hover:bg-cyan-600"
+          >
             <Camera className="h-3.5 w-3.5 text-white" />
-          </div>
+          </button>
         </div>
 
         {/* Form */}

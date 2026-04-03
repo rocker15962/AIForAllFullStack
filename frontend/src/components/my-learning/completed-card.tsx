@@ -75,7 +75,7 @@ export function CompletedCard({ course }: CompletedCardProps) {
           {/* Score + completion date */}
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-green-600 dark:text-green-400">
-              Score: {course.score}/{course.totalQuestions}
+              Score: {Math.round(course.score)}%
             </span>
             <span className="text-xs text-zinc-400">{formatDate(course.completedAt)}</span>
           </div>
