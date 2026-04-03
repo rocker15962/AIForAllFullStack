@@ -23,7 +23,7 @@ describe('CourseCard', () => {
 
   it('renders difficulty tag in body', () => {
     render(<CourseCard course={mockCourse} />)
-    expect(screen.getByText('初級')).toBeInTheDocument()
+    expect(screen.getByText('Beginner')).toBeInTheDocument()
   })
 
   it('renders tool and skill tags when provided', () => {

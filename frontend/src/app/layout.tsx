@@ -16,8 +16,8 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'AI for All - AI 教育平台',
-  description: '透過 YouTube 創作者的優質內容，輕鬆學習 AI 技能',
+  title: 'AI for All - AI Education Platform',
+  description: 'Learn AI skills through curated YouTube creator content',
 }
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="zh-TW" className={`${dmSans.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased">
         <AuthProvider>{children}</AuthProvider>
       </body>

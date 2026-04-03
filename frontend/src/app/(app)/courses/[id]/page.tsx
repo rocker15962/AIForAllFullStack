@@ -40,12 +40,12 @@ export default function CourseLearningPage() {
       try {
         const res = await fetch(`${API_URL}/api/v1/courses/${courseId}`)
         if (!res.ok) {
-          setError('課程不存在')
+          setError('Course not found')
           return
         }
         setCourse(await res.json())
       } catch {
-        setError('無法載入課程')
+        setError('Failed to load course')
       } finally {
         setIsLoading(false)
       }
@@ -65,9 +65,9 @@ export default function CourseLearningPage() {
     return (
       <div className="flex min-h-[calc(100vh-56px)] items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-medium text-zinc-500">{error || '課程不存在'}</p>
+          <p className="text-lg font-medium text-zinc-500">{error || 'Course not found'}</p>
           <Link href="/courses" className="mt-4 inline-block text-sm text-cyan-500 hover:underline">
-            返回課程列表
+            Back to course list
           </Link>
         </div>
       </div>

@@ -63,16 +63,20 @@ export function QuizSection({ courseId, questions }: QuizSectionProps) {
         if (res.ok) {
           result = await res.json()
         } else {
-          result = { correct: false, correctAnswer: '', explanation: '提交失敗，請重試' }
+          result = {
+            correct: false,
+            correctAnswer: '',
+            explanation: 'Submission failed, please try again',
+          }
         }
       } catch {
-        result = { correct: false, correctAnswer: '', explanation: '網路錯誤' }
+        result = { correct: false, correctAnswer: '', explanation: 'Network error' }
       }
     } else {
       result = {
         correct: currentQuestion.type === 'multiple_choice' ? selectedAnswer === 'a' : true,
         correctAnswer: '',
-        explanation: '登入後可查看詳細解說',
+        explanation: 'Sign in to see detailed explanations',
       }
     }
 
@@ -106,7 +110,7 @@ export function QuizSection({ courseId, questions }: QuizSectionProps) {
   if (questions.length === 0) {
     return (
       <div className="rounded-xl border border-zinc-200 p-8 text-center dark:border-zinc-700">
-        <p className="text-sm text-zinc-500">此課程尚無測驗題目</p>
+        <p className="text-sm text-zinc-500">No quiz questions for this course</p>
       </div>
     )
   }

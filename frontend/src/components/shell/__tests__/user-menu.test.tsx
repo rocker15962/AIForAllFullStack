@@ -42,9 +42,9 @@ describe('UserMenu', () => {
     await user.click(getTrigger())
 
     expect(screen.getByText('demo@test.com')).toBeInTheDocument()
-    expect(screen.getByText('我的學習')).toBeInTheDocument()
-    expect(screen.getByText('個人資料')).toBeInTheDocument()
-    expect(screen.getByText('登出')).toBeInTheDocument()
+    expect(screen.getByText('My Learning')).toBeInTheDocument()
+    expect(screen.getByText('Profile')).toBeInTheDocument()
+    expect(screen.getByText('Log Out')).toBeInTheDocument()
   })
 
   it('hides dropdown when trigger is clicked again', async () => {
@@ -52,10 +52,10 @@ describe('UserMenu', () => {
     render(<UserMenu />)
 
     await user.click(getTrigger())
-    expect(screen.getByText('登出')).toBeInTheDocument()
+    expect(screen.getByText('Log Out')).toBeInTheDocument()
 
     await user.click(getTrigger())
-    expect(screen.queryByText('登出')).not.toBeInTheDocument()
+    expect(screen.queryByText('Log Out')).not.toBeInTheDocument()
   })
 
   it('closes dropdown on Escape key', async () => {
@@ -63,10 +63,10 @@ describe('UserMenu', () => {
     render(<UserMenu />)
 
     await user.click(getTrigger())
-    expect(screen.getByText('登出')).toBeInTheDocument()
+    expect(screen.getByText('Log Out')).toBeInTheDocument()
 
     await user.keyboard('{Escape}')
-    expect(screen.queryByText('登出')).not.toBeInTheDocument()
+    expect(screen.queryByText('Log Out')).not.toBeInTheDocument()
   })
 
   it('closes dropdown when clicking outside', async () => {
@@ -79,10 +79,10 @@ describe('UserMenu', () => {
     )
 
     await user.click(getTrigger())
-    expect(screen.getByText('登出')).toBeInTheDocument()
+    expect(screen.getByText('Log Out')).toBeInTheDocument()
 
     await user.click(screen.getByTestId('outside'))
-    expect(screen.queryByText('登出')).not.toBeInTheDocument()
+    expect(screen.queryByText('Log Out')).not.toBeInTheDocument()
   })
 
   it('has navigation links with correct hrefs', async () => {
@@ -91,10 +91,10 @@ describe('UserMenu', () => {
 
     await user.click(getTrigger())
 
-    const myLearningLink = screen.getByRole('link', { name: '我的學習' })
+    const myLearningLink = screen.getByRole('link', { name: 'My Learning' })
     expect(myLearningLink).toHaveAttribute('href', '/my-learning')
 
-    const profileLink = screen.getByRole('link', { name: '個人資料' })
+    const profileLink = screen.getByRole('link', { name: 'Profile' })
     expect(profileLink).toHaveAttribute('href', '/profile')
   })
 })
