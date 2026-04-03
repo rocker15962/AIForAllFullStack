@@ -32,8 +32,8 @@ vi.mock('@/contexts/auth-context', () => ({
 }))
 
 const navLinks: NavigationItem[] = [
-  { label: '探索課程', href: '/courses' },
-  { label: '我的學習', href: '/my-learning' },
+  { label: 'Explore', href: '/courses' },
+  { label: 'My Learning', href: '/my-learning' },
 ]
 
 describe('TopNav', () => {
@@ -45,8 +45,8 @@ describe('TopNav', () => {
 
   it('renders navigation links', () => {
     render(<TopNav navLinks={navLinks} />)
-    expect(screen.getByText('探索課程')).toBeInTheDocument()
-    expect(screen.getByText('我的學習')).toBeInTheDocument()
+    expect(screen.getByText('Explore')).toBeInTheDocument()
+    expect(screen.getByText('My Learning')).toBeInTheDocument()
   })
 
   it('renders user menu when authenticated', () => {
@@ -56,7 +56,7 @@ describe('TopNav', () => {
 
   it('highlights active link based on pathname', () => {
     render(<TopNav navLinks={navLinks} />)
-    const activeLink = screen.getAllByText('探索課程')[0]
+    const activeLink = screen.getAllByText('Explore')[0]
     expect(activeLink.closest('a')).toHaveClass('text-cyan-500')
   })
 
@@ -72,7 +72,7 @@ describe('TopNav', () => {
 
     await user.click(screen.getByRole('button', { name: /menu/i }))
 
-    const allExplorLinks = screen.getAllByText('探索課程')
+    const allExplorLinks = screen.getAllByText('Explore')
     expect(allExplorLinks.length).toBeGreaterThanOrEqual(2)
   })
 })

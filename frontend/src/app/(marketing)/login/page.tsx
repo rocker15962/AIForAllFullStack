@@ -17,9 +17,11 @@ export default function LoginPage() {
         </div>
 
         <h1 className="mb-2 text-center text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-          歡迎回來
+          Welcome Back
         </h1>
-        <p className="mb-8 text-center text-sm text-zinc-500">登入以追蹤你的學習進度</p>
+        <p className="mb-8 text-center text-sm text-zinc-500">
+          Sign in to track your learning progress
+        </p>
 
         <button
           onClick={() => login('/courses')}
@@ -43,12 +45,12 @@ export default function LoginPage() {
               d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
             />
           </svg>
-          使用 Google 帳號登入
+          Sign in with Google
         </button>
 
         <div className="my-6 flex items-center gap-3">
           <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-600" />
-          <span className="text-xs text-zinc-400">或</span>
+          <span className="text-xs text-zinc-400">or</span>
           <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-600" />
         </div>
 
@@ -57,7 +59,7 @@ export default function LoginPage() {
             href="/courses"
             className="text-sm text-zinc-500 transition-colors hover:text-zinc-700 dark:hover:text-zinc-300"
           >
-            不登入，直接瀏覽課程 →
+            Continue without signing in →
           </Link>
         </div>
       </div>
