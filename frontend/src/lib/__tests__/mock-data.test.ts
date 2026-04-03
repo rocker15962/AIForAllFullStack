@@ -26,10 +26,10 @@ describe('mock-data', () => {
     it('contains admin navigation items', () => {
       expect(adminNavLinks).toHaveLength(4)
       expect(adminNavLinks.map((link) => link.href)).toEqual([
-        '/courses',
-        '/my-learning',
-        '/admin/users',
         '/admin',
+        '/admin/courses',
+        '/admin/users',
+        '/admin/categories',
       ])
     })
   })

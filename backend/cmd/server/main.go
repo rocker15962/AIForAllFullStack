@@ -126,6 +126,29 @@ func main() {
 	my.PUT("/profile", userHandler.UpdateProfile)
 	my.POST("/avatar", userHandler.UploadAvatar)
 
+	// Admin routes (require auth + admin)
+	adminHandler := handler.NewAdminHandler(queries)
+
+	admin := api.Group("/admin", middleware.Auth(authService), middleware.Admin())
+	admin.GET("/dashboard", adminHandler.Dashboard)
+	admin.GET("/courses", adminHandler.ListCourses)
+	admin.GET("/courses/:id", adminHandler.GetCourse)
+	admin.POST("/courses", adminHandler.CreateCourse)
+	admin.PUT("/courses/:id", adminHandler.UpdateCourse)
+	admin.DELETE("/courses/:id", adminHandler.DeleteCourse)
+	admin.PUT("/courses/:id/publish", adminHandler.TogglePublish)
+	admin.GET("/users", adminHandler.ListUsers)
+	admin.GET("/users/:id/progress", adminHandler.GetUserProgress)
+	admin.GET("/categories", adminHandler.ListCategories)
+	admin.POST("/tools", adminHandler.CreateTool)
+	admin.PUT("/tools/:id", adminHandler.UpdateTool)
+	admin.DELETE("/tools/:id", adminHandler.DeleteTool)
+	admin.PUT("/tools/reorder", adminHandler.ReorderTools)
+	admin.POST("/skills", adminHandler.CreateSkill)
+	admin.PUT("/skills/:id", adminHandler.UpdateSkill)
+	admin.DELETE("/skills/:id", adminHandler.DeleteSkill)
+	admin.PUT("/skills/reorder", adminHandler.ReorderSkills)
+
 	// Static file serving for uploads
 	r.Static("/uploads", "./uploads")
 
