@@ -45,7 +45,7 @@ export function MobileMenu({ navLinks, isOpen, onClose }: MobileMenuProps) {
               onClick={onClose}
               className="border-b border-zinc-100 py-3 text-base font-medium text-zinc-700 dark:border-zinc-800 dark:text-zinc-300"
             >
-              個人資料
+              Profile
             </Link>
           )}
         </div>
@@ -65,7 +65,7 @@ export function MobileMenu({ navLinks, isOpen, onClose }: MobileMenuProps) {
                 className="flex items-center gap-2 text-sm text-red-500"
               >
                 <LogOut className="h-4 w-4" />
-                登出
+                Log Out
               </button>
             </>
           ) : (
@@ -76,7 +76,7 @@ export function MobileMenu({ navLinks, isOpen, onClose }: MobileMenuProps) {
               }}
               className="w-full rounded-lg bg-cyan-500 py-3 text-sm font-medium text-white"
             >
-              登入
+              Log In
             </button>
           )}
         </div>

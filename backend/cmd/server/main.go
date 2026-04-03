@@ -74,9 +74,13 @@ func main() {
 		os.Getenv("JWT_SECRET"),
 	)
 
+	courseService := service.NewCourseService(queries, queries, queries, queries, queries, queries)
+
 	// Handlers
 	healthHandler := handler.NewHealthHandler(pool, rdb)
 	authHandler := handler.NewAuthHandler(authService, os.Getenv("FRONTEND_URL"))
+	courseHandler := handler.NewCourseHandler(courseService)
+	categoryHandler := handler.NewCategoryHandler(queries, queries)
 
 	// Gin setup
 	r := gin.Default()
@@ -99,6 +103,17 @@ func main() {
 	auth.POST("/refresh", authHandler.Refresh)
 	auth.POST("/logout", authHandler.Logout)
 	auth.GET("/me", middleware.Auth(authService), authHandler.Me)
+
+	// Category routes (public)
+	api.GET("/tools", categoryHandler.ListTools)
+	api.GET("/skills", categoryHandler.ListSkills)
+
+	// Course routes
+	api.GET("/courses", courseHandler.List)
+	api.GET("/courses/:id", courseHandler.Get)
+	api.GET("/courses/:id/recommended", courseHandler.Recommended)
+	api.POST("/courses/:id/submit", middleware.Auth(authService), courseHandler.Submit)
+	api.POST("/courses/:id/complete", middleware.Auth(authService), courseHandler.Complete)
 
 	// HTTP server with graceful shutdown
 	srv := &http.Server{

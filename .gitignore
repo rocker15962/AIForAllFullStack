@@ -4,8 +4,9 @@
 # Claude Code
 .claude/
 
-# Superpowers specs (generated during design sessions)
+# Superpowers (generated during design sessions)
 docs/superpowers/
+.superpowers/
 node_modules/
 
 # Environment variables (contains secrets)
