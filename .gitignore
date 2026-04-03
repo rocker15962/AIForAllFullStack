@@ -1,0 +1,13 @@
+# OS
+.DS_Store
+
+# Claude Code
+.claude/
+
+# Superpowers specs (generated during design sessions)
+docs/superpowers/
+node_modules/
+
+# Backend build artifacts
+backend/tmp/
+backend/server
