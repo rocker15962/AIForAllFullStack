@@ -4,6 +4,26 @@ import userEvent from '@testing-library/user-event'
 import { MobileMenu } from '../mobile-menu'
 import type { NavigationItem } from '@/types'
 
+vi.mock('@/contexts/auth-context', () => ({
+  useAuth: () => ({
+    user: {
+      id: '1',
+      name: 'Demo User',
+      email: 'demo@test.com',
+      avatarUrl: '',
+      provider: 'google',
+      isAdmin: false,
+      createdAt: '',
+      lastActiveAt: '',
+    },
+    accessToken: 'test-token',
+    isLoading: false,
+    login: vi.fn(),
+    logout: vi.fn(),
+    setAuth: vi.fn(),
+  }),
+}))
+
 const navLinks: NavigationItem[] = [
   { label: '探索課程', href: '/courses' },
   { label: '我的學習', href: '/my-learning' },
@@ -24,11 +44,11 @@ describe('MobileMenu', () => {
     expect(screen.getByText('我的學習')).toBeInTheDocument()
   })
 
-  it('renders user info when open', () => {
+  it('renders user info when authenticated', () => {
     render(<MobileMenu navLinks={navLinks} isOpen={true} onClose={vi.fn()} />)
 
     expect(screen.getByText('Demo User')).toBeInTheDocument()
-    expect(screen.getByText('demo@aiforall.org')).toBeInTheDocument()
+    expect(screen.getByText('demo@test.com')).toBeInTheDocument()
   })
 
   it('calls onClose when close button is clicked', async () => {

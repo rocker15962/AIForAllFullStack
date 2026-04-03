@@ -1,7 +1,29 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { UserMenu } from '../user-menu'
+
+const mockLogout = vi.fn()
+
+vi.mock('@/contexts/auth-context', () => ({
+  useAuth: () => ({
+    user: {
+      id: '1',
+      name: 'Demo User',
+      email: 'demo@test.com',
+      avatarUrl: '',
+      provider: 'google',
+      isAdmin: false,
+      createdAt: '',
+      lastActiveAt: '',
+    },
+    accessToken: 'test-token',
+    isLoading: false,
+    login: vi.fn(),
+    logout: mockLogout,
+    setAuth: vi.fn(),
+  }),
+}))
 
 function getTrigger() {
   return screen.getByRole('button', { name: /Demo User/i })
@@ -19,7 +41,7 @@ describe('UserMenu', () => {
 
     await user.click(getTrigger())
 
-    expect(screen.getByText('demo@aiforall.org')).toBeInTheDocument()
+    expect(screen.getByText('demo@test.com')).toBeInTheDocument()
     expect(screen.getByText('我的學習')).toBeInTheDocument()
     expect(screen.getByText('個人資料')).toBeInTheDocument()
     expect(screen.getByText('登出')).toBeInTheDocument()
