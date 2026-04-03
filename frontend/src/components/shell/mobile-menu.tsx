@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { X, LogOut } from 'lucide-react'
 import { Logo } from './logo'
-import { mockUser } from '@/lib/mock-data'
+import { useAuth } from '@/contexts/auth-context'
 import type { NavigationItem } from '@/types'
 
 interface MobileMenuProps {
@@ -13,6 +13,8 @@ interface MobileMenuProps {
 }
 
 export function MobileMenu({ navLinks, isOpen, onClose }: MobileMenuProps) {
+  const { user, login, logout } = useAuth()
+
   if (!isOpen) return null
 
   return (
@@ -37,24 +39,46 @@ export function MobileMenu({ navLinks, isOpen, onClose }: MobileMenuProps) {
             </Link>
           ))}
 
-          <Link
-            href="/profile"
-            onClick={onClose}
-            className="border-b border-zinc-100 py-3 text-base font-medium text-zinc-700 dark:border-zinc-800 dark:text-zinc-300"
-          >
-            個人資料
-          </Link>
+          {user && (
+            <Link
+              href="/profile"
+              onClick={onClose}
+              className="border-b border-zinc-100 py-3 text-base font-medium text-zinc-700 dark:border-zinc-800 dark:text-zinc-300"
+            >
+              個人資料
+            </Link>
+          )}
         </div>
 
         <div className="absolute right-0 bottom-0 left-0 border-t border-zinc-200 p-4 dark:border-zinc-700">
-          <div className="mb-3">
-            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{mockUser.name}</p>
-            <p className="text-xs text-zinc-500">{mockUser.email}</p>
-          </div>
-          <button className="flex items-center gap-2 text-sm text-red-500">
-            <LogOut className="h-4 w-4" />
-            登出
-          </button>
+          {user ? (
+            <>
+              <div className="mb-3">
+                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{user.name}</p>
+                <p className="text-xs text-zinc-500">{user.email}</p>
+              </div>
+              <button
+                onClick={() => {
+                  logout()
+                  onClose()
+                }}
+                className="flex items-center gap-2 text-sm text-red-500"
+              >
+                <LogOut className="h-4 w-4" />
+                登出
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => {
+                login()
+                onClose()
+              }}
+              className="w-full rounded-lg bg-cyan-500 py-3 text-sm font-medium text-white"
+            >
+              登入
+            </button>
+          )}
         </div>
       </nav>
     </div>
