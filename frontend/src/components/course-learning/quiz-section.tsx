@@ -23,7 +23,7 @@ interface QuizSectionProps {
   questions: Question[]
 }
 
-type QuizState = 'idle' | 'answering' | 'feedback' | 'completed'
+type QuizState = 'answering' | 'feedback' | 'completed'
 
 interface FeedbackData {
   correct: boolean
@@ -102,6 +102,7 @@ export function QuizSection({ courseId, questions }: QuizSectionProps) {
     }
   }, [isLast, user, accessToken, courseId])
 
+  // No questions
   if (questions.length === 0) {
     return (
       <div className="rounded-xl border border-zinc-200 p-8 text-center dark:border-zinc-700">
@@ -110,23 +111,22 @@ export function QuizSection({ courseId, questions }: QuizSectionProps) {
     )
   }
 
+  // Completed
   if (state === 'completed') {
     const correctCount = answers.filter((a) => a.correct).length
     const score = (correctCount / questions.length) * 100
     return (
-      <div className="rounded-xl border border-zinc-200 dark:border-zinc-700">
-        <CompletionView
-          score={score}
-          totalQuestions={questions.length}
-          correctAnswers={correctCount}
-        />
-      </div>
+      <CompletionView
+        score={score}
+        totalQuestions={questions.length}
+        correctAnswers={correctCount}
+      />
     )
   }
 
   return (
     <div>
-      {/* Quiz header */}
+      {/* Quiz header — "Quiz" left, "Question X / Y" right, bottom border */}
       <div className="flex items-center justify-between border-b border-zinc-200 py-4 dark:border-zinc-700">
         <span className="text-base font-semibold text-zinc-700 dark:text-zinc-300">Quiz</span>
         <span className="text-sm text-zinc-500">
@@ -135,11 +135,11 @@ export function QuizSection({ courseId, questions }: QuizSectionProps) {
       </div>
 
       {/* Segmented progress bar */}
-      <div className="py-4">
+      <div className="py-3">
         <QuizProgress current={answers.length} total={questions.length} />
       </div>
 
-      {/* Quiz card */}
+      {/* Quiz card — white bg, rounded-xl, border, padding 32px */}
       <div className="rounded-xl border border-zinc-200 bg-white p-8 dark:border-zinc-700 dark:bg-zinc-800">
         {state === 'answering' && currentQuestion && (
           <>

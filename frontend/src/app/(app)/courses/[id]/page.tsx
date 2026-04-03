@@ -75,8 +75,8 @@ export default function CourseLearningPage() {
   }
 
   return (
-    <div className="px-6 py-6 sm:px-[200px]">
-      {/* Back link */}
+    <div className="mx-auto max-w-[1040px] px-6 py-6">
+      {/* ← Back to course list */}
       <Link
         href="/courses"
         className="mb-6 inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
@@ -85,31 +85,19 @@ export default function CourseLearningPage() {
         Back to course list
       </Link>
 
-      {/* Video */}
-      <div className="mb-0">
-        <YouTubeEmbed videoId={course.youtubeId} />
-      </div>
+      {/* YouTube Video — rounded-xl, fills width */}
+      <YouTubeEmbed videoId={course.youtubeId} />
 
-      {/* Title — below video */}
-      <div className="py-6">
-        <h1 className="text-[22px] font-bold text-zinc-900 dark:text-zinc-100">{course.title}</h1>
-      </div>
+      {/* Title — below video, padding-top 24px */}
+      <h1 className="pt-6 pb-4 text-[22px] font-bold text-zinc-900 dark:text-zinc-100">
+        {course.title}
+      </h1>
 
-      {/* Guest banner */}
+      {/* Guest banner (only for unauthenticated) */}
       <GuestBanner />
 
-      {/* Quiz header */}
-      <div className="flex items-center justify-between border-b border-zinc-200 py-4 dark:border-zinc-700">
-        <span className="text-base font-semibold text-zinc-700 dark:text-zinc-300">Quiz</span>
-        <span className="text-sm text-zinc-500">
-          Question {Math.min(course.questions?.length || 0, 1)} / {course.questions?.length || 0}
-        </span>
-      </div>
-
-      {/* Segmented progress bar */}
-      <div className="py-4">
-        <QuizSection courseId={course.id} questions={course.questions || []} />
-      </div>
+      {/* Quiz — header + segmented progress + quiz card */}
+      <QuizSection courseId={course.id} questions={course.questions || []} />
     </div>
   )
 }
