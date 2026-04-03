@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { DM_Sans, JetBrains_Mono } from 'next/font/google'
 import { AuthProvider } from '@/contexts/auth-context'
+import { ToastProvider } from '@/components/shared'
 import './globals.css'
 
 const dmSans = DM_Sans({
@@ -28,7 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </AuthProvider>
       </body>
     </html>
   )
