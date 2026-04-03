@@ -38,10 +38,19 @@ interface RecommendedCourse {
   skillName: string
 }
 
-const difficultyLabels: Record<string, string> = {
-  beginner: '初級',
-  intermediate: '中級',
-  advanced: '進階',
+const difficultyConfig: Record<string, { classes: string; label: string }> = {
+  beginner: { classes: 'bg-green-100 text-green-700', label: '初級' },
+  intermediate: { classes: 'bg-amber-100 text-amber-700', label: '中級' },
+  advanced: { classes: 'bg-rose-100 text-rose-700', label: '進階' },
+}
+
+function DifficultyTag({ difficulty }: { difficulty: string }) {
+  const config = difficultyConfig[difficulty] || difficultyConfig.beginner
+  return (
+    <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${config.classes}`}>
+      {config.label}
+    </span>
+  )
 }
 
 export default function CourseLearningPage() {
@@ -112,16 +121,14 @@ export default function CourseLearningPage() {
 
       {/* Course header */}
       <div className="mb-4">
-        <div className="mb-2 flex flex-wrap gap-2">
-          <span className="rounded bg-cyan-50 px-2 py-0.5 text-xs text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300">
+        <div className="mb-2 flex flex-wrap gap-1.5">
+          <span className="rounded-full bg-cyan-50 px-2 py-0.5 text-[11px] font-medium text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300">
             {course.tool.name}
           </span>
-          <span className="rounded bg-amber-50 px-2 py-0.5 text-xs text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+          <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[11px] font-medium text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
             {course.skill.name}
           </span>
-          <span className="rounded bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300">
-            {difficultyLabels[course.difficulty] || course.difficulty}
-          </span>
+          <DifficultyTag difficulty={course.difficulty} />
         </div>
         <h1 className="mb-2 text-xl font-bold text-zinc-900 sm:text-2xl dark:text-zinc-100">
           {course.title}

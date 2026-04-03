@@ -20,16 +20,10 @@ interface CourseCardProps {
   creatorName?: string
 }
 
-const difficultyStyles: Record<string, { bg: string; label: string }> = {
-  beginner: { bg: 'bg-amber-400 text-amber-900', label: '初級' },
-  intermediate: { bg: 'bg-cyan-400 text-cyan-900', label: '中級' },
-  advanced: { bg: 'bg-zinc-400 text-zinc-900', label: '進階' },
-}
-
-function formatDuration(seconds: number): string {
-  const m = Math.floor(seconds / 60)
-  const s = seconds % 60
-  return `${m}:${s.toString().padStart(2, '0')}`
+const difficultyStyles: Record<string, { classes: string; label: string }> = {
+  beginner: { classes: 'bg-green-100 text-green-700', label: '初級' },
+  intermediate: { classes: 'bg-amber-100 text-amber-700', label: '中級' },
+  advanced: { classes: 'bg-rose-100 text-rose-700', label: '進階' },
 }
 
 export function CourseCard({ course, toolName, skillName, creatorName }: CourseCardProps) {
@@ -38,8 +32,8 @@ export function CourseCard({ course, toolName, skillName, creatorName }: CourseC
   return (
     <Link href={`/courses/${course.id}`} className="group block">
       <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white transition-shadow group-hover:shadow-md dark:border-zinc-700 dark:bg-zinc-800">
-        {/* Thumbnail */}
-        <div className="relative aspect-video bg-zinc-200 dark:bg-zinc-700">
+        {/* Thumbnail — 190px, no overlays */}
+        <div className="h-[190px] bg-zinc-200 dark:bg-zinc-700">
           {course.thumbnailUrl ? (
             <img
               src={course.thumbnailUrl}
@@ -50,44 +44,41 @@ export function CourseCard({ course, toolName, skillName, creatorName }: CourseC
           ) : (
             <div className="flex h-full items-center justify-center text-4xl text-zinc-400">▶</div>
           )}
-          <span
-            className={`absolute top-2 left-2 rounded px-2 py-0.5 text-xs font-semibold ${difficulty.bg}`}
-          >
-            {difficulty.label}
-          </span>
-          <span className="absolute right-2 bottom-2 rounded bg-black/70 px-1.5 py-0.5 text-xs text-white">
-            {formatDuration(course.duration)}
-          </span>
         </div>
 
-        {/* Content */}
-        <div className="p-3 sm:p-4">
-          <h3 className="mb-1 line-clamp-2 text-sm font-semibold text-zinc-900 sm:text-base dark:text-zinc-100">
-            {course.title}
-          </h3>
-          <p className="mb-3 line-clamp-2 text-xs text-zinc-500 sm:text-sm">{course.description}</p>
-
-          {/* Tags */}
-          <div className="mb-3 flex flex-wrap gap-1.5">
+        {/* Body */}
+        <div className="flex flex-col gap-2.5 p-4">
+          {/* Tags row — tool + skill + difficulty all together */}
+          <div className="flex flex-wrap gap-1.5">
             {toolName && (
-              <span className="rounded bg-cyan-50 px-2 py-0.5 text-xs text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300">
+              <span className="rounded-full bg-cyan-50 px-2 py-0.5 text-[11px] font-medium text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300">
                 {toolName}
               </span>
             )}
             {skillName && (
-              <span className="rounded bg-amber-50 px-2 py-0.5 text-xs text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+              <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[11px] font-medium text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
                 {skillName}
               </span>
             )}
+            <span
+              className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${difficulty.classes}`}
+            >
+              {difficulty.label}
+            </span>
           </div>
 
-          {/* Footer */}
-          <div className="flex items-center justify-between text-xs text-zinc-500">
-            <div className="flex items-center gap-1.5">
-              <div className="h-5 w-5 rounded-full bg-cyan-200" />
-              <span>{creatorName || '未知創作者'}</span>
-            </div>
-            <span>{course.questionCount} 題</span>
+          {/* Title */}
+          <h3 className="line-clamp-2 text-[15px] leading-snug font-semibold text-zinc-900 dark:text-zinc-100">
+            {course.title}
+          </h3>
+
+          {/* Description */}
+          <p className="line-clamp-2 text-[13px] text-zinc-500">{course.description}</p>
+
+          {/* Footer — avatar + creator name only */}
+          <div className="flex items-center gap-1.5">
+            <div className="h-5 w-5 rounded-full bg-zinc-300 dark:bg-zinc-600" />
+            <span className="text-xs text-zinc-500">{creatorName || '未知創作者'}</span>
           </div>
         </div>
       </div>

@@ -21,25 +21,20 @@ describe('CourseCard', () => {
     expect(screen.getByText('ChatGPT 入門：從零開始學 AI 對話')).toBeInTheDocument()
   })
 
-  it('renders difficulty badge', () => {
+  it('renders difficulty tag in body', () => {
     render(<CourseCard course={mockCourse} />)
     expect(screen.getByText('初級')).toBeInTheDocument()
   })
 
-  it('renders formatted duration', () => {
-    render(<CourseCard course={mockCourse} />)
-    expect(screen.getByText('10:30')).toBeInTheDocument()
-  })
-
-  it('renders question count', () => {
-    render(<CourseCard course={mockCourse} />)
-    expect(screen.getByText('5 題')).toBeInTheDocument()
-  })
-
-  it('renders tool and skill names when provided', () => {
+  it('renders tool and skill tags when provided', () => {
     render(<CourseCard course={mockCourse} toolName="ChatGPT" skillName="Copywriting" />)
     expect(screen.getByText('ChatGPT')).toBeInTheDocument()
     expect(screen.getByText('Copywriting')).toBeInTheDocument()
+  })
+
+  it('renders creator name', () => {
+    render(<CourseCard course={mockCourse} creatorName="AI Prince" />)
+    expect(screen.getByText('AI Prince')).toBeInTheDocument()
   })
 
   it('links to course detail page', () => {
