@@ -25,8 +25,8 @@ vi.mock('@/contexts/auth-context', () => ({
 }))
 
 const navLinks: NavigationItem[] = [
-  { label: '探索課程', href: '/courses' },
-  { label: '我的學習', href: '/my-learning' },
+  { label: 'Explore', href: '/courses' },
+  { label: 'My Learning', href: '/my-learning' },
 ]
 
 describe('MobileMenu', () => {
@@ -40,8 +40,8 @@ describe('MobileMenu', () => {
   it('renders navigation links when open', () => {
     render(<MobileMenu navLinks={navLinks} isOpen={true} onClose={vi.fn()} />)
 
-    expect(screen.getByText('探索課程')).toBeInTheDocument()
-    expect(screen.getByText('我的學習')).toBeInTheDocument()
+    expect(screen.getByText('Explore')).toBeInTheDocument()
+    expect(screen.getByText('My Learning')).toBeInTheDocument()
   })
 
   it('renders user info when authenticated', () => {
@@ -65,15 +65,18 @@ describe('MobileMenu', () => {
     const onClose = vi.fn()
     render(<MobileMenu navLinks={navLinks} isOpen={true} onClose={onClose} />)
 
-    await user.click(screen.getByText('探索課程'))
+    await user.click(screen.getByText('Explore'))
     expect(onClose).toHaveBeenCalledOnce()
   })
 
   it('has correct link hrefs', () => {
     render(<MobileMenu navLinks={navLinks} isOpen={true} onClose={vi.fn()} />)
 
-    expect(screen.getByRole('link', { name: '探索課程' })).toHaveAttribute('href', '/courses')
-    expect(screen.getByRole('link', { name: '我的學習' })).toHaveAttribute('href', '/my-learning')
+    expect(screen.getByRole('link', { name: 'Explore' })).toHaveAttribute('href', '/courses')
+    expect(screen.getByRole('link', { name: 'My Learning' })).toHaveAttribute(
+      'href',
+      '/my-learning',
+    )
   })
 
   it('calls onClose when backdrop is clicked', async () => {

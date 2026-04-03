@@ -65,13 +65,13 @@ export function UserMenu() {
               href="/my-learning"
               className="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700"
             >
-              我的學習
+              My Learning
             </Link>
             <Link
               href="/profile"
               className="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700"
             >
-              個人資料
+              Profile
             </Link>
           </div>
 
@@ -84,7 +84,7 @@ export function UserMenu() {
               className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-zinc-50 dark:hover:bg-zinc-700"
             >
               <LogOut className="h-4 w-4" />
-              登出
+              Log Out
             </button>
           </div>
         </div>

@@ -47,7 +47,7 @@ export default function AuthCallbackPage() {
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
         <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
-        <p className="mt-4 text-sm text-zinc-500">登入中...</p>
+        <p className="mt-4 text-sm text-zinc-500">Signing in...</p>
       </div>
     </div>
   )

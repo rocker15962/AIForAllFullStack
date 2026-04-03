@@ -1,4 +1,4 @@
-.PHONY: dev dev-detach stop clean migrate migrate-down sqlc logs logs-backend health build
+.PHONY: dev dev-detach stop clean migrate migrate-down seed sqlc logs logs-backend health build
 
 # Start all services (foreground)
 dev:
@@ -23,6 +23,10 @@ migrate:
 # Rollback last migration
 migrate-down:
 	docker compose exec backend sh -c 'migrate -path /app/db/migrations -database "$$DATABASE_URL" down 1'
+
+# Load seed data
+seed:
+	docker compose exec -T postgres psql -U aiforall -d aiforall < backend/db/seed.sql
 
 # Regenerate sqlc code (runs on host)
 sqlc:
