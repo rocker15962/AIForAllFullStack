@@ -17,8 +17,8 @@ export const mainNavLinks: NavigationItem[] = [
 ]
 
 export const adminNavLinks: NavigationItem[] = [
-  { label: 'Explore', href: '/courses' },
-  { label: 'My Learning', href: '/my-learning' },
+  { label: 'Dashboard', href: '/admin' },
+  { label: 'Courses', href: '/admin/courses' },
   { label: 'Users', href: '/admin/users' },
-  { label: 'Admin', href: '/admin' },
+  { label: 'Categories', href: '/admin/categories' },
 ]

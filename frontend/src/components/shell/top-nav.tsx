@@ -30,7 +30,8 @@ export function TopNav({ navLinks }: TopNavProps) {
             key={link.href}
             href={link.href}
             className={`text-sm font-medium ${
-              pathname === link.href || pathname.startsWith(link.href + '/')
+              pathname === link.href ||
+              (link.href !== '/admin' && pathname.startsWith(link.href + '/'))
                 ? 'text-cyan-500'
                 : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
             }`}
