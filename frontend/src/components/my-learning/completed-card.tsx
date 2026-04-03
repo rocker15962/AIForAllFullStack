@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { CheckCircle } from 'lucide-react'
 import type { CompletedCourse } from '@/types'
 
 interface CompletedCardProps {
@@ -14,13 +13,8 @@ const difficultyStyles: Record<string, { classes: string; label: string }> = {
   advanced: { classes: 'bg-rose-100 text-rose-700', label: 'Advanced' },
 }
 
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
+function formatShortDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
 export function CompletedCard({ course }: CompletedCardProps) {
@@ -29,8 +23,8 @@ export function CompletedCard({ course }: CompletedCardProps) {
   return (
     <Link href={`/courses/${course.courseId}`} className="group block">
       <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white transition-shadow group-hover:shadow-md dark:border-zinc-700 dark:bg-zinc-800">
-        {/* Thumbnail with check overlay */}
-        <div className="relative h-[190px] bg-zinc-200 dark:bg-zinc-700">
+        {/* Thumbnail — 200px */}
+        <div className="h-[200px] bg-zinc-200 dark:bg-zinc-700">
           {course.courseThumbnail ? (
             <img
               src={course.courseThumbnail}
@@ -41,13 +35,18 @@ export function CompletedCard({ course }: CompletedCardProps) {
           ) : (
             <div className="flex h-full items-center justify-center text-4xl text-zinc-400">▶</div>
           )}
-          <div className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white">
-            <CheckCircle className="h-5 w-5" />
-          </div>
         </div>
 
+        {/* Green bar — 100% complete */}
+        <div className="h-1 bg-green-500" />
+
         {/* Body */}
-        <div className="flex flex-col gap-3 p-4">
+        <div className="flex flex-col gap-2.5 p-4">
+          {/* Title — first */}
+          <h3 className="line-clamp-2 text-[15px] leading-snug font-semibold text-zinc-900 dark:text-zinc-100">
+            {course.courseTitle}
+          </h3>
+
           {/* Tags row */}
           <div className="flex flex-wrap gap-1.5">
             {course.toolName && (
@@ -67,17 +66,12 @@ export function CompletedCard({ course }: CompletedCardProps) {
             </span>
           </div>
 
-          {/* Title */}
-          <h3 className="line-clamp-2 text-[15px] leading-snug font-semibold text-zinc-900 dark:text-zinc-100">
-            {course.courseTitle}
-          </h3>
-
-          {/* Score + completion date */}
-          <div className="flex items-center justify-between text-sm">
-            <span className="font-medium text-green-600 dark:text-green-400">
+          {/* Meta — Score + date */}
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-green-600 dark:text-green-400">
               Score: {Math.round(course.score)}%
             </span>
-            <span className="text-xs text-zinc-400">{formatDate(course.completedAt)}</span>
+            <span className="text-xs text-zinc-400">{formatShortDate(course.completedAt)}</span>
           </div>
         </div>
       </div>
