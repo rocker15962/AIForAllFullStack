@@ -30,12 +30,16 @@ func (h *HealthHandler) Check(c *gin.Context) {
 	defer cancel()
 
 	dbStatus := "connected"
-	if err := h.db.Ping(ctx); err != nil {
+	if h.db == nil {
+		dbStatus = "disconnected"
+	} else if err := h.db.Ping(ctx); err != nil {
 		dbStatus = "disconnected"
 	}
 
 	redisStatus := "connected"
-	if err := h.redis.Ping(ctx).Err(); err != nil {
+	if h.redis == nil {
+		redisStatus = "disconnected"
+	} else if err := h.redis.Ping(ctx).Err(); err != nil {
 		redisStatus = "disconnected"
 	}
 
