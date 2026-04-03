@@ -327,12 +327,14 @@ func (s *CourseService) CompleteCourse(ctx context.Context, userID, courseID uui
 		score = float64(correctCount) / float64(total) * 100
 	}
 
+	scoreNumeric := pgtype.Numeric{}
+	scoreNumeric.Scan(fmt.Sprintf("%.2f", score))
+
 	_, err = s.progress.CompleteProgress(ctx, repository.CompleteProgressParams{
-		Score:    pgtype.Numeric{Int: nil, Valid: true, NaN: false, InfinityModifier: pgtype.Finite},
+		Score:    scoreNumeric,
 		UserID:   userID,
 		CourseID: courseID,
 	})
-	// Use a simpler approach for the numeric score
 	if err != nil {
 		return nil, fmt.Errorf("complete progress: %w", err)
 	}
