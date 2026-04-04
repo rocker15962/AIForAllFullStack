@@ -18,3 +18,8 @@ backend/server
 
 # User uploads
 backend/uploads/
+
+# Test artifacts
+frontend/test-results/
+frontend/playwright-report/
+backend/coverage.out
