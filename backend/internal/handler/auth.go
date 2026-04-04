@@ -28,6 +28,7 @@ func NewAuthHandler(authService *service.AuthService, frontendURL string) *AuthH
 }
 
 // GoogleLogin godoc
+//
 //	@Summary		Initiate Google OAuth login
 //	@Description	Redirects to Google OAuth consent screen
 //	@Tags			auth
@@ -51,6 +52,7 @@ func (h *AuthHandler) GoogleLogin(c *gin.Context) {
 }
 
 // GoogleCallback godoc
+//
 //	@Summary		Google OAuth callback
 //	@Description	Handles Google OAuth callback and issues JWT tokens
 //	@Tags			auth
@@ -116,6 +118,7 @@ func (h *AuthHandler) GoogleCallback(c *gin.Context) {
 }
 
 // Refresh godoc
+//
 //	@Summary		Refresh access token
 //	@Description	Uses refresh token cookie to issue a new access token
 //	@Tags			auth
@@ -163,6 +166,7 @@ func (h *AuthHandler) Refresh(c *gin.Context) {
 }
 
 // Logout godoc
+//
 //	@Summary		Logout
 //	@Description	Clears refresh token cookie
 //	@Tags			auth
@@ -186,6 +190,7 @@ type meResponse struct {
 }
 
 // Me godoc
+//
 //	@Summary		Get current user
 //	@Description	Returns the authenticated user's profile
 //	@Tags			auth

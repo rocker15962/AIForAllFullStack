@@ -22,6 +22,7 @@ func NewAdminHandler(queries *repository.Queries) *AdminHandler {
 }
 
 // Dashboard godoc
+//
 //	@Summary		Admin dashboard
 //	@Description	Returns platform stats, user trends, and popular courses
 //	@Tags			admin
@@ -136,6 +137,7 @@ func (h *AdminHandler) formatFullCourse(ctx context.Context, course repository.C
 }
 
 // GetCourse godoc
+//
 //	@Summary		Get course detail (admin)
 //	@Description	Returns full course with questions and answers
 //	@Tags			admin
@@ -206,6 +208,7 @@ func (h *AdminHandler) resolveSkillName(ctx context.Context, skillID uuid.UUID) 
 }
 
 // ListCourses godoc
+//
 //	@Summary		List all courses (admin)
 //	@Description	Returns all courses with search and status filter
 //	@Tags			admin
@@ -250,6 +253,7 @@ type adminCourseRequest struct {
 }
 
 // CreateCourse godoc
+//
 //	@Summary		Create course
 //	@Description	Create a new course
 //	@Tags			admin
@@ -309,6 +313,7 @@ func (h *AdminHandler) CreateCourse(c *gin.Context) {
 }
 
 // UpdateCourse godoc
+//
 //	@Summary		Update course
 //	@Description	Update an existing course
 //	@Tags			admin
@@ -370,6 +375,7 @@ func (h *AdminHandler) UpdateCourse(c *gin.Context) {
 }
 
 // DeleteCourse godoc
+//
 //	@Summary		Delete course
 //	@Description	Delete a course and its questions
 //	@Tags			admin
@@ -394,6 +400,7 @@ func (h *AdminHandler) DeleteCourse(c *gin.Context) {
 }
 
 // TogglePublish godoc
+//
 //	@Summary		Toggle course publish status
 //	@Description	Switch course between draft and published
 //	@Tags			admin
@@ -432,6 +439,7 @@ func (h *AdminHandler) TogglePublish(c *gin.Context) {
 }
 
 // ListUsers godoc
+//
 //	@Summary		List all users
 //	@Description	Returns all users with optional search
 //	@Tags			admin
@@ -465,6 +473,7 @@ func (h *AdminHandler) ListUsers(c *gin.Context) {
 }
 
 // GetUserProgress godoc
+//
 //	@Summary		Get user progress (admin)
 //	@Description	Returns a user's course progress details
 //	@Tags			admin
@@ -517,6 +526,7 @@ func (h *AdminHandler) GetUserProgress(c *gin.Context) {
 }
 
 // ListCategories godoc
+//
 //	@Summary		List all categories
 //	@Description	Returns all tools and skills
 //	@Tags			admin
@@ -551,6 +561,7 @@ type categoryRequest struct {
 }
 
 // CreateTool godoc
+//
 //	@Summary		Create tool
 //	@Tags			admin
 //	@Accept			json
@@ -586,6 +597,7 @@ func (h *AdminHandler) CreateTool(c *gin.Context) {
 }
 
 // UpdateTool godoc
+//
 //	@Summary		Update tool
 //	@Tags			admin
 //	@Accept			json
@@ -621,6 +633,7 @@ func (h *AdminHandler) UpdateTool(c *gin.Context) {
 }
 
 // DeleteTool godoc
+//
 //	@Summary		Delete tool
 //	@Tags			admin
 //	@Produce		json
@@ -647,6 +660,7 @@ type reorderRequest struct {
 }
 
 // ReorderTools godoc
+//
 //	@Summary		Reorder tools
 //	@Tags			admin
 //	@Accept			json
@@ -687,6 +701,7 @@ func (h *AdminHandler) ReorderTools(c *gin.Context) {
 }
 
 // CreateSkill godoc
+//
 //	@Summary		Create skill
 //	@Tags			admin
 //	@Accept			json
@@ -721,6 +736,7 @@ func (h *AdminHandler) CreateSkill(c *gin.Context) {
 }
 
 // UpdateSkill godoc
+//
 //	@Summary		Update skill
 //	@Tags			admin
 //	@Accept			json
@@ -756,6 +772,7 @@ func (h *AdminHandler) UpdateSkill(c *gin.Context) {
 }
 
 // DeleteSkill godoc
+//
 //	@Summary		Delete skill
 //	@Tags			admin
 //	@Produce		json
@@ -778,6 +795,7 @@ func (h *AdminHandler) DeleteSkill(c *gin.Context) {
 }
 
 // ReorderSkills godoc
+//
 //	@Summary		Reorder skills
 //	@Tags			admin
 //	@Accept			json

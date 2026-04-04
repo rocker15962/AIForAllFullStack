@@ -17,6 +17,7 @@ func NewCategoryHandler(tools service.ToolRepository, skills service.SkillReposi
 }
 
 // ListTools godoc
+//
 //	@Summary		List all tools
 //	@Description	Returns all tool categories
 //	@Tags			categories
@@ -33,6 +34,7 @@ func (h *CategoryHandler) ListTools(c *gin.Context) {
 }
 
 // ListSkills godoc
+//
 //	@Summary		List all skills
 //	@Description	Returns all skill categories
 //	@Tags			categories
