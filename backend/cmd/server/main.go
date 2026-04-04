@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,12 +12,17 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/handler"
+	"github.com/rocker15962/AIForAllFullStack/backend/internal/logger"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/middleware"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/repository"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/service"
+	"go.uber.org/zap"
 )
 
 func main() {
+	logger.Init(os.Getenv("GIN_MODE"))
+	defer logger.L.Sync()
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -29,38 +33,38 @@ func main() {
 	// PostgreSQL connection
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		log.Fatal("DATABASE_URL environment variable is required")
+		logger.L.Fatal("DATABASE_URL environment variable is required")
 	}
 
 	pool, err := pgxpool.New(ctx, dbURL)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		logger.L.Fatal("Failed to connect to database", zap.Error(err))
 	}
 	defer pool.Close()
 
 	if err := pool.Ping(ctx); err != nil {
-		log.Fatalf("Failed to ping database: %v", err)
+		logger.L.Fatal("Failed to ping database", zap.Error(err))
 	}
-	log.Println("Connected to PostgreSQL")
+	logger.L.Info("Connected to PostgreSQL")
 
 	// Redis connection
 	redisURL := os.Getenv("REDIS_URL")
 	if redisURL == "" {
-		log.Fatal("REDIS_URL environment variable is required")
+		logger.L.Fatal("REDIS_URL environment variable is required")
 	}
 
 	opt, err := redis.ParseURL(redisURL)
 	if err != nil {
-		log.Fatalf("Failed to parse Redis URL: %v", err)
+		logger.L.Fatal("Failed to parse Redis URL", zap.Error(err))
 	}
 
 	rdb := redis.NewClient(opt)
 	defer rdb.Close()
 
 	if err := rdb.Ping(ctx).Err(); err != nil {
-		log.Fatalf("Failed to ping Redis: %v", err)
+		logger.L.Fatal("Failed to ping Redis", zap.Error(err))
 	}
-	log.Println("Connected to Redis")
+	logger.L.Info("Connected to Redis")
 
 	// Repository
 	queries := repository.New(pool)
@@ -91,6 +95,8 @@ func main() {
 	if frontendURL == "" {
 		frontendURL = "http://localhost:3000"
 	}
+	r.Use(logger.RequestID())
+	r.Use(logger.RequestLogger())
 	r.Use(middleware.CORS(frontendURL))
 	r.Use(middleware.RateLimit(rdb))
 
@@ -159,9 +165,9 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("Server starting on :%s", port)
+		logger.L.Info("Server starting", zap.String("port", port))
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Failed to start server: %v", err)
+			logger.L.Fatal("Failed to start server", zap.Error(err))
 		}
 	}()
 
@@ -169,14 +175,14 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Println("Shutting down server...")
+	logger.L.Info("Shutting down server...")
 
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer shutdownCancel()
 
 	if err := srv.Shutdown(shutdownCtx); err != nil {
-		log.Fatalf("Server forced to shutdown: %v", err)
+		logger.L.Fatal("Server forced to shutdown", zap.Error(err))
 	}
 
-	log.Println("Server exited cleanly")
+	logger.L.Info("Server exited cleanly")
 }

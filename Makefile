@@ -1,4 +1,4 @@
-.PHONY: dev dev-detach stop clean migrate migrate-down seed sqlc logs logs-backend health build
+.PHONY: dev dev-detach stop clean migrate migrate-down seed sqlc logs logs-backend health build lint-backend
 
 # Start all services (foreground)
 dev:
@@ -47,3 +47,7 @@ health:
 # Build all Docker images
 build:
 	docker compose build
+
+# Run Go linter
+lint-backend:
+	cd backend && golangci-lint run ./...
