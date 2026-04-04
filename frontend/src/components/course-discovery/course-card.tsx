@@ -27,7 +27,13 @@ const difficultyStyles: Record<string, { classes: string; label: string }> = {
   advanced: { classes: 'bg-rose-100 text-rose-700', label: 'Advanced' },
 }
 
-export function CourseCard({ course, toolName, skillName, creatorName, creatorAvatarUrl }: CourseCardProps) {
+export function CourseCard({
+  course,
+  toolName,
+  skillName,
+  creatorName,
+  creatorAvatarUrl,
+}: CourseCardProps) {
   const difficulty = difficultyStyles[course.difficulty] || difficultyStyles.beginner
 
   return (

@@ -186,7 +186,13 @@ export default function CoursesPage() {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
             </div>
           ) : (
-            <CourseGrid courses={courses} toolNames={toolNames} skillNames={skillNames} creatorNames={creatorNames} creatorAvatarUrls={creatorAvatarUrls} />
+            <CourseGrid
+              courses={courses}
+              toolNames={toolNames}
+              skillNames={skillNames}
+              creatorNames={creatorNames}
+              creatorAvatarUrls={creatorAvatarUrls}
+            />
           )}
         </div>
       </div>

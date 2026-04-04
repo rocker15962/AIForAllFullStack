@@ -27,7 +27,13 @@ interface CourseGridProps {
   creatorAvatarUrls?: ToolMap
 }
 
-export function CourseGrid({ courses, toolNames, skillNames, creatorNames = {}, creatorAvatarUrls = {} }: CourseGridProps) {
+export function CourseGrid({
+  courses,
+  toolNames,
+  skillNames,
+  creatorNames = {},
+  creatorAvatarUrls = {},
+}: CourseGridProps) {
   if (courses.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
