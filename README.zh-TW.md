@@ -4,6 +4,10 @@
 
 非營利 AI 教育平台，透過與 YouTube 創作者合作，提供結構化的 AI 學習體驗。使用者可以觀看教學影片、完成問答測驗、追蹤學習進度並獲得完課徽章。
 
+<p align="center">
+  <img src="docs/screenshots/hero.png" alt="AI for All — 首頁" width="800" />
+</p>
+
 ## 技術選型
 
 ### 前端：Next.js + TypeScript
@@ -172,6 +176,23 @@ AIForAllFullStack/
 - 課程搜尋與篩選
 - 後台管理系統（課程、使用者、分類管理）
 
+### 畫面截圖
+
+<p align="center">
+  <img src="docs/screenshots/course-discovery.png" alt="課程探索 — 瀏覽與篩選課程" width="800" />
+  <br><em>課程探索 — 依工具、技能、難度篩選課程</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/course-learning.png" alt="課程學習 — 影片觀看與問答測驗" width="800" />
+  <br><em>課程學習 — 內嵌 YouTube 影片搭配逐步問答測驗</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/admin-dashboard.png" alt="後台管理 — 平台數據分析" width="800" />
+  <br><em>後台管理 — 使用者趨勢、熱門課程、平台統計</em>
+</p>
+
 ## 設計系統
 
 - 主色：`cyan` — 按鈕、連結、重點強調
@@ -232,6 +253,11 @@ HTTP Request
 | 13 | 程式碼品質 | 🟢 | golangci-lint、gofmt、ESLint、Prettier、pre-commit hooks |
 | 14 | 文件 | 🟢 | Swagger/OpenAPI UI、README、ADR、環境變數文件 |
 
+<p align="center">
+  <img src="docs/screenshots/grafana-dashboard.png" alt="Grafana Dashboard — HTTP 指標概覽" width="800" />
+  <br><em>Grafana Dashboard — 請求速率、延遲百分位、錯誤率、進行中請求</em>
+</p>
+
 ## API 概覽
 
 38 個端點，分為 6 個領域，皆位於 `/api/v1/` 下：
@@ -244,6 +270,11 @@ HTTP Request
 | Categories | `GET /tools`, `GET /skills` | — | 公開的工具/技能列表 |
 | User | `GET /my/progress`, `GET /my/completed`, `GET /my/badges`, `GET /my/stats`, `GET /my/profile`, `PUT /my/profile`, `POST /my/avatar` | 必要 | 學習進度、個人資料管理 |
 | Admin | 18 個端點（`/admin/dashboard`, `/admin/courses/*`, `/admin/users/*`, `/admin/tools/*`, `/admin/skills/*`） | 管理員 | 儀表板、課程/使用者/分類 CRUD |
+
+<p align="center">
+  <img src="docs/screenshots/swagger-ui.png" alt="Swagger UI — 互動式 API 文件" width="800" />
+  <br><em>Swagger UI — 39 個端點的互動式 API 文件</em>
+</p>
 
 ## 測試
 
