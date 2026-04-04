@@ -1,3 +1,10 @@
+//	@title			AI for All API
+//	@version		1.0
+//	@description	RESTful API for the AI for All education platform.
+
+//	@host		localhost:8080
+//	@BasePath	/api/v1
+
 package main
 
 import (
@@ -17,7 +24,11 @@ import (
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/middleware"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/repository"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/service"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/zap"
+
+	_ "github.com/rocker15962/AIForAllFullStack/backend/docs/swagger"
 )
 
 func main() {
@@ -162,6 +173,9 @@ func main() {
 
 	// Prometheus metrics endpoint
 	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	// Swagger API documentation
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// HTTP server with graceful shutdown
 	srv := &http.Server{
