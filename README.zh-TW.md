@@ -100,9 +100,14 @@ make seed                  # 載入種子資料（課程、工具、技能）
 
 # 驗證
 make health                # 應回傳 {"status":"ok"}
+
+# 選用：啟動監控（Prometheus + Grafana）
+make monitoring            # 加入 Prometheus (9090) + Grafana (3001)
 ```
 
 開啟 [http://localhost:3000](http://localhost:3000) 查看前端，[http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health) 查看後端。
+
+選用：[http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html) 查看 API 文件，[http://localhost:3001](http://localhost:3001) 查看 Grafana dashboard。
 
 環境變數說明請參考 [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md)。
 
@@ -126,7 +131,7 @@ AIForAllFullStack/
 │   ├── cmd/server/              # 進入點
 │   ├── internal/
 │   │   ├── handler/             # HTTP handlers（6 個檔案）
-│   │   ├── middleware/          # JWT 驗證、CORS、rate limiting
+│   │   ├── middleware/          # JWT 驗證、CORS、rate limiting、Prometheus metrics
 │   │   ├── service/             # 業務邏輯層
 │   │   ├── repository/          # 資料存取層（sqlc 生成）
 │   │   ├── integration/         # 整合測試（testcontainers-go）
@@ -135,12 +140,18 @@ AIForAllFullStack/
 │   │   ├── migrations/          # SQL migration（golang-migrate）
 │   │   ├── queries/             # sqlc SQL 查詢
 │   │   └── seed.sql             # 種子資料
+│   ├── docs/swagger/            # 生成的 Swagger/OpenAPI 規格
 │   ├── Dockerfile
 │   └── go.mod
+├── monitoring/                  # Prometheus + Grafana 設定
+│   ├── prometheus.yml           # 抓取設定
+│   └── grafana/                 # Dashboard provisioning + JSON
+├── scripts/                     # 工具腳本
+│   └── verify-services.sh      # 驗證所有服務連線狀態
 ├── .github/workflows/ci.yml    # GitHub Actions CI（5 個 job）
-├── docker-compose.yml           # 一鍵啟動
+├── docker-compose.yml           # 4 核心 + 2 監控（profile）
 ├── .env.example                 # 環境變數範本
-├── Makefile                     # 常用指令（13 個 target）
+├── Makefile                     # 常用指令（15 個 target）
 ├── PRODUCT_ROADMAP.md           # 產品路線圖（English）
 ├── PRODUCT_ROADMAP.zh-TW.md     # 產品路線圖（繁體中文）
 └── docs/                        # 技術文件

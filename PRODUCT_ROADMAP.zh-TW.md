@@ -596,15 +596,21 @@ User ─────────< Progress >───────── Course
 - [x] Branch protection rules
 
 **文件**：
-- [x] Swagger/OpenAPI 規格（所有 API endpoint）
+- [x] Swagger/OpenAPI 規格（38 個 API endpoint，swaggo/swag）
+- [x] Swagger UI（`/swagger/index.html`）
 - [x] README 完善（設定指南、貢獻指南）
 - [x] 環境變數文件
 
 **程式碼品質**：
-- [x] Go：golangci-lint、gofmt
+- [x] Go：golangci-lint（v2，Go 1.25）、gofmt
 - [x] 前端：ESLint、Prettier
 - [x] Pre-commit hooks（lint-staged + husky）
-- [x] 結構化日誌（含 request ID）
+- [x] 結構化日誌（zap，含 request ID）
+
+**可觀測性**：
+- [x] Prometheus metrics middleware（`/metrics` endpoint）
+- [x] Grafana dashboard（request rate、latency p50/p95/p99、error rate、in-flight）
+- [x] Docker Compose monitoring profile（Prometheus + Grafana）
 
 #### 成功標準
 
@@ -642,6 +648,10 @@ User ─────────< Progress >───────── Course
 - 快取：Redis
 
 **基礎設施**：Docker Compose + GitHub Actions CI/CD
+
+**監控**（選用，透過 `--profile monitoring`）：Prometheus + Grafana
+
+**文件**：Swagger/OpenAPI（swaggo/swag）
 
 ### 架構圖
 

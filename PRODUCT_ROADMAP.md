@@ -596,15 +596,21 @@ User ─────────< Progress >───────── Course
 - [x] Branch protection rules
 
 **Documentation**:
-- [x] Swagger/OpenAPI spec for all API endpoints
+- [x] Swagger/OpenAPI spec for all 38 API endpoints (swaggo/swag)
+- [x] Swagger UI at `/swagger/index.html`
 - [x] README polish (setup guide, contributing guide)
 - [x] Environment variables documentation
 
 **Code Quality**:
-- [x] Go: golangci-lint, gofmt
+- [x] Go: golangci-lint (v2, Go 1.25), gofmt
 - [x] Frontend: ESLint, Prettier
 - [x] Pre-commit hooks (lint-staged + husky)
-- [x] Structured logging with request IDs
+- [x] Structured logging with request IDs (zap)
+
+**Observability**:
+- [x] Prometheus metrics middleware (`/metrics` endpoint)
+- [x] Grafana dashboard (request rate, latency p50/p95/p99, error rate, in-flight)
+- [x] Docker Compose monitoring profile (Prometheus + Grafana)
 
 #### Success Criteria
 
@@ -642,6 +648,10 @@ User ─────────< Progress >───────── Course
 - Cache: Redis
 
 **Infrastructure**: Docker Compose + GitHub Actions CI/CD
+
+**Monitoring** (optional, via `--profile monitoring`): Prometheus + Grafana
+
+**Documentation**: Swagger/OpenAPI (swaggo/swag)
 
 ### Architecture Diagram
 

@@ -100,9 +100,14 @@ make seed                  # Load seed data (courses, tools, skills)
 
 # Verify
 make health                # Should return {"status":"ok"}
+
+# Optional: start with monitoring (Prometheus + Grafana)
+make monitoring            # Adds Prometheus (9090) + Grafana (3001)
 ```
 
 Open [http://localhost:3000](http://localhost:3000) for the frontend, [http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health) for the backend.
+
+Optional: [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html) for API docs, [http://localhost:3001](http://localhost:3001) for Grafana dashboard.
 
 See [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md) for all environment variables.
 
@@ -126,7 +131,7 @@ AIForAllFullStack/
 │   ├── cmd/server/              # Entry point
 │   ├── internal/
 │   │   ├── handler/             # HTTP handlers (6 files)
-│   │   ├── middleware/          # JWT auth, CORS, rate limiting
+│   │   ├── middleware/          # JWT auth, CORS, rate limiting, Prometheus metrics
 │   │   ├── service/             # Business logic layer
 │   │   ├── repository/          # Data access layer (sqlc generated)
 │   │   ├── integration/         # Integration tests (testcontainers-go)
@@ -135,12 +140,18 @@ AIForAllFullStack/
 │   │   ├── migrations/          # SQL migrations (golang-migrate)
 │   │   ├── queries/             # sqlc SQL queries
 │   │   └── seed.sql             # Seed data
+│   ├── docs/swagger/            # Generated Swagger/OpenAPI spec
 │   ├── Dockerfile
 │   └── go.mod
+├── monitoring/                  # Prometheus + Grafana configs
+│   ├── prometheus.yml           # Scrape config
+│   └── grafana/                 # Dashboard provisioning + JSON
+├── scripts/                     # Utility scripts
+│   └── verify-services.sh      # Verify all services connectivity
 ├── .github/workflows/ci.yml    # GitHub Actions CI (5 jobs)
-├── docker-compose.yml           # One-command startup
+├── docker-compose.yml           # 4 core + 2 monitoring (profile)
 ├── .env.example                 # Environment variables template
-├── Makefile                     # Common commands (13 targets)
+├── Makefile                     # Common commands (15 targets)
 ├── PRODUCT_ROADMAP.md           # Product roadmap (English)
 ├── PRODUCT_ROADMAP.zh-TW.md     # Product roadmap (繁體中文)
 └── docs/                        # Technical documentation
