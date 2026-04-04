@@ -83,6 +83,29 @@
 └──────────────────────────────────────────────────────┘
 ```
 
+## 快速開始
+
+```bash
+# 複製並設定
+git clone https://github.com/rocker15962/AIForAllFullStack.git
+cd AIForAllFullStack
+cp .env.example .env       # 編輯 .env，填入 Google OAuth 憑證
+
+# 啟動所有服務（前端、後端、PostgreSQL、Redis）
+make dev                   # 前景模式 — 或 `make dev-detach` 背景執行
+
+# 設定資料庫
+make migrate               # 執行 PostgreSQL migration
+make seed                  # 載入種子資料（課程、工具、技能）
+
+# 驗證
+make health                # 應回傳 {"status":"ok"}
+```
+
+開啟 [http://localhost:3000](http://localhost:3000) 查看前端，[http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health) 查看後端。
+
+環境變數說明請參考 [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md)。
+
 ## 專案結構
 
 ```
@@ -90,28 +113,34 @@ AIForAllFullStack/
 ├── frontend/                    # Next.js 前端
 │   ├── src/
 │   │   ├── app/                 # 頁面路由 (App Router)
-│   │   ├── components/          # UI 元件
+│   │   ├── components/          # UI 元件（7 個功能目錄 + ui/）
 │   │   ├── contexts/            # React Context (Auth)
-│   │   ├── lib/                 # 工具函式
+│   │   ├── lib/                 # 工具函式、schema、API client
+│   │   ├── stores/              # Zustand 狀態管理
+│   │   ├── test/                # 測試設定
 │   │   └── types/               # TypeScript 型別
+│   ├── e2e/                     # Playwright E2E 測試
 │   ├── Dockerfile
 │   └── package.json
 ├── backend/                     # Go API Server
 │   ├── cmd/server/              # 進入點
 │   ├── internal/
-│   │   ├── handler/             # HTTP handlers
+│   │   ├── handler/             # HTTP handlers（6 個檔案）
 │   │   ├── middleware/          # JWT 驗證、CORS、rate limiting
 │   │   ├── service/             # 業務邏輯層
-│   │   └── repository/         # 資料存取層 (sqlc 生成)
+│   │   ├── repository/          # 資料存取層（sqlc 生成）
+│   │   ├── integration/         # 整合測試（testcontainers-go）
+│   │   └── logger/              # 結構化日誌（zap）
 │   ├── db/
-│   │   ├── migrations/          # SQL migration
-│   │   ├── queries/             # sqlc 查詢
+│   │   ├── migrations/          # SQL migration（golang-migrate）
+│   │   ├── queries/             # sqlc SQL 查詢
 │   │   └── seed.sql             # 種子資料
 │   ├── Dockerfile
 │   └── go.mod
+├── .github/workflows/ci.yml    # GitHub Actions CI（5 個 job）
 ├── docker-compose.yml           # 一鍵啟動
 ├── .env.example                 # 環境變數範本
-├── Makefile                     # 常用指令
+├── Makefile                     # 常用指令（13 個 target）
 ├── PRODUCT_ROADMAP.md           # 產品路線圖（English）
 ├── PRODUCT_ROADMAP.zh-TW.md     # 產品路線圖（繁體中文）
 └── docs/                        # 技術文件
@@ -178,26 +207,50 @@ HTTP Request
 | 2 | Go 後端架構 | 🟢 | 3-Layer Clean（Handler → Service → Repository） |
 | 3 | 資料庫設計 | 🟢 | PostgreSQL + golang-migrate 版本化遷移 |
 | 4 | API 設計 | 🟢 | RESTful、版本化 (/api/v1/)、統一回應格式 |
-| 5 | 認證與授權 | 🟡 | 本地 Email/Password + JWT；未來可接 OAuth2 |
+| 5 | 認證與授權 | 🟢 | Google OAuth2 + JWT（access token + HttpOnly refresh cookie） |
 | 6 | 快取層 | 🟢 | Redis 課程列表快取、rate limiting |
 | 7 | 前端調整 | 🟢 | TanStack Query、Zustand、shadcn/ui、Zod |
 | 8 | 測試策略 | 🟢 | Go unit + integration（testcontainers-go）；前端 Vitest |
 | 9 | Docker 化 | 🟢 | Go multi-stage build（~20MB）、4 服務 compose + health check |
-| 10 | CI/CD | 🟡 | GitHub Actions（lint → test → build） |
+| 10 | CI/CD | 🟢 | GitHub Actions（5 個 job：lint、unit test、integration test、E2E、Docker build） |
 | 11 | 安全性 | 🟢 | CORS、rate limiting、input sanitization、安全 headers |
 | 12 | 可觀測性 | 🟡 | 本地 structured logging + request ID；可升級 Prometheus/Grafana |
-| 13 | 程式碼品質 | 🟢 | golangci-lint、gofmt、ESLint、Prettier、pre-commit hooks |
-| 14 | 文件 | 🟢 | README、ADR、Swagger/OpenAPI |
+| 13 | 程式碼品質 | 🟡 | go vet、gofmt、ESLint、Prettier、pre-commit hooks；可升級 golangci-lint |
+| 14 | 文件 | 🟡 | README、ADR、環境變數文件；可升級 Swagger/OpenAPI |
+
+## API 概覽
+
+38 個端點，分為 6 個領域，皆位於 `/api/v1/` 下：
+
+| 領域 | 端點 | 認證 | 說明 |
+|------|------|------|------|
+| Health | `GET /health` | — | 服務健康檢查 |
+| Auth | `GET /auth/google/login`, `GET /auth/google/callback`, `POST /auth/refresh`, `POST /auth/logout`, `GET /auth/me` | 部分 | Google OAuth2 流程 + session 管理 |
+| Courses | `GET /courses`, `GET /courses/:id`, `GET /courses/:id/recommended`, `POST /courses/:id/submit`, `POST /courses/:id/complete` | 部分 | 瀏覽、學習、答題、完課 |
+| Categories | `GET /tools`, `GET /skills` | — | 公開的工具/技能列表 |
+| User | `GET /my/progress`, `GET /my/completed`, `GET /my/badges`, `GET /my/stats`, `GET /my/profile`, `PUT /my/profile`, `POST /my/avatar` | 必要 | 學習進度、個人資料管理 |
+| Admin | 18 個端點（`/admin/dashboard`, `/admin/courses/*`, `/admin/users/*`, `/admin/tools/*`, `/admin/skills/*`） | 管理員 | 儀表板、課程/使用者/分類 CRUD |
+
+## 測試
+
+| 類型 | 工具 | 位置 | 指令 |
+|------|------|------|------|
+| 後端 unit | Go `testing` | `backend/internal/service/`, `handler/`, `middleware/` | `cd backend && go test ./...` |
+| 後端 integration | testcontainers-go + 真實 PostgreSQL | `backend/internal/integration/` | `cd backend && go test -tags integration ./internal/integration/ -v` |
+| 前端 unit | Vitest + React Testing Library | `frontend/src/**/__tests__/` | `cd frontend && npx vitest run` |
+| 前端 E2E | Playwright | `frontend/e2e/` | `cd frontend && npx playwright test` |
+
+CI 會在 push/PR 至 `dev` 和 `main` 時自動執行所有 4 種測試。
 
 ## 實作階段
 
-分為 6 個循序階段，後端優先：
+全部 6 個階段已完成，後端優先：
 
-| 階段 | 名稱 | 核心交付物 |
-|------|------|-----------|
-| 1 | 基礎設施 + Go 骨架 | Docker Compose、Go 專案骨架、PostgreSQL 遷移、sqlc、health check、Makefile |
-| 2 | 認證系統 | JWT 認證流程、auth/admin middleware、rate limiting |
-| 3 | 核心 API | 課程瀏覽、進度追蹤、搜尋/篩選/分頁、Redis 快取 |
-| 4 | 管理員 API | 儀表板統計、課程/使用者/分類管理 |
-| 5 | 前端改造 | app/ → frontend/、移除 SQLite、接 Go API |
-| 6 | 品質保證 | 測試覆蓋、CI/CD、Swagger 文件、linting、README 完善 |
+| 階段 | 名稱 | 狀態 |
+|------|------|------|
+| 1 | 基礎設施 + Go 骨架 | ✅ 已完成 |
+| 2 | 認證系統 | ✅ 已完成 |
+| 3 | 核心 API | ✅ 已完成 |
+| 4 | 管理員 API | ✅ 已完成 |
+| 5 | 前端改造 | ✅ 已完成 |
+| 6 | 品質保證 | ✅ 已完成 |
