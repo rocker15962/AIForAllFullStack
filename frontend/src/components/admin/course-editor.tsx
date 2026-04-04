@@ -41,6 +41,7 @@ interface ExistingCourse {
   youtubeUrl: string
   toolId: string
   skillId: string
+  creatorId: string
   difficulty: string
   duration: number
   status: string
@@ -170,9 +171,12 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
         body: JSON.stringify({
           title: form.title,
           description: form.description,
-          youtube_url: form.youtubeUrl,
-          tool_id: form.toolId,
-          skill_id: form.skillId,
+          youtubeUrl: form.youtubeUrl,
+          youtubeId: extractYouTubeId(form.youtubeUrl) || '',
+          thumbnailUrl: `https://img.youtube.com/vi/${extractYouTubeId(form.youtubeUrl) || ''}/maxresdefault.jpg`,
+          toolId: form.toolId,
+          skillId: form.skillId,
+          creatorId: course?.creatorId || 'c1000000-0000-0000-0000-000000000001',
           difficulty: form.difficulty,
           duration: form.duration,
           status,

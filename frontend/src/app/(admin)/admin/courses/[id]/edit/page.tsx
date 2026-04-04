@@ -39,6 +39,7 @@ export default function EditCoursePage() {
             (raw.youtubeId ? `https://www.youtube.com/watch?v=${raw.youtubeId}` : ''),
           toolId: raw.toolId || raw.tool?.id || '',
           skillId: raw.skillId || raw.skill?.id || '',
+          creatorId: raw.creatorId || raw.creator?.id || '',
           difficulty: raw.difficulty || 'beginner',
           duration: raw.duration || 0,
           status: raw.status || 'draft',
