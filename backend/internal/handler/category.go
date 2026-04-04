@@ -8,12 +8,13 @@ import (
 )
 
 type CategoryHandler struct {
-	tools  service.ToolRepository
-	skills service.SkillRepository
+	tools    service.ToolRepository
+	skills   service.SkillRepository
+	creators service.CreatorRepository
 }
 
-func NewCategoryHandler(tools service.ToolRepository, skills service.SkillRepository) *CategoryHandler {
-	return &CategoryHandler{tools: tools, skills: skills}
+func NewCategoryHandler(tools service.ToolRepository, skills service.SkillRepository, creators service.CreatorRepository) *CategoryHandler {
+	return &CategoryHandler{tools: tools, skills: skills, creators: creators}
 }
 
 // ListTools godoc
@@ -48,4 +49,21 @@ func (h *CategoryHandler) ListSkills(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"skills": skills})
+}
+
+// ListCreators godoc
+//
+//	@Summary		List all creators
+//	@Description	Returns all content creators
+//	@Tags			categories
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Router			/creators [get]
+func (h *CategoryHandler) ListCreators(c *gin.Context) {
+	creators, err := h.creators.ListCreators(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list creators"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"creators": creators})
 }

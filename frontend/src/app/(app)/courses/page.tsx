@@ -48,6 +48,19 @@ async function fetchSkills(): Promise<Skill[]> {
   return data.skills || []
 }
 
+interface Creator {
+  id: string
+  name: string
+  avatar_url: string
+}
+
+async function fetchCreators(): Promise<Creator[]> {
+  const res = await fetch(`${API_URL}/api/v1/creators`)
+  if (!res.ok) return []
+  const data = (await res.json()) as { creators: Creator[] }
+  return data.creators || []
+}
+
 async function fetchCourses(params: {
   search: string
   toolId: string | null
@@ -86,6 +99,11 @@ export default function CoursesPage() {
     queryFn: fetchSkills,
   })
 
+  const { data: creators = [] } = useQuery({
+    queryKey: ['creators'],
+    queryFn: fetchCreators,
+  })
+
   // TanStack Query: fetch courses (re-fetches when filters change)
   const { data: courseData, isLoading } = useQuery({
     queryKey: ['courses', search, toolId, skillId, difficulty],
@@ -102,6 +120,12 @@ export default function CoursesPage() {
   const skillNames: Record<string, string> = {}
   for (const s of skills) {
     skillNames[s.id] = s.name
+  }
+  const creatorNames: Record<string, string> = {}
+  const creatorAvatarUrls: Record<string, string> = {}
+  for (const cr of creators) {
+    creatorNames[cr.id] = cr.name
+    creatorAvatarUrls[cr.id] = cr.avatar_url
   }
 
   const activeFilterCount = [toolId, skillId, difficulty].filter(Boolean).length
@@ -162,7 +186,13 @@ export default function CoursesPage() {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
             </div>
           ) : (
-            <CourseGrid courses={courses} toolNames={toolNames} skillNames={skillNames} />
+            <CourseGrid
+              courses={courses}
+              toolNames={toolNames}
+              skillNames={skillNames}
+              creatorNames={creatorNames}
+              creatorAvatarUrls={creatorAvatarUrls}
+            />
           )}
         </div>
       </div>

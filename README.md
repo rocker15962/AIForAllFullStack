@@ -103,6 +103,9 @@ make health                # Should return {"status":"ok"}
 
 # Optional: start with monitoring (Prometheus + Grafana)
 make monitoring            # Adds Prometheus (9090) + Grafana (3001)
+
+# Promote yourself to admin (login via OAuth first, then run)
+make admin EMAIL=you@gmail.com
 ```
 
 Open [http://localhost:3000](http://localhost:3000) for the frontend, [http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health) for the backend.

@@ -55,6 +55,7 @@ make build                # Build all Docker images
 make lint-backend         # Run Go linter
 make monitoring           # Start all services + Prometheus + Grafana
 make swagger              # Regenerate Swagger docs (swag init)
+make admin EMAIL=x@y.com  # Promote a user to admin (must have logged in first)
 ```
 
 ## Feature Development Lifecycle

@@ -997,6 +997,27 @@ const docTemplate = `{
                 }
             }
         },
+        "/creators": {
+            "get": {
+                "description": "Returns all content creators",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "categories"
+                ],
+                "summary": "List all creators",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "Returns service health status including database and Redis connectivity",

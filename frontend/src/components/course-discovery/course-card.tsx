@@ -18,6 +18,7 @@ interface CourseCardProps {
   toolName?: string
   skillName?: string
   creatorName?: string
+  creatorAvatarUrl?: string
 }
 
 const difficultyStyles: Record<string, { classes: string; label: string }> = {
@@ -26,7 +27,13 @@ const difficultyStyles: Record<string, { classes: string; label: string }> = {
   advanced: { classes: 'bg-rose-100 text-rose-700', label: 'Advanced' },
 }
 
-export function CourseCard({ course, toolName, skillName, creatorName }: CourseCardProps) {
+export function CourseCard({
+  course,
+  toolName,
+  skillName,
+  creatorName,
+  creatorAvatarUrl,
+}: CourseCardProps) {
   const difficulty = difficultyStyles[course.difficulty] || difficultyStyles.beginner
 
   return (
@@ -77,7 +84,11 @@ export function CourseCard({ course, toolName, skillName, creatorName }: CourseC
 
           {/* Footer — avatar + creator name only */}
           <div className="flex items-center gap-1.5">
-            <div className="h-5 w-5 rounded-full bg-zinc-300 dark:bg-zinc-600" />
+            {creatorAvatarUrl ? (
+              <img src={creatorAvatarUrl} alt="" className="h-5 w-5 rounded-full" />
+            ) : (
+              <div className="h-5 w-5 rounded-full bg-zinc-300 dark:bg-zinc-600" />
+            )}
             <span className="text-xs text-zinc-500">{creatorName || 'Unknown creator'}</span>
           </div>
         </div>

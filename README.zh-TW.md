@@ -103,6 +103,9 @@ make health                # 應回傳 {"status":"ok"}
 
 # 選用：啟動監控（Prometheus + Grafana）
 make monitoring            # 加入 Prometheus (9090) + Grafana (3001)
+
+# 將自己升級為管理員（先用 OAuth 登入一次，再執行）
+make admin EMAIL=you@gmail.com
 ```
 
 開啟 [http://localhost:3000](http://localhost:3000) 查看前端，[http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health) 查看後端。
