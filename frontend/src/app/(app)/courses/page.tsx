@@ -51,6 +51,7 @@ async function fetchSkills(): Promise<Skill[]> {
 interface Creator {
   id: string
   name: string
+  avatar_url: string
 }
 
 async function fetchCreators(): Promise<Creator[]> {
@@ -121,8 +122,10 @@ export default function CoursesPage() {
     skillNames[s.id] = s.name
   }
   const creatorNames: Record<string, string> = {}
+  const creatorAvatarUrls: Record<string, string> = {}
   for (const cr of creators) {
     creatorNames[cr.id] = cr.name
+    creatorAvatarUrls[cr.id] = cr.avatar_url
   }
 
   const activeFilterCount = [toolId, skillId, difficulty].filter(Boolean).length
@@ -183,7 +186,7 @@ export default function CoursesPage() {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
             </div>
           ) : (
-            <CourseGrid courses={courses} toolNames={toolNames} skillNames={skillNames} creatorNames={creatorNames} />
+            <CourseGrid courses={courses} toolNames={toolNames} skillNames={skillNames} creatorNames={creatorNames} creatorAvatarUrls={creatorAvatarUrls} />
           )}
         </div>
       </div>
