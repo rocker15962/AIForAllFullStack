@@ -38,7 +38,7 @@ INSERT INTO courses (id, title, description, youtube_url, youtube_id, thumbnail_
    'ChatGPT Copywriting 101: Learn AI Writing from Scratch',
    'Learn how to effectively use ChatGPT for conversations, master prompt engineering techniques, and boost your productivity.',
    'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'dQw4w9WgXcQ',
-   'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+   'https://picsum.photos/seed/chatgpt-writing/640/360',
    'a1000000-0000-0000-0000-000000000001', 'b1000000-0000-0000-0000-000000000001',
    'c1000000-0000-0000-0000-000000000001', 'beginner', 630, 'published'),
 
@@ -46,7 +46,7 @@ INSERT INTO courses (id, title, description, youtube_url, youtube_id, thumbnail_
    'Midjourney Art Tips: Create Your Own AI Artwork',
    'From basic commands to advanced parameters, a complete guide to generating professional-grade images with Midjourney.',
    'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'dQw4w9WgXcQ',
-   'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+   'https://picsum.photos/seed/midjourney-art/640/360',
    'a1000000-0000-0000-0000-000000000002', 'b1000000-0000-0000-0000-000000000002',
    'c1000000-0000-0000-0000-000000000002', 'intermediate', 1200, 'published'),
 
@@ -54,7 +54,7 @@ INSERT INTO courses (id, title, description, youtube_url, youtube_id, thumbnail_
    'Cursor AI Dev: Accelerate Your Coding with AI',
    'Learn to use Cursor, the AI-powered code editor, to speed up your development workflow. Write, debug, and refactor with AI.',
    'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'dQw4w9WgXcQ',
-   'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+   'https://picsum.photos/seed/cursor-coding/640/360',
    'a1000000-0000-0000-0000-000000000003', 'b1000000-0000-0000-0000-000000000003',
    'c1000000-0000-0000-0000-000000000003', 'beginner', 900, 'published'),
 
@@ -62,7 +62,7 @@ INSERT INTO courses (id, title, description, youtube_url, youtube_id, thumbnail_
    'Advanced ChatGPT: Build Automated Workflows',
    'Learn to use the ChatGPT API and automation tools to build efficient workflows. Covers GPT-4 API integration and prompt chaining.',
    'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'dQw4w9WgXcQ',
-   'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+   'https://picsum.photos/seed/chatgpt-automation/640/360',
    'a1000000-0000-0000-0000-000000000001', 'b1000000-0000-0000-0000-000000000001',
    'c1000000-0000-0000-0000-000000000001', 'advanced', 1500, 'published'),
 
@@ -70,7 +70,7 @@ INSERT INTO courses (id, title, description, youtube_url, youtube_id, thumbnail_
    'AI Data Analysis: Processing Data with Claude',
    'Learn how to use Claude for CSV data analysis, report generation, and data visualization. Great for marketers and analysts.',
    'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'dQw4w9WgXcQ',
-   'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+   'https://picsum.photos/seed/data-analysis/640/360',
    'a1000000-0000-0000-0000-000000000004', 'b1000000-0000-0000-0000-000000000004',
    'c1000000-0000-0000-0000-000000000003', 'intermediate', 1100, 'published'),
 
@@ -78,7 +78,7 @@ INSERT INTO courses (id, title, description, youtube_url, youtube_id, thumbnail_
    'Stable Diffusion Local Setup Guide',
    'Step-by-step guide to installing Stable Diffusion on your own computer. Generate AI images without paid subscriptions.',
    'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'dQw4w9WgXcQ',
-   'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+   'https://picsum.photos/seed/stable-diffusion/640/360',
    'a1000000-0000-0000-0000-000000000005', 'b1000000-0000-0000-0000-000000000002',
    'c1000000-0000-0000-0000-000000000002', 'advanced', 1800, 'published'),
 
@@ -86,7 +86,7 @@ INSERT INTO courses (id, title, description, youtube_url, youtube_id, thumbnail_
    'AI Presentations: Create Pro Slides in 10 Minutes',
    'Use ChatGPT + Gamma to quickly create high-quality presentations. From outline generation to layout polish, all in one go.',
    'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'dQw4w9WgXcQ',
-   'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+   'https://picsum.photos/seed/ai-presentations/640/360',
    'a1000000-0000-0000-0000-000000000001', 'b1000000-0000-0000-0000-000000000005',
    'c1000000-0000-0000-0000-000000000001', 'beginner', 600, 'published'),
 
@@ -94,7 +94,7 @@ INSERT INTO courses (id, title, description, youtube_url, youtube_id, thumbnail_
    'Advanced Cursor: TDD & AI Pair Programming',
    'Practice test-driven development with Cursor. Learn how to let AI write tests, implementations, and refactor for better code quality.',
    'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'dQw4w9WgXcQ',
-   'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+   'https://picsum.photos/seed/tdd-programming/640/360',
    'a1000000-0000-0000-0000-000000000003', 'b1000000-0000-0000-0000-000000000003',
    'c1000000-0000-0000-0000-000000000003', 'advanced', 2100, 'published');
 
