@@ -226,6 +226,10 @@ User ─────────< Progress >───────── Course
 | 4 | User & Progress | Learning dashboard, progress tracking, profile, badges | ✅ Complete |
 | 5 | Admin Dashboard | Analytics, course/user/category management | ✅ Complete |
 | 6 | Quality Assurance | Testing, CI/CD, API docs, linting | ✅ Complete |
+| 7 | AI-Powered Learning | AI learning paths, chatbot tutor | 🔲 Planned |
+| 8 | Creator Ecosystem | Creator self-service, answer review, analytics | 🔲 Planned |
+| 9 | Monetization & Growth | Revenue sharing, certificates, gamification | 🔲 Planned |
+| 10 | Scale & Infrastructure | Kubernetes, OpenTelemetry, CDN, i18n | 🔲 Planned |
 
 ---
 
@@ -736,3 +740,92 @@ Detailed technical selection rationales are documented in:
 - `docs/superpowers/specs/2026-04-01-frontend-tech-selection-design.md` — Next.js vs Nuxt vs SvelteKit
 - `docs/superpowers/specs/2026-04-01-production-ready-design.md` — 14 production readiness areas
 - `docs/superpowers/specs/2026-04-02-development-workflow-design.md` — Development workflow design
+
+---
+
+## 7. Future Roadmap
+
+Phases 1–6 are complete. The following phases outline the product's long-term evolution — from AI-driven learning to creator ecosystems, monetization, and cloud-native infrastructure.
+
+### Phase 7: AI-Powered Learning
+
+**Goal**: Leverage large language models to personalize the learning experience and reduce manual content creation.
+
+**Status**: 🔲 Planned
+
+#### Features
+
+- **AI Learning Path** — LLM analyzes a user's completed courses, quiz scores, and interests to recommend a personalized course sequence. Adapts as the user progresses.
+- **AI Chatbot Tutor** — Embedded AI assistant on each course page. Users can ask questions about the video content and get instant, context-aware answers powered by RAG (Retrieval-Augmented Generation) with video transcripts.
+
+#### Technical Approach
+
+- Go microservice calling OpenAI / Anthropic API
+- RAG pipeline: YouTube transcript → vector embedding → semantic search → LLM response
+- Prompt engineering for educational context (explain concepts, not just answer)
+
+---
+
+### Phase 8: Creator Ecosystem
+
+**Goal**: Empower YouTube creators to participate directly in the platform — submitting courses, grading student answers, and understanding their content performance.
+
+**Status**: 🔲 Planned
+
+#### Features
+
+- **Creator Self-Service** — Creators submit courses by providing a YouTube URL. The system auto-generates description, tags, and quiz suggestions. Admin reviews and publishes.
+- **Creator Application Flow** — Application form + review pipeline with quality gates. Ensures only vetted creators publish content.
+- **Creator Answer Review** — Creators can grade short-answer quiz responses and provide direct, personalized feedback to learners. Replaces keyword-only validation with human insight.
+- **Content Analytics for Creators** — Dashboard showing per-course metrics: answer accuracy rates by question, learner drop-off points, completion rates, and score distributions.
+
+#### Technical Approach
+
+- New `creator` role in auth system (alongside `user` and `admin`)
+- Notification system (email or in-app) for review assignments and feedback delivery
+- Analytics queries aggregating progress data per creator's courses
+
+---
+
+### Phase 9: Monetization & Growth
+
+**Goal**: Build sustainable revenue streams while growing the user base through social features and gamification.
+
+**Status**: 🔲 Planned
+
+#### Features
+
+- **Creator Revenue Sharing** — Creators earn based on course completion count. Transparent revenue dashboard with payout history.
+- **Certificates & Credentials** — Verifiable completion certificates. Options: digitally signed PDF (simple) or blockchain-backed credential (advanced).
+- **Enterprise / Team Plans** — Company accounts with bulk enrollment. Admin dashboard shows employee learning progress and completion rates.
+- **Sponsorship / Featured Courses** — AI tool vendors (OpenAI, Midjourney, etc.) can sponsor featured placement for courses using their tools.
+- **Course Reviews & Ratings** — Star ratings + text reviews from learners. Surfaces quality courses and helps new users choose.
+- **Gamification** — Learning streaks, XP system, achievement badges, and leaderboards. Increases daily active usage and course completion rates.
+
+#### Technical Approach
+
+- Stripe integration for payments (subscriptions, one-time purchases, payouts)
+- PDF generation for certificates (or smart contract for blockchain credentials)
+- Gamification engine: XP rules, streak tracking, badge unlock conditions
+
+---
+
+### Phase 10: Scale & Infrastructure
+
+**Goal**: Prepare the platform for production-scale traffic and global reach.
+
+**Status**: 🔲 Planned
+
+#### Features
+
+- **Kubernetes + Helm** — Container orchestration with horizontal pod autoscaling. Helm charts for reproducible deployments across environments.
+- **OpenTelemetry Distributed Tracing** — Replace current Prometheus-only monitoring with full distributed tracing. Trace requests across frontend → backend → database for precise performance debugging.
+- **CDN + ISR** — Next.js Incremental Static Regeneration + CDN edge caching. Course pages load in milliseconds globally.
+- **Internationalization (i18n)** — Multi-language UI support beyond English. Priority: Traditional Chinese, Simplified Chinese, Japanese — expanding reach across Asian markets.
+
+#### Technical Approach
+
+- Helm charts + GitHub Actions CD pipeline for K8s deployment
+- Jaeger or Grafana Tempo for trace visualization
+- Cloudflare or Vercel Edge for CDN
+- next-intl or similar i18n library with JSON translation files
