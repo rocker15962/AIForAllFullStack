@@ -64,6 +64,14 @@ jobs:
         with:
           working-directory: backend
 
+      - name: Install swag
+        run: go install github.com/swaggo/swag/cmd/swag@latest
+
+      - name: Verify Swagger docs
+        run: |
+          swag init -g cmd/server/main.go -o docs/swagger
+          git diff --exit-code docs/swagger/
+
       - name: Build
         run: go build ./...
 

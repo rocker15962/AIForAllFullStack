@@ -214,9 +214,9 @@ HTTP Request
 | 9 | Dockerization | 🟢 | Multi-stage Go build (~20MB), 4-service compose with health checks |
 | 10 | CI/CD | 🟢 | GitHub Actions (5 jobs: lint, unit test, integration test, E2E, Docker build) |
 | 11 | Security | 🟢 | CORS, rate limiting, input sanitization, secure headers |
-| 12 | Observability | 🟡 | Structured logging + request ID locally; Prometheus/Grafana upgrade |
-| 13 | Code quality | 🟡 | go vet, gofmt, ESLint, Prettier, pre-commit hooks; golangci-lint upgrade path |
-| 14 | Documentation | 🟡 | README, ADRs, environment docs; Swagger/OpenAPI upgrade path |
+| 12 | Observability | 🟢 | Prometheus metrics + Grafana dashboard, structured logging + request ID |
+| 13 | Code quality | 🟢 | golangci-lint, gofmt, ESLint, Prettier, pre-commit hooks |
+| 14 | Documentation | 🟢 | Swagger/OpenAPI UI, README, ADRs, environment docs |
 
 ## API Overview
 

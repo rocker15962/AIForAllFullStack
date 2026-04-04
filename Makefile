@@ -1,4 +1,4 @@
-.PHONY: dev dev-detach stop clean migrate migrate-down seed sqlc logs logs-backend health build lint-backend monitoring
+.PHONY: dev dev-detach stop clean migrate migrate-down seed sqlc logs logs-backend health build lint-backend monitoring swagger
 
 # Start all services (foreground)
 dev:
@@ -55,3 +55,7 @@ lint-backend:
 # Start with monitoring stack (Prometheus + Grafana)
 monitoring:
 	docker compose --profile monitoring up --build
+
+# Regenerate Swagger docs
+swagger:
+	cd backend && swag init -g cmd/server/main.go -o docs/swagger

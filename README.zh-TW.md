@@ -214,9 +214,9 @@ HTTP Request
 | 9 | Docker 化 | 🟢 | Go multi-stage build（~20MB）、4 服務 compose + health check |
 | 10 | CI/CD | 🟢 | GitHub Actions（5 個 job：lint、unit test、integration test、E2E、Docker build） |
 | 11 | 安全性 | 🟢 | CORS、rate limiting、input sanitization、安全 headers |
-| 12 | 可觀測性 | 🟡 | 本地 structured logging + request ID；可升級 Prometheus/Grafana |
-| 13 | 程式碼品質 | 🟡 | go vet、gofmt、ESLint、Prettier、pre-commit hooks；可升級 golangci-lint |
-| 14 | 文件 | 🟡 | README、ADR、環境變數文件；可升級 Swagger/OpenAPI |
+| 12 | 可觀測性 | 🟢 | Prometheus metrics + Grafana dashboard、structured logging + request ID |
+| 13 | 程式碼品質 | 🟢 | golangci-lint、gofmt、ESLint、Prettier、pre-commit hooks |
+| 14 | 文件 | 🟢 | Swagger/OpenAPI UI、README、ADR、環境變數文件 |
 
 ## API 概覽
 
