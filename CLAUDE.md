@@ -53,6 +53,8 @@ make logs                 # Follow all service logs
 make logs-backend         # Follow backend logs only
 make build                # Build all Docker images
 make lint-backend         # Run Go linter
+make monitoring           # Start all services + Prometheus + Grafana
+make swagger              # Regenerate Swagger docs (swag init)
 ```
 
 ## Feature Development Lifecycle
@@ -256,6 +258,8 @@ The Go backend follows 3-Layer Clean Architecture: Handler (HTTP parsing) → Se
 - **`.env` required for OAuth**: Copy `.env.example` to `.env` and fill in Google OAuth credentials. Without valid OAuth credentials, login will fail (but the rest of the app works).
 - **Root `package.json`**: A minimal `package.json` exists at the git root solely for husky's `prepare` script. It is NOT the app's package.json.
 - **`app/` is legacy**: The frontend source code is in `frontend/`, not `app/`. Any remaining `app/` references are outdated.
+- **Monitoring is optional**: `make dev` starts 4 core services. `make monitoring` adds Prometheus (9090) + Grafana (3001) via Docker Compose profiles.
+- **Swagger docs are generated**: Run `make swagger` after changing handler annotations. Generated files in `backend/docs/swagger/` must be committed.
 
 ## Important Files
 
@@ -264,6 +268,10 @@ The Go backend follows 3-Layer Clean Architecture: Handler (HTTP parsing) → Se
 - `AIForAll.pen` — Visual design file (open with Pencil MCP tools)
 - `frontend/src/types/index.ts` — TypeScript type definitions (source of truth for data shapes)
 - `frontend/src/app/globals.css` — Design tokens and color scale definitions
-- `backend/cmd/server/main.go` — All 38 API endpoint registrations
+- `backend/cmd/server/main.go` — All 38 API endpoint registrations + Swagger general info
 - `backend/db/migrations/` — PostgreSQL schema (golang-migrate)
+- `backend/docs/swagger/` — Generated Swagger/OpenAPI spec (committed to git)
+- `backend/internal/middleware/metrics.go` — Prometheus HTTP metrics middleware
+- `monitoring/` — Prometheus config + Grafana dashboard provisioning
 - `docs/ENVIRONMENT.md` — All environment variables documentation
+- `scripts/verify-services.sh` — Verify all 6 services are running and connected

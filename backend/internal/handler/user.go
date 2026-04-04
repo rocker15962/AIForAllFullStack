@@ -22,19 +22,6 @@ func NewUserHandler(queries *repository.Queries) *UserHandler {
 	return &UserHandler{queries: queries}
 }
 
-func (h *UserHandler) resolveToolName(ctx interface{ Value(interface{}) interface{} }, toolID uuid.UUID) string {
-	tool, err := h.queries.GetToolByID(ctx.(interface {
-		Value(interface{}) interface{}
-		Deadline() (time.Time, bool)
-		Done() <-chan struct{}
-		Err() error
-	}), toolID)
-	if err != nil {
-		return ""
-	}
-	return tool.Name
-}
-
 func (h *UserHandler) getToolName(c *gin.Context, toolID uuid.UUID) string {
 	tool, err := h.queries.GetToolByID(c.Request.Context(), toolID)
 	if err != nil {
@@ -51,6 +38,15 @@ func (h *UserHandler) getSkillName(c *gin.Context, skillID uuid.UUID) string {
 	return skill.Name
 }
 
+// GetProgress godoc
+//
+//	@Summary		Get in-progress courses
+//	@Description	Returns courses the user is currently working on
+//	@Tags			user
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		401	{object}	map[string]interface{}
+//	@Router			/my/progress [get]
 func (h *UserHandler) GetProgress(c *gin.Context) {
 	userID := c.MustGet(middleware.ContextKeyUserID).(uuid.UUID)
 
@@ -63,7 +59,7 @@ func (h *UserHandler) GetProgress(c *gin.Context) {
 	items := make([]gin.H, len(rows))
 	for i, r := range rows {
 		var answers []map[string]interface{}
-		json.Unmarshal(r.Answers, &answers)
+		_ = json.Unmarshal(r.Answers, &answers)
 		answeredCount := len(answers)
 		progressPct := 0
 		if r.TotalQuestions > 0 {
@@ -88,6 +84,15 @@ func (h *UserHandler) GetProgress(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"courses": items})
 }
 
+// GetCompleted godoc
+//
+//	@Summary		Get completed courses
+//	@Description	Returns courses the user has completed with scores
+//	@Tags			user
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		401	{object}	map[string]interface{}
+//	@Router			/my/completed [get]
 func (h *UserHandler) GetCompleted(c *gin.Context) {
 	userID := c.MustGet(middleware.ContextKeyUserID).(uuid.UUID)
 
@@ -126,6 +131,15 @@ func (h *UserHandler) GetCompleted(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"courses": items})
 }
 
+// GetBadges godoc
+//
+//	@Summary		Get earned badges
+//	@Description	Returns badges earned by completing courses
+//	@Tags			user
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		401	{object}	map[string]interface{}
+//	@Router			/my/badges [get]
 func (h *UserHandler) GetBadges(c *gin.Context) {
 	userID := c.MustGet(middleware.ContextKeyUserID).(uuid.UUID)
 
@@ -153,6 +167,15 @@ func (h *UserHandler) GetBadges(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"badges": items})
 }
 
+// GetProfile godoc
+//
+//	@Summary		Get user profile
+//	@Description	Returns the user's profile with learning counts
+//	@Tags			user
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		401	{object}	map[string]interface{}
+//	@Router			/my/profile [get]
 func (h *UserHandler) GetProfile(c *gin.Context) {
 	userID := c.MustGet(middleware.ContextKeyUserID).(uuid.UUID)
 
@@ -181,6 +204,17 @@ type updateProfileRequest struct {
 	Name string `json:"name" binding:"required"`
 }
 
+// UpdateProfile godoc
+//
+//	@Summary		Update user profile
+//	@Description	Update the user's display name
+//	@Tags			user
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body	object	true	"Profile update"
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		401	{object}	map[string]interface{}
+//	@Router			/my/profile [put]
 func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	userID := c.MustGet(middleware.ContextKeyUserID).(uuid.UUID)
 
@@ -207,7 +241,15 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	})
 }
 
-// GetStats returns counts for the My Learning dashboard header
+// GetStats godoc
+//
+//	@Summary		Get learning stats
+//	@Description	Returns in-progress, completed, and badge counts
+//	@Tags			user
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		401	{object}	map[string]interface{}
+//	@Router			/my/stats [get]
 func (h *UserHandler) GetStats(c *gin.Context) {
 	userID := c.MustGet(middleware.ContextKeyUserID).(uuid.UUID)
 
@@ -224,6 +266,17 @@ func (h *UserHandler) GetStats(c *gin.Context) {
 	})
 }
 
+// UploadAvatar godoc
+//
+//	@Summary		Upload avatar
+//	@Description	Upload a new profile avatar (max 2MB, jpg/png/webp)
+//	@Tags			user
+//	@Accept			multipart/form-data
+//	@Produce		json
+//	@Param			avatar	formData	file	true	"Avatar image"
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		401	{object}	map[string]interface{}
+//	@Router			/my/avatar [post]
 func (h *UserHandler) UploadAvatar(c *gin.Context) {
 	userID := c.MustGet(middleware.ContextKeyUserID).(uuid.UUID)
 
@@ -246,7 +299,10 @@ func (h *UserHandler) UploadAvatar(c *gin.Context) {
 	}
 
 	uploadDir := "uploads/avatars"
-	os.MkdirAll(uploadDir, 0755)
+	if err := os.MkdirAll(uploadDir, 0755); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create upload directory"})
+		return
+	}
 
 	filename := fmt.Sprintf("%s%s", userID.String(), ext)
 	savePath := filepath.Join(uploadDir, filename)

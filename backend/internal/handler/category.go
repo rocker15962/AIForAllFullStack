@@ -16,6 +16,14 @@ func NewCategoryHandler(tools service.ToolRepository, skills service.SkillReposi
 	return &CategoryHandler{tools: tools, skills: skills}
 }
 
+// ListTools godoc
+//
+//	@Summary		List all tools
+//	@Description	Returns all tool categories
+//	@Tags			categories
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Router			/tools [get]
 func (h *CategoryHandler) ListTools(c *gin.Context) {
 	tools, err := h.tools.ListTools(c.Request.Context())
 	if err != nil {
@@ -25,6 +33,14 @@ func (h *CategoryHandler) ListTools(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"tools": tools})
 }
 
+// ListSkills godoc
+//
+//	@Summary		List all skills
+//	@Description	Returns all skill categories
+//	@Tags			categories
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Router			/skills [get]
 func (h *CategoryHandler) ListSkills(c *gin.Context) {
 	skills, err := h.skills.ListSkills(c.Request.Context())
 	if err != nil {

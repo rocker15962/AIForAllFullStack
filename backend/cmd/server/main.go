@@ -1,3 +1,10 @@
+//	@title			AI for All API
+//	@version		1.0
+//	@description	RESTful API for the AI for All education platform.
+
+//	@host		localhost:8080
+//	@BasePath	/api/v1
+
 package main
 
 import (
@@ -10,18 +17,23 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/redis/go-redis/v9"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/handler"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/logger"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/middleware"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/repository"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/service"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/zap"
+
+	_ "github.com/rocker15962/AIForAllFullStack/backend/docs/swagger"
 )
 
 func main() {
 	logger.Init(os.Getenv("GIN_MODE"))
-	defer logger.L.Sync()
+	defer func() { _ = logger.L.Sync() }()
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -98,6 +110,7 @@ func main() {
 	r.Use(logger.RequestID())
 	r.Use(logger.RequestLogger())
 	r.Use(middleware.CORS(frontendURL))
+	r.Use(middleware.Metrics())
 	r.Use(middleware.RateLimit(rdb))
 
 	api := r.Group("/api/v1")
@@ -157,6 +170,12 @@ func main() {
 
 	// Static file serving for uploads
 	r.Static("/uploads", "./uploads")
+
+	// Prometheus metrics endpoint
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	// Swagger API documentation
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// HTTP server with graceful shutdown
 	srv := &http.Server{
