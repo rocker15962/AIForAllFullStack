@@ -4,6 +4,10 @@
 
 非營利 AI 教育平台，透過與 YouTube 創作者合作，提供結構化的 AI 學習體驗。使用者可以觀看教學影片、完成問答測驗、追蹤學習進度並獲得完課徽章。
 
+<p align="center">
+  <img src="docs/screenshots/hero.png" alt="AI for All — 首頁" width="800" />
+</p>
+
 ## 技術選型
 
 ### 前端：Next.js + TypeScript
@@ -66,22 +70,62 @@
 ## 架構
 
 ```
-                    docker compose up
-┌──────────────────────────────────────────────────────┐
-│                   Docker Compose                      │
-│                                                       │
-│  ┌─────────────────┐     ┌──────────────────────┐    │
-│  │   Next.js 前端   │────▶│    Go API Server      │    │
-│  │   (port 3000)    │     │    (Gin + sqlc)       │    │
-│  └─────────────────┘     │    (port 8080)        │    │
-│                           └──────┬──────────┬─────┘    │
-│                                  │          │           │
-│                           ┌──────▼──┐  ┌───▼────┐     │
-│                           │PostgreSQL│  │ Redis  │     │
-│                           │ (5432)   │  │ (6379) │     │
-│                           └─────────┘  └────────┘     │
-└──────────────────────────────────────────────────────┘
+                    docker compose up [--profile monitoring]
+┌────────────────────────────────────────────────────────────┐
+│                       Docker Compose                        │
+│                                                             │
+│  ┌─────────────────┐     ┌──────────────────────┐          │
+│  │   Next.js 前端   │────▶│    Go API Server      │          │
+│  │   (port 3000)    │     │    (Gin + sqlc)       │          │
+│  └─────────────────┘     │    (port 8080)        │          │
+│                           └──┬──────────┬────┬───┘          │
+│                              │          │    │               │
+│                        ┌─────▼──┐  ┌───▼──┐ │               │
+│                        │PostgreSQL│  │Redis │ │               │
+│                        │ (5432)   │  │(6379)│ │               │
+│                        └─────────┘  └──────┘ │               │
+│                                               │               │
+│  ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘ ─ ─ ─ ─ ┐   │
+│    選用：--profile monitoring                              │
+│  │                                                       │   │
+│    ┌───────────┐  抓取 /metrics     ┌─────────┐         │   │
+│  │ │Prometheus │◀───────────────────│ Grafana │          │   │
+│    │  (9090)   │───────────────────▶│ (3001)  │         │   │
+│  │ └───────────┘                    └─────────┘          │   │
+│   ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘   │
+└────────────────────────────────────────────────────────────┘
 ```
+
+## 快速開始
+
+```bash
+# 複製並設定
+git clone https://github.com/rocker15962/AIForAllFullStack.git
+cd AIForAllFullStack
+cp .env.example .env       # 編輯 .env，填入 Google OAuth 憑證
+
+# 啟動所有服務（前端、後端、PostgreSQL、Redis）
+make dev                   # 前景模式 — 或 `make dev-detach` 背景執行
+
+# 設定資料庫
+make migrate               # 執行 PostgreSQL migration
+make seed                  # 載入種子資料（課程、工具、技能）
+
+# 驗證
+make health                # 應回傳 {"status":"ok"}
+
+# 選用：啟動監控（Prometheus + Grafana）
+make monitoring            # 加入 Prometheus (9090) + Grafana (3001)
+
+# 將自己升級為管理員（先用 OAuth 登入一次，再執行）
+make admin EMAIL=you@gmail.com
+```
+
+開啟 [http://localhost:3000](http://localhost:3000) 查看前端，[http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health) 查看後端。
+
+選用：[http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html) 查看 API 文件，[http://localhost:3001](http://localhost:3001) 查看 Grafana dashboard。
+
+環境變數說明請參考 [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md)。
 
 ## 專案結構
 
@@ -90,28 +134,40 @@ AIForAllFullStack/
 ├── frontend/                    # Next.js 前端
 │   ├── src/
 │   │   ├── app/                 # 頁面路由 (App Router)
-│   │   ├── components/          # UI 元件
+│   │   ├── components/          # UI 元件（7 個功能目錄 + ui/）
 │   │   ├── contexts/            # React Context (Auth)
-│   │   ├── lib/                 # 工具函式
+│   │   ├── lib/                 # 工具函式、schema、API client
+│   │   ├── stores/              # Zustand 狀態管理
+│   │   ├── test/                # 測試設定
 │   │   └── types/               # TypeScript 型別
+│   ├── e2e/                     # Playwright E2E 測試
 │   ├── Dockerfile
 │   └── package.json
 ├── backend/                     # Go API Server
 │   ├── cmd/server/              # 進入點
 │   ├── internal/
-│   │   ├── handler/             # HTTP handlers
-│   │   ├── middleware/          # JWT 驗證、CORS、rate limiting
+│   │   ├── handler/             # HTTP handlers（6 個檔案）
+│   │   ├── middleware/          # JWT 驗證、CORS、rate limiting、Prometheus metrics
 │   │   ├── service/             # 業務邏輯層
-│   │   └── repository/         # 資料存取層 (sqlc 生成)
+│   │   ├── repository/          # 資料存取層（sqlc 生成）
+│   │   ├── integration/         # 整合測試（testcontainers-go）
+│   │   └── logger/              # 結構化日誌（zap）
 │   ├── db/
-│   │   ├── migrations/          # SQL migration
-│   │   ├── queries/             # sqlc 查詢
+│   │   ├── migrations/          # SQL migration（golang-migrate）
+│   │   ├── queries/             # sqlc SQL 查詢
 │   │   └── seed.sql             # 種子資料
+│   ├── docs/swagger/            # 生成的 Swagger/OpenAPI 規格
 │   ├── Dockerfile
 │   └── go.mod
-├── docker-compose.yml           # 一鍵啟動
+├── monitoring/                  # Prometheus + Grafana 設定
+│   ├── prometheus.yml           # 抓取設定
+│   └── grafana/                 # Dashboard provisioning + JSON
+├── scripts/                     # 工具腳本
+│   └── verify-services.sh      # 驗證所有服務連線狀態
+├── .github/workflows/ci.yml    # GitHub Actions CI（5 個 job）
+├── docker-compose.yml           # 4 核心 + 2 監控（profile）
 ├── .env.example                 # 環境變數範本
-├── Makefile                     # 常用指令
+├── Makefile                     # 常用指令（15 個 target）
 ├── PRODUCT_ROADMAP.md           # 產品路線圖（English）
 ├── PRODUCT_ROADMAP.zh-TW.md     # 產品路線圖（繁體中文）
 └── docs/                        # 技術文件
@@ -128,6 +184,23 @@ AIForAllFullStack/
 - 課程難度標註（初階、中階、高階）
 - 課程搜尋與篩選
 - 後台管理系統（課程、使用者、分類管理）
+
+### 畫面截圖
+
+<p align="center">
+  <img src="docs/screenshots/course-discovery.png" alt="課程探索 — 瀏覽與篩選課程" width="800" />
+  <br><em>課程探索 — 依工具、技能、難度篩選課程</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/course-learning.png" alt="課程學習 — 影片觀看與問答測驗" width="800" />
+  <br><em>課程學習 — 內嵌 YouTube 影片搭配逐步問答測驗</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/admin-dashboard.png" alt="後台管理 — 平台數據分析" width="800" />
+  <br><em>後台管理 — 使用者趨勢、熱門課程、平台統計</em>
+</p>
 
 ## 設計系統
 
@@ -178,26 +251,71 @@ HTTP Request
 | 2 | Go 後端架構 | 🟢 | 3-Layer Clean（Handler → Service → Repository） |
 | 3 | 資料庫設計 | 🟢 | PostgreSQL + golang-migrate 版本化遷移 |
 | 4 | API 設計 | 🟢 | RESTful、版本化 (/api/v1/)、統一回應格式 |
-| 5 | 認證與授權 | 🟡 | 本地 Email/Password + JWT；未來可接 OAuth2 |
+| 5 | 認證與授權 | 🟢 | Google OAuth2 + JWT（access token + HttpOnly refresh cookie） |
 | 6 | 快取層 | 🟢 | Redis 課程列表快取、rate limiting |
 | 7 | 前端調整 | 🟢 | TanStack Query、Zustand、shadcn/ui、Zod |
 | 8 | 測試策略 | 🟢 | Go unit + integration（testcontainers-go）；前端 Vitest |
 | 9 | Docker 化 | 🟢 | Go multi-stage build（~20MB）、4 服務 compose + health check |
-| 10 | CI/CD | 🟡 | GitHub Actions（lint → test → build） |
+| 10 | CI/CD | 🟢 | GitHub Actions（5 個 job：lint、unit test、integration test、E2E、Docker build） |
 | 11 | 安全性 | 🟢 | CORS、rate limiting、input sanitization、安全 headers |
-| 12 | 可觀測性 | 🟡 | 本地 structured logging + request ID；可升級 Prometheus/Grafana |
+| 12 | 可觀測性 | 🟢 | Prometheus metrics + Grafana dashboard、structured logging + request ID |
 | 13 | 程式碼品質 | 🟢 | golangci-lint、gofmt、ESLint、Prettier、pre-commit hooks |
-| 14 | 文件 | 🟢 | README、ADR、Swagger/OpenAPI |
+| 14 | 文件 | 🟢 | Swagger/OpenAPI UI、README、ADR、環境變數文件 |
+
+<p align="center">
+  <img src="docs/screenshots/grafana-dashboard.png" alt="Grafana Dashboard — HTTP 指標概覽" width="800" />
+  <br><em>Grafana Dashboard — 請求速率、延遲百分位、錯誤率、進行中請求</em>
+</p>
+
+## API 概覽
+
+39 個端點，分為 7 個領域，皆位於 `/api/v1/` 下：
+
+| 領域 | 端點 | 認證 | 說明 |
+|------|------|------|------|
+| Health | `GET /health` | — | 服務健康檢查 |
+| Auth | `GET /auth/google/login`, `GET /auth/google/callback`, `POST /auth/refresh`, `POST /auth/logout`, `GET /auth/me` | 部分 | Google OAuth2 流程 + session 管理 |
+| Courses | `GET /courses`, `GET /courses/:id`, `GET /courses/:id/recommended`, `POST /courses/:id/submit`, `POST /courses/:id/complete` | 部分 | 瀏覽、學習、答題、完課 |
+| Categories | `GET /tools`, `GET /skills`, `GET /creators` | — | 公開的工具/技能/創作者列表 |
+| User | `GET /my/progress`, `GET /my/completed`, `GET /my/badges`, `GET /my/stats`, `GET /my/profile`, `PUT /my/profile`, `POST /my/avatar` | 必要 | 學習進度、個人資料管理 |
+| Admin | 18 個端點（`/admin/dashboard`, `/admin/courses/*`, `/admin/users/*`, `/admin/tools/*`, `/admin/skills/*`） | 管理員 | 儀表板、課程/使用者/分類 CRUD |
+
+<p align="center">
+  <img src="docs/screenshots/swagger-ui.png" alt="Swagger UI — 互動式 API 文件" width="800" />
+  <br><em>Swagger UI — 39 個端點的互動式 API 文件</em>
+</p>
+
+## 測試
+
+| 類型 | 工具 | 位置 | 指令 |
+|------|------|------|------|
+| 後端 unit | Go `testing` | `backend/internal/service/`, `handler/`, `middleware/` | `cd backend && go test ./...` |
+| 後端 integration | testcontainers-go + 真實 PostgreSQL | `backend/internal/integration/` | `cd backend && go test -tags integration ./internal/integration/ -v` |
+| 前端 unit | Vitest + React Testing Library | `frontend/src/**/__tests__/` | `cd frontend && npx vitest run` |
+| 前端 E2E | Playwright | `frontend/e2e/` | `cd frontend && npx playwright test` |
+
+CI 會在 push/PR 至 `dev` 和 `main` 時自動執行所有 4 種測試。
 
 ## 實作階段
 
-分為 6 個循序階段，後端優先：
+全部 6 個階段已完成，後端優先：
 
-| 階段 | 名稱 | 核心交付物 |
-|------|------|-----------|
-| 1 | 基礎設施 + Go 骨架 | Docker Compose、Go 專案骨架、PostgreSQL 遷移、sqlc、health check、Makefile |
-| 2 | 認證系統 | JWT 認證流程、auth/admin middleware、rate limiting |
-| 3 | 核心 API | 課程瀏覽、進度追蹤、搜尋/篩選/分頁、Redis 快取 |
-| 4 | 管理員 API | 儀表板統計、課程/使用者/分類管理 |
-| 5 | 前端改造 | app/ → frontend/、移除 SQLite、接 Go API |
-| 6 | 品質保證 | 測試覆蓋、CI/CD、Swagger 文件、linting、README 完善 |
+| 階段 | 名稱 | 狀態 |
+|------|------|------|
+| 1 | 基礎設施 + Go 骨架 | ✅ 已完成 |
+| 2 | 認證系統 | ✅ 已完成 |
+| 3 | 核心 API | ✅ 已完成 |
+| 4 | 管理員 API | ✅ 已完成 |
+| 5 | 前端改造 | ✅ 已完成 |
+| 6 | 品質保證 | ✅ 已完成 |
+
+## 未來產品路線圖
+
+| 階段 | 名稱 | 重點 |
+|------|------|------|
+| 7 | AI 驅動學習 | LLM 個人化學習路徑、RAG 驅動的 AI 助教 |
+| 8 | 創作者生態系 | 創作者自助上架、簡答題批改回饋、內容數據分析 |
+| 9 | 商業化與成長 | 創作者分潤、可驗證證書、企業方案、遊戲化 |
+| 10 | 規模化與基礎設施 | Kubernetes + Helm、OpenTelemetry 分散式追蹤、CDN + ISR、i18n |
+
+詳細功能描述與技術方向請參考 [`PRODUCT_ROADMAP.zh-TW.md`](PRODUCT_ROADMAP.zh-TW.md)。

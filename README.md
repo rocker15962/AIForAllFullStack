@@ -4,6 +4,10 @@
 
 A nonprofit AI education platform that partners with YouTube creators to deliver structured AI learning experiences. Users can watch tutorial videos, complete quizzes, track learning progress, and earn completion badges.
 
+<p align="center">
+  <img src="docs/screenshots/hero.png" alt="AI for All — Landing Page" width="800" />
+</p>
+
 ## Tech Stack
 
 ### Frontend: Next.js + TypeScript
@@ -66,22 +70,62 @@ This project is designed for long-term growth, targeting a large-scale education
 ## Architecture
 
 ```
-                    docker compose up
-┌──────────────────────────────────────────────────────┐
-│                   Docker Compose                      │
-│                                                       │
-│  ┌─────────────────┐     ┌──────────────────────┐    │
-│  │  Next.js Frontend│────▶│    Go API Server      │    │
-│  │   (port 3000)    │     │    (Gin + sqlc)       │    │
-│  └─────────────────┘     │    (port 8080)        │    │
-│                           └──────┬──────────┬─────┘    │
-│                                  │          │           │
-│                           ┌──────▼──┐  ┌───▼────┐     │
-│                           │PostgreSQL│  │ Redis  │     │
-│                           │ (5432)   │  │ (6379) │     │
-│                           └─────────┘  └────────┘     │
-└──────────────────────────────────────────────────────┘
+                    docker compose up [--profile monitoring]
+┌────────────────────────────────────────────────────────────┐
+│                       Docker Compose                        │
+│                                                             │
+│  ┌─────────────────┐     ┌──────────────────────┐          │
+│  │  Next.js Frontend│────▶│    Go API Server      │          │
+│  │   (port 3000)    │     │    (Gin + sqlc)       │          │
+│  └─────────────────┘     │    (port 8080)        │          │
+│                           └──┬──────────┬────┬───┘          │
+│                              │          │    │               │
+│                        ┌─────▼──┐  ┌───▼──┐ │               │
+│                        │PostgreSQL│  │Redis │ │               │
+│                        │ (5432)   │  │(6379)│ │               │
+│                        └─────────┘  └──────┘ │               │
+│                                               │               │
+│  ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘ ─ ─ ─ ─ ┐   │
+│    Optional: --profile monitoring                          │
+│  │                                                       │   │
+│    ┌───────────┐  scrape /metrics   ┌─────────┐         │   │
+│  │ │Prometheus │◀───────────────────│ Grafana │          │   │
+│    │  (9090)   │───────────────────▶│ (3001)  │         │   │
+│  │ └───────────┘                    └─────────┘          │   │
+│   ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘   │
+└────────────────────────────────────────────────────────────┘
 ```
+
+## Getting Started
+
+```bash
+# Clone and configure
+git clone https://github.com/rocker15962/AIForAllFullStack.git
+cd AIForAllFullStack
+cp .env.example .env       # Edit .env with your Google OAuth credentials
+
+# Start all services (frontend, backend, PostgreSQL, Redis)
+make dev                   # Foreground — or `make dev-detach` for background
+
+# Set up database
+make migrate               # Run PostgreSQL migrations
+make seed                  # Load seed data (courses, tools, skills)
+
+# Verify
+make health                # Should return {"status":"ok"}
+
+# Optional: start with monitoring (Prometheus + Grafana)
+make monitoring            # Adds Prometheus (9090) + Grafana (3001)
+
+# Promote yourself to admin (login via OAuth first, then run)
+make admin EMAIL=you@gmail.com
+```
+
+Open [http://localhost:3000](http://localhost:3000) for the frontend, [http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health) for the backend.
+
+Optional: [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html) for API docs, [http://localhost:3001](http://localhost:3001) for Grafana dashboard.
+
+See [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md) for all environment variables.
 
 ## Project Structure
 
@@ -90,28 +134,40 @@ AIForAllFullStack/
 ├── frontend/                    # Next.js frontend
 │   ├── src/
 │   │   ├── app/                 # Page routes (App Router)
-│   │   ├── components/          # UI components
+│   │   ├── components/          # UI components (7 feature dirs + ui/)
 │   │   ├── contexts/            # React Context (Auth)
-│   │   ├── lib/                 # Utility functions
+│   │   ├── lib/                 # Utility functions, schemas, API client
+│   │   ├── stores/              # Zustand state management
+│   │   ├── test/                # Test setup
 │   │   └── types/               # TypeScript types
+│   ├── e2e/                     # Playwright E2E tests
 │   ├── Dockerfile
 │   └── package.json
 ├── backend/                     # Go API Server
 │   ├── cmd/server/              # Entry point
 │   ├── internal/
-│   │   ├── handler/             # HTTP handlers
-│   │   ├── middleware/          # JWT auth, CORS, rate limiting
+│   │   ├── handler/             # HTTP handlers (6 files)
+│   │   ├── middleware/          # JWT auth, CORS, rate limiting, Prometheus metrics
 │   │   ├── service/             # Business logic layer
-│   │   └── repository/         # Data access layer (sqlc generated)
+│   │   ├── repository/          # Data access layer (sqlc generated)
+│   │   ├── integration/         # Integration tests (testcontainers-go)
+│   │   └── logger/              # Structured logging (zap)
 │   ├── db/
-│   │   ├── migrations/          # SQL migrations
-│   │   ├── queries/             # sqlc queries
+│   │   ├── migrations/          # SQL migrations (golang-migrate)
+│   │   ├── queries/             # sqlc SQL queries
 │   │   └── seed.sql             # Seed data
+│   ├── docs/swagger/            # Generated Swagger/OpenAPI spec
 │   ├── Dockerfile
 │   └── go.mod
-├── docker-compose.yml           # One-command startup
+├── monitoring/                  # Prometheus + Grafana configs
+│   ├── prometheus.yml           # Scrape config
+│   └── grafana/                 # Dashboard provisioning + JSON
+├── scripts/                     # Utility scripts
+│   └── verify-services.sh      # Verify all services connectivity
+├── .github/workflows/ci.yml    # GitHub Actions CI (5 jobs)
+├── docker-compose.yml           # 4 core + 2 monitoring (profile)
 ├── .env.example                 # Environment variables template
-├── Makefile                     # Common commands
+├── Makefile                     # Common commands (15 targets)
 ├── PRODUCT_ROADMAP.md           # Product roadmap (English)
 ├── PRODUCT_ROADMAP.zh-TW.md     # Product roadmap (繁體中文)
 └── docs/                        # Technical documentation
@@ -128,6 +184,23 @@ AIForAllFullStack/
 - Course difficulty levels (beginner, intermediate, advanced)
 - Course search and filtering
 - Admin dashboard (course, user, and category management)
+
+### Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/course-discovery.png" alt="Course Discovery — Browse and filter courses" width="800" />
+  <br><em>Course Discovery — Browse and filter courses by tool, skill, and difficulty</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/course-learning.png" alt="Course Learning — Watch video and take quiz" width="800" />
+  <br><em>Course Learning — Embedded YouTube video with step-by-step quiz</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/admin-dashboard.png" alt="Admin Dashboard — Platform analytics" width="800" />
+  <br><em>Admin Dashboard — User trends, popular courses, and platform stats</em>
+</p>
 
 ## Design System
 
@@ -178,26 +251,71 @@ HTTP Request
 | 2 | Go backend architecture | 🟢 | 3-Layer Clean (Handler → Service → Repository) |
 | 3 | Database | 🟢 | PostgreSQL with golang-migrate versioned migrations |
 | 4 | API design | 🟢 | RESTful, versioned (/api/v1/), unified response format |
-| 5 | Authentication | 🟡 | Email/Password + JWT locally; OAuth2 upgrade path |
+| 5 | Authentication | 🟢 | Google OAuth2 + JWT (access token + HttpOnly refresh cookie) |
 | 6 | Caching | 🟢 | Redis for list caching, rate limiting |
 | 7 | Frontend adjustments | 🟢 | TanStack Query, Zustand, shadcn/ui, Zod |
 | 8 | Testing | 🟢 | Go unit + integration (testcontainers-go); Vitest frontend |
 | 9 | Dockerization | 🟢 | Multi-stage Go build (~20MB), 4-service compose with health checks |
-| 10 | CI/CD | 🟡 | GitHub Actions (lint → test → build) |
+| 10 | CI/CD | 🟢 | GitHub Actions (5 jobs: lint, unit test, integration test, E2E, Docker build) |
 | 11 | Security | 🟢 | CORS, rate limiting, input sanitization, secure headers |
-| 12 | Observability | 🟡 | Structured logging + request ID locally; Prometheus/Grafana upgrade |
+| 12 | Observability | 🟢 | Prometheus metrics + Grafana dashboard, structured logging + request ID |
 | 13 | Code quality | 🟢 | golangci-lint, gofmt, ESLint, Prettier, pre-commit hooks |
-| 14 | Documentation | 🟢 | README, ADRs, Swagger/OpenAPI |
+| 14 | Documentation | 🟢 | Swagger/OpenAPI UI, README, ADRs, environment docs |
+
+<p align="center">
+  <img src="docs/screenshots/grafana-dashboard.png" alt="Grafana Dashboard — HTTP metrics overview" width="800" />
+  <br><em>Grafana Dashboard — Request rate, latency percentiles, error rate, and in-flight requests</em>
+</p>
+
+## API Overview
+
+39 endpoints across 7 domains, all under `/api/v1/`:
+
+| Domain | Endpoints | Auth | Description |
+|--------|-----------|------|-------------|
+| Health | `GET /health` | — | Service health check |
+| Auth | `GET /auth/google/login`, `GET /auth/google/callback`, `POST /auth/refresh`, `POST /auth/logout`, `GET /auth/me` | Partial | Google OAuth2 flow + session management |
+| Courses | `GET /courses`, `GET /courses/:id`, `GET /courses/:id/recommended`, `POST /courses/:id/submit`, `POST /courses/:id/complete` | Partial | Browse, learn, submit answers, complete courses |
+| Categories | `GET /tools`, `GET /skills`, `GET /creators` | — | Public tool/skill/creator listings |
+| User | `GET /my/progress`, `GET /my/completed`, `GET /my/badges`, `GET /my/stats`, `GET /my/profile`, `PUT /my/profile`, `POST /my/avatar` | Required | Learning progress, profile management |
+| Admin | 18 endpoints (`/admin/dashboard`, `/admin/courses/*`, `/admin/users/*`, `/admin/tools/*`, `/admin/skills/*`) | Admin | Dashboard, course/user/category CRUD |
+
+<p align="center">
+  <img src="docs/screenshots/swagger-ui.png" alt="Swagger UI — Interactive API documentation" width="800" />
+  <br><em>Swagger UI — Interactive API documentation for all 39 endpoints</em>
+</p>
+
+## Testing
+
+| Type | Tool | Location | Command |
+|------|------|----------|---------|
+| Backend unit | Go `testing` | `backend/internal/service/`, `handler/`, `middleware/` | `cd backend && go test ./...` |
+| Backend integration | testcontainers-go + real PostgreSQL | `backend/internal/integration/` | `cd backend && go test -tags integration ./internal/integration/ -v` |
+| Frontend unit | Vitest + React Testing Library | `frontend/src/**/__tests__/` | `cd frontend && npx vitest run` |
+| Frontend E2E | Playwright | `frontend/e2e/` | `cd frontend && npx playwright test` |
+
+CI runs all 4 test types automatically on push/PR to `dev` and `main`.
 
 ## Implementation Phases
 
-Work is decomposed into 6 sequential phases, backend-first:
+All 6 phases completed, backend-first:
 
-| Phase | Name | Key Deliverable |
-|-------|------|----------------|
-| 1 | Infrastructure + Go Skeleton | Docker Compose, Go scaffold, PostgreSQL migrations, sqlc, health check, Makefile |
-| 2 | Authentication System | JWT auth flow, auth/admin middleware, rate limiting |
-| 3 | Core API | Course browsing, progress tracking, search/filter/pagination, Redis cache |
-| 4 | Admin API | Dashboard stats, course/user/category management |
-| 5 | Frontend Migration | app/ → frontend/, remove SQLite, connect to Go API |
-| 6 | Quality Assurance | Test coverage, CI/CD, Swagger docs, linting, README polish |
+| Phase | Name | Status |
+|-------|------|--------|
+| 1 | Infrastructure + Go Skeleton | ✅ Complete |
+| 2 | Authentication System | ✅ Complete |
+| 3 | Core API | ✅ Complete |
+| 4 | Admin API | ✅ Complete |
+| 5 | Frontend Migration | ✅ Complete |
+| 6 | Quality Assurance | ✅ Complete |
+
+## Future Roadmap
+
+| Phase | Name | Highlights |
+|-------|------|------------|
+| 7 | AI-Powered Learning | LLM-driven personalized learning paths, AI chatbot tutor with RAG |
+| 8 | Creator Ecosystem | Creator self-service course submission, short-answer grading with direct feedback, content analytics |
+| 9 | Monetization & Growth | Creator revenue sharing, verifiable certificates, enterprise plans, gamification |
+| 10 | Scale & Infrastructure | Kubernetes + Helm, OpenTelemetry distributed tracing, CDN + ISR, i18n |
+
+See [`PRODUCT_ROADMAP.md`](PRODUCT_ROADMAP.md) for detailed feature descriptions and technical approach.

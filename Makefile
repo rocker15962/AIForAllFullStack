@@ -1,4 +1,4 @@
-.PHONY: dev dev-detach stop clean migrate migrate-down seed sqlc logs logs-backend health build
+.PHONY: dev dev-detach stop clean migrate migrate-down seed sqlc logs logs-backend health build lint-backend monitoring swagger admin
 
 # Start all services (foreground)
 dev:
@@ -47,3 +47,22 @@ health:
 # Build all Docker images
 build:
 	docker compose build
+
+# Run Go linter
+lint-backend:
+	cd backend && golangci-lint run ./...
+
+# Start with monitoring stack (Prometheus + Grafana)
+monitoring:
+	docker compose --profile monitoring up --build
+
+# Regenerate Swagger docs
+swagger:
+	cd backend && swag init -g cmd/server/main.go -o docs/swagger
+
+# Promote a user to admin (requires prior OAuth login)
+admin:
+	@test -n "$(EMAIL)" || (echo "Usage: make admin EMAIL=you@gmail.com" && exit 1)
+	@docker compose exec -T postgres psql -U aiforall -d aiforall \
+		-c "UPDATE users SET is_admin = true WHERE email = '$(EMAIL)';"
+	@echo "✓ $(EMAIL) is now admin"

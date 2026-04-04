@@ -21,7 +21,15 @@ func NewAdminHandler(queries *repository.Queries) *AdminHandler {
 	return &AdminHandler{queries: queries}
 }
 
-// Dashboard returns combined stats, user trend, and popular courses.
+// Dashboard godoc
+//
+//	@Summary		Admin dashboard
+//	@Description	Returns platform stats, user trends, and popular courses
+//	@Tags			admin
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		403	{object}	map[string]interface{}
+//	@Router			/admin/dashboard [get]
 func (h *AdminHandler) Dashboard(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -128,6 +136,16 @@ func (h *AdminHandler) formatFullCourse(ctx context.Context, course repository.C
 	}
 }
 
+// GetCourse godoc
+//
+//	@Summary		Get course detail (admin)
+//	@Description	Returns full course with questions and answers
+//	@Tags			admin
+//	@Produce		json
+//	@Param			id	path	string	true	"Course ID"
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		403	{object}	map[string]interface{}
+//	@Router			/admin/courses/{id} [get]
 func (h *AdminHandler) GetCourse(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -150,11 +168,11 @@ func (h *AdminHandler) GetCourse(c *gin.Context) {
 		// Unmarshal json.RawMessage fields so they serialize as JSON objects, not base64
 		var options interface{}
 		if q.Options != nil {
-			json.Unmarshal(q.Options, &options)
+			_ = json.Unmarshal(q.Options, &options)
 		}
 		var keywords interface{}
 		if q.AcceptableKeywords != nil {
-			json.Unmarshal(q.AcceptableKeywords, &keywords)
+			_ = json.Unmarshal(q.AcceptableKeywords, &keywords)
 		}
 
 		qItems[i] = gin.H{
@@ -189,7 +207,17 @@ func (h *AdminHandler) resolveSkillName(ctx context.Context, skillID uuid.UUID) 
 	return skill.Name
 }
 
-// ListCourses returns all courses with search and status filter.
+// ListCourses godoc
+//
+//	@Summary		List all courses (admin)
+//	@Description	Returns all courses with search and status filter
+//	@Tags			admin
+//	@Produce		json
+//	@Param			search	query	string	false	"Search by title"
+//	@Param			status	query	string	false	"Filter by status (draft/published)"
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		403	{object}	map[string]interface{}
+//	@Router			/admin/courses [get]
 func (h *AdminHandler) ListCourses(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -224,7 +252,17 @@ type adminCourseRequest struct {
 	Status       string `json:"status"`
 }
 
-// CreateCourse creates a new course.
+// CreateCourse godoc
+//
+//	@Summary		Create course
+//	@Description	Create a new course
+//	@Tags			admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body	object	true	"Course data"
+//	@Success		201	{object}	map[string]interface{}
+//	@Failure		403	{object}	map[string]interface{}
+//	@Router			/admin/courses [post]
 func (h *AdminHandler) CreateCourse(c *gin.Context) {
 	var req adminCourseRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -274,7 +312,18 @@ func (h *AdminHandler) CreateCourse(c *gin.Context) {
 	c.JSON(http.StatusCreated, h.formatFullCourse(c.Request.Context(), course))
 }
 
-// UpdateCourse updates an existing course.
+// UpdateCourse godoc
+//
+//	@Summary		Update course
+//	@Description	Update an existing course
+//	@Tags			admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path	string	true	"Course ID"
+//	@Param			body	body	object	true	"Course data"
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		403	{object}	map[string]interface{}
+//	@Router			/admin/courses/{id} [put]
 func (h *AdminHandler) UpdateCourse(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -325,7 +374,16 @@ func (h *AdminHandler) UpdateCourse(c *gin.Context) {
 	c.JSON(http.StatusOK, h.formatFullCourse(c.Request.Context(), course))
 }
 
-// DeleteCourse deletes a course by ID.
+// DeleteCourse godoc
+//
+//	@Summary		Delete course
+//	@Description	Delete a course and its questions
+//	@Tags			admin
+//	@Produce		json
+//	@Param			id	path	string	true	"Course ID"
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		403	{object}	map[string]interface{}
+//	@Router			/admin/courses/{id} [delete]
 func (h *AdminHandler) DeleteCourse(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -341,7 +399,16 @@ func (h *AdminHandler) DeleteCourse(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "course deleted"})
 }
 
-// TogglePublish flips a course between published and draft.
+// TogglePublish godoc
+//
+//	@Summary		Toggle course publish status
+//	@Description	Switch course between draft and published
+//	@Tags			admin
+//	@Produce		json
+//	@Param			id	path	string	true	"Course ID"
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		403	{object}	map[string]interface{}
+//	@Router			/admin/courses/{id}/publish [put]
 func (h *AdminHandler) TogglePublish(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -371,7 +438,16 @@ func (h *AdminHandler) TogglePublish(c *gin.Context) {
 	c.JSON(http.StatusOK, h.formatFullCourse(ctx, course))
 }
 
-// ListUsers returns all users with optional search.
+// ListUsers godoc
+//
+//	@Summary		List all users
+//	@Description	Returns all users with optional search
+//	@Tags			admin
+//	@Produce		json
+//	@Param			search	query	string	false	"Search by name or email"
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		403	{object}	map[string]interface{}
+//	@Router			/admin/users [get]
 func (h *AdminHandler) ListUsers(c *gin.Context) {
 	users, err := h.queries.AdminListUsers(c.Request.Context(), service.NullableText(c.Query("search")))
 	if err != nil {
@@ -396,7 +472,16 @@ func (h *AdminHandler) ListUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"users": items})
 }
 
-// GetUserProgress returns a specific user's course progress.
+// GetUserProgress godoc
+//
+//	@Summary		Get user progress (admin)
+//	@Description	Returns a user's course progress details
+//	@Tags			admin
+//	@Produce		json
+//	@Param			id	path	string	true	"User ID"
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		403	{object}	map[string]interface{}
+//	@Router			/admin/users/{id}/progress [get]
 func (h *AdminHandler) GetUserProgress(c *gin.Context) {
 	userID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -429,9 +514,9 @@ func (h *AdminHandler) GetUserProgress(c *gin.Context) {
 		items[i] = gin.H{
 			"courseId":        r.CourseID.String(),
 			"courseTitle":     r.CourseTitle,
-			"status":         string(r.Status),
-			"score":          score,
-			"completedAt":    completedAt,
+			"status":          string(r.Status),
+			"score":           score,
+			"completedAt":     completedAt,
 			"currentQuestion": currentQuestion,
 			"totalQuestions":  r.TotalQuestions,
 		}
@@ -440,7 +525,15 @@ func (h *AdminHandler) GetUserProgress(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"progress": items})
 }
 
-// ListCategories returns all tools and skills.
+// ListCategories godoc
+//
+//	@Summary		List all categories
+//	@Description	Returns all tools and skills
+//	@Tags			admin
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		403	{object}	map[string]interface{}
+//	@Router			/admin/categories [get]
 func (h *AdminHandler) ListCategories(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -467,7 +560,15 @@ type categoryRequest struct {
 	Icon string `json:"icon" binding:"required"`
 }
 
-// CreateTool creates a new tool category.
+// CreateTool godoc
+//
+//	@Summary		Create tool
+//	@Tags			admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body	object	true	"Tool data (name, icon)"
+//	@Success		201	{object}	map[string]interface{}
+//	@Router			/admin/tools [post]
 func (h *AdminHandler) CreateTool(c *gin.Context) {
 	var req categoryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -495,7 +596,16 @@ func (h *AdminHandler) CreateTool(c *gin.Context) {
 	c.JSON(http.StatusCreated, tool)
 }
 
-// UpdateTool updates an existing tool.
+// UpdateTool godoc
+//
+//	@Summary		Update tool
+//	@Tags			admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path	string	true	"Tool ID"
+//	@Param			body	body	object	true	"Tool data (name, icon)"
+//	@Success		200	{object}	map[string]interface{}
+//	@Router			/admin/tools/{id} [put]
 func (h *AdminHandler) UpdateTool(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -522,7 +632,14 @@ func (h *AdminHandler) UpdateTool(c *gin.Context) {
 	c.JSON(http.StatusOK, tool)
 }
 
-// DeleteTool deletes a tool by ID.
+// DeleteTool godoc
+//
+//	@Summary		Delete tool
+//	@Tags			admin
+//	@Produce		json
+//	@Param			id	path	string	true	"Tool ID"
+//	@Success		200	{object}	map[string]interface{}
+//	@Router			/admin/tools/{id} [delete]
 func (h *AdminHandler) DeleteTool(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -542,8 +659,15 @@ type reorderRequest struct {
 	IDs []string `json:"ids" binding:"required"`
 }
 
-// ReorderTools updates the order of tools based on the provided ID array.
-// Uses raw SQL because sqlc does not support array unnesting well.
+// ReorderTools godoc
+//
+//	@Summary		Reorder tools
+//	@Tags			admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body	object	true	"Ordered tool IDs"
+//	@Success		200	{object}	map[string]interface{}
+//	@Router			/admin/tools/reorder [put]
 func (h *AdminHandler) ReorderTools(c *gin.Context) {
 	var req reorderRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -576,7 +700,15 @@ func (h *AdminHandler) ReorderTools(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"tools": tools})
 }
 
-// CreateSkill creates a new skill category.
+// CreateSkill godoc
+//
+//	@Summary		Create skill
+//	@Tags			admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body	object	true	"Skill data (name, icon)"
+//	@Success		201	{object}	map[string]interface{}
+//	@Router			/admin/skills [post]
 func (h *AdminHandler) CreateSkill(c *gin.Context) {
 	var req categoryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -603,7 +735,16 @@ func (h *AdminHandler) CreateSkill(c *gin.Context) {
 	c.JSON(http.StatusCreated, skill)
 }
 
-// UpdateSkill updates an existing skill.
+// UpdateSkill godoc
+//
+//	@Summary		Update skill
+//	@Tags			admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path	string	true	"Skill ID"
+//	@Param			body	body	object	true	"Skill data (name, icon)"
+//	@Success		200	{object}	map[string]interface{}
+//	@Router			/admin/skills/{id} [put]
 func (h *AdminHandler) UpdateSkill(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -630,7 +771,14 @@ func (h *AdminHandler) UpdateSkill(c *gin.Context) {
 	c.JSON(http.StatusOK, skill)
 }
 
-// DeleteSkill deletes a skill by ID.
+// DeleteSkill godoc
+//
+//	@Summary		Delete skill
+//	@Tags			admin
+//	@Produce		json
+//	@Param			id	path	string	true	"Skill ID"
+//	@Success		200	{object}	map[string]interface{}
+//	@Router			/admin/skills/{id} [delete]
 func (h *AdminHandler) DeleteSkill(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -646,7 +794,15 @@ func (h *AdminHandler) DeleteSkill(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "skill deleted"})
 }
 
-// ReorderSkills updates the order of skills based on the provided ID array.
+// ReorderSkills godoc
+//
+//	@Summary		Reorder skills
+//	@Tags			admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body	object	true	"Ordered skill IDs"
+//	@Success		200	{object}	map[string]interface{}
+//	@Router			/admin/skills/reorder [put]
 func (h *AdminHandler) ReorderSkills(c *gin.Context) {
 	var req reorderRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

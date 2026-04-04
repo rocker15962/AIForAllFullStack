@@ -25,6 +25,14 @@ type healthResponse struct {
 	Services  map[string]string `json:"services"`
 }
 
+// Check godoc
+//
+//	@Summary		Health check
+//	@Description	Returns service health status including database and Redis connectivity
+//	@Tags			health
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Router			/health [get]
 func (h *HealthHandler) Check(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
 	defer cancel()

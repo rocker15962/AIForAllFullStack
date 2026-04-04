@@ -26,3 +26,32 @@ func (q *Queries) GetCreatorByID(ctx context.Context, id uuid.UUID) (Creator, er
 	)
 	return i, err
 }
+
+const listCreators = `-- name: ListCreators :many
+SELECT id, name, avatar_url, channel_url FROM creators ORDER BY name
+`
+
+func (q *Queries) ListCreators(ctx context.Context) ([]Creator, error) {
+	rows, err := q.db.Query(ctx, listCreators)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Creator{}
+	for rows.Next() {
+		var i Creator
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.AvatarUrl,
+			&i.ChannelUrl,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

@@ -220,12 +220,16 @@ User ─────────< Progress >───────── Course
 
 | Phase | Name | Goal | Status |
 |-------|------|------|--------|
-| 1 | Foundation | Set up Go skeleton, Docker Compose, PostgreSQL, design tokens, routing, App Shell | 🔲 Not Started |
-| 2 | Authentication | OAuth2 + JWT auth system with role-based access | 🔲 Not Started |
-| 3 | Course Discovery & Learning | Browse, search, filter courses + video playback + quiz system | 🔲 Not Started |
-| 4 | User & Progress | Learning dashboard, progress tracking, profile, badges | 🔲 Not Started |
-| 5 | Admin Dashboard | Analytics, course/user/category management | 🔲 Not Started |
-| 6 | Quality Assurance | Testing, CI/CD, API docs, linting | 🔲 Not Started |
+| 1 | Foundation | Set up Go skeleton, Docker Compose, PostgreSQL, design tokens, routing, App Shell | ✅ Complete |
+| 2 | Authentication | OAuth2 + JWT auth system with role-based access | ✅ Complete |
+| 3 | Course Discovery & Learning | Browse, search, filter courses + video playback + quiz system | ✅ Complete |
+| 4 | User & Progress | Learning dashboard, progress tracking, profile, badges | ✅ Complete |
+| 5 | Admin Dashboard | Analytics, course/user/category management | ✅ Complete |
+| 6 | Quality Assurance | Testing, CI/CD, API docs, linting | ✅ Complete |
+| 7 | AI-Powered Learning | AI learning paths, chatbot tutor | 🔲 Planned |
+| 8 | Creator Ecosystem | Creator self-service, answer review, analytics | 🔲 Planned |
+| 9 | Monetization & Growth | Revenue sharing, certificates, gamification | 🔲 Planned |
+| 10 | Scale & Infrastructure | Kubernetes, OpenTelemetry, CDN, i18n | 🔲 Planned |
 
 ---
 
@@ -235,24 +239,24 @@ User ─────────< Progress >───────── Course
 
 **Goal**: Set up the project infrastructure — Go backend skeleton, Docker Compose with PostgreSQL and Redis, design system tokens, TypeScript types, routing, and the application shell.
 
-**Status**: 🔲 Not Started
+**Status**: ✅ Complete
 
 #### Feature Checklist
 
 **Backend Infrastructure**:
-- [ ] Go project scaffold (`cmd/server/`, `internal/handler|service|repository/`)
-- [ ] Docker Compose with PostgreSQL, Redis, Go server, Next.js frontend
-- [ ] PostgreSQL migrations setup (golang-migrate)
-- [ ] sqlc configuration and initial queries
-- [ ] Health check endpoint (`GET /api/v1/health`)
-- [ ] Makefile with common commands (`make dev`, `make migrate`, `make sqlc`)
+- [x] Go project scaffold (`cmd/server/`, `internal/handler|service|repository/`)
+- [x] Docker Compose with PostgreSQL, Redis, Go server, Next.js frontend
+- [x] PostgreSQL migrations setup (golang-migrate)
+- [x] sqlc configuration and initial queries
+- [x] Health check endpoint (`GET /api/v1/health`)
+- [x] Makefile with common commands (`make dev`, `make migrate`, `make sqlc`)
 
 **Frontend Foundation**:
-- [ ] Design tokens (colors, fonts, spacing) in Tailwind config
-- [ ] TypeScript type definitions for all entities (User, Course, Question, Tool, Skill, Progress, Creator)
-- [ ] Route structure (9 routes — see below)
-- [ ] App Shell (AppShell + TopNav + UserMenu)
-- [ ] Responsive navigation (desktop: horizontal nav, mobile: hamburger menu)
+- [x] Design tokens (colors, fonts, spacing) in Tailwind config
+- [x] TypeScript type definitions for all entities (User, Course, Question, Tool, Skill, Progress, Creator)
+- [x] Route structure (9 routes — see below)
+- [x] App Shell (AppShell + TopNav + UserMenu)
+- [x] Responsive navigation (desktop: horizontal nav, mobile: hamburger menu)
 
 #### Routes
 
@@ -293,19 +297,19 @@ User ─────────< Progress >───────── Course
 
 **Goal**: Implement the complete authentication system — OAuth2 login (Google), JWT token management, auth middleware, admin middleware, and rate limiting.
 
-**Status**: 🔲 Not Started
+**Status**: ✅ Complete
 
 #### Feature Checklist
 
-- [ ] OAuth2 login flow (Google)
-- [ ] JWT token generation and verification
-- [ ] Auth middleware (protect authenticated routes)
-- [ ] Admin middleware (protect admin routes)
-- [ ] Rate limiting middleware (Redis-based)
-- [ ] CORS configuration
-- [ ] Login button in TopNav (shows when not authenticated)
-- [ ] User dropdown menu (shows when authenticated: avatar, name, links, logout)
-- [ ] Session persistence (JWT in cookie/localStorage)
+- [x] OAuth2 login flow (Google)
+- [x] JWT token generation and verification
+- [x] Auth middleware (protect authenticated routes)
+- [x] Admin middleware (protect admin routes)
+- [x] Rate limiting middleware (Redis-based)
+- [x] CORS configuration
+- [x] Login button in TopNav (shows when not authenticated)
+- [x] User dropdown menu (shows when authenticated: avatar, name, links, logout)
+- [x] Session persistence (JWT in cookie/localStorage)
 
 #### API Requirements
 
@@ -338,35 +342,35 @@ User ─────────< Progress >───────── Course
 
 **Goal**: Implement the core learning experience — users browse and filter courses, watch embedded YouTube videos, and complete step-by-step quizzes with feedback.
 
-**Status**: 🔲 Not Started
+**Status**: ✅ Complete
 
 #### Feature Checklist
 
 **Course Discovery**:
-- [ ] Course card grid/list view
-- [ ] Search by keyword (title/description)
-- [ ] Filter by tool (ChatGPT, Midjourney, etc.)
-- [ ] Filter by skill (copywriting, image generation, etc.)
-- [ ] Filter by difficulty (beginner, intermediate, advanced)
-- [ ] Combined filters (tool + skill + difficulty)
-- [ ] Filter sidebar (collapsible on mobile as drawer)
-- [ ] Active filter count badge on mobile
-- [ ] Results count display
-- [ ] Empty state when no courses match
-- [ ] Clear all filters action
-- [ ] Click course card to navigate to learning page
+- [x] Course card grid/list view
+- [x] Search by keyword (title/description)
+- [x] Filter by tool (ChatGPT, Midjourney, etc.)
+- [x] Filter by skill (copywriting, image generation, etc.)
+- [x] Filter by difficulty (beginner, intermediate, advanced)
+- [x] Combined filters (tool + skill + difficulty)
+- [x] Filter sidebar (collapsible on mobile as drawer)
+- [x] Active filter count badge on mobile
+- [x] Results count display
+- [x] Empty state when no courses match
+- [x] Clear all filters action
+- [x] Click course card to navigate to learning page
 
 **Course Learning**:
-- [ ] Embedded YouTube video player (16:9 responsive)
-- [ ] Step-by-step quiz (one question at a time)
-- [ ] Quiz progress bar ("Question X of Y")
-- [ ] Multiple choice question UI (select → submit → feedback)
-- [ ] Short answer question UI (type → submit → keyword validation)
-- [ ] Answer feedback (correct: green + explanation, incorrect: red + correct answer + explanation)
-- [ ] Completion view (score summary, trophy icon, congratulations message)
-- [ ] Score-based feedback (100%: gold, 60%+: cyan, <60%: gray)
-- [ ] Recommended next courses
-- [ ] Back to course list navigation
+- [x] Embedded YouTube video player (16:9 responsive)
+- [x] Step-by-step quiz (one question at a time)
+- [x] Quiz progress bar ("Question X of Y")
+- [x] Multiple choice question UI (select → submit → feedback)
+- [x] Short answer question UI (type → submit → keyword validation)
+- [x] Answer feedback (correct: green + explanation, incorrect: red + correct answer + explanation)
+- [x] Completion view (score summary, trophy icon, congratulations message)
+- [x] Score-based feedback (100%: gold, 60%+: cyan, <60%: gray)
+- [x] Recommended next courses
+- [x] Back to course list navigation
 
 #### User Flows
 
@@ -431,19 +435,19 @@ User ─────────< Progress >───────── Course
 
 **Goal**: Implement the learning dashboard where users track their progress, view completed courses and badges, and manage their profile.
 
-**Status**: 🔲 Not Started
+**Status**: ✅ Complete
 
 #### Feature Checklist
 
-- [ ] My Learning dashboard with 3 tabs (In Progress / Completed / Badges)
-- [ ] In-progress course cards (thumbnail, title, progress %, current question, "Continue" button)
-- [ ] Completed course cards (thumbnail, title, score, completion date)
-- [ ] Badge cards (course thumbnail, title, earned date)
-- [ ] Tab switching with active highlight
-- [ ] Profile page (view/edit name and avatar)
-- [ ] Profile form validation (name required)
-- [ ] Empty states for each tab
-- [ ] Grid layout for badges
+- [x] My Learning dashboard with 3 tabs (In Progress / Completed / Badges)
+- [x] In-progress course cards (thumbnail, title, progress %, current question, "Continue" button)
+- [x] Completed course cards (thumbnail, title, score, completion date)
+- [x] Badge cards (course thumbnail, title, earned date)
+- [x] Tab switching with active highlight
+- [x] Profile page (view/edit name and avatar)
+- [x] Profile form validation (name required)
+- [x] Empty states for each tab
+- [x] Grid layout for badges
 
 #### User Flows
 
@@ -487,41 +491,41 @@ User ─────────< Progress >───────── Course
 
 **Goal**: Build the admin panel with analytics overview, course management (CRUD with quiz editor), user management, and category management.
 
-**Status**: 🔲 Not Started
+**Status**: ✅ Complete
 
 #### Feature Checklist
 
 **Analytics Dashboard** (`/admin`):
-- [ ] 4 stat cards (total users, total courses, total completions, active users)
-- [ ] Trend indicator on each stat (up/down arrow with percentage)
-- [ ] Trend chart (line chart: new users vs. active users over time)
-- [ ] Popular courses ranking list
+- [x] 4 stat cards (total users, total courses, total completions, active users)
+- [x] Trend indicator on each stat (up/down arrow with percentage)
+- [x] Trend chart (line chart: new users vs. active users over time)
+- [x] Popular courses ranking list
 
 **Course Management** (`/admin/courses`):
-- [ ] Course table (title, status, difficulty, tool, skill)
-- [ ] Search courses by title
-- [ ] Filter by status (draft/published)
-- [ ] "Create course" button
-- [ ] Course editor drawer (slides from right)
-- [ ] Course form (title, description, YouTube URL, tool, skill, difficulty)
-- [ ] Quiz question editor (add/edit/delete/reorder questions)
-- [ ] MC question editor (question text, 4 options, mark correct, explanation)
-- [ ] SA question editor (question text, sample answer, keywords, explanation)
-- [ ] Toggle course publish/unpublish
-- [ ] Delete course with confirmation dialog
+- [x] Course table (title, status, difficulty, tool, skill)
+- [x] Search courses by title
+- [x] Filter by status (draft/published)
+- [x] "Create course" button
+- [x] Course editor drawer (slides from right)
+- [x] Course form (title, description, YouTube URL, tool, skill, difficulty)
+- [x] Quiz question editor (add/edit/delete/reorder questions)
+- [x] MC question editor (question text, 4 options, mark correct, explanation)
+- [x] SA question editor (question text, sample answer, keywords, explanation)
+- [x] Toggle course publish/unpublish
+- [x] Delete course with confirmation dialog
 
 **User Management** (`/admin/users`):
-- [ ] User table (name, email, provider, registered, last active)
-- [ ] Search users by name/email
-- [ ] Expandable row to view user's course progress
-- [ ] Progress details (in-progress and completed courses with scores)
+- [x] User table (name, email, provider, registered, last active)
+- [x] Search users by name/email
+- [x] Expandable row to view user's course progress
+- [x] Progress details (in-progress and completed courses with scores)
 
 **Category Management** (`/admin/categories`):
-- [ ] Tool category list with drag-and-drop reordering
-- [ ] Skill category list with drag-and-drop reordering
-- [ ] Add/edit/delete tools
-- [ ] Add/edit/delete skills
-- [ ] Category count display
+- [x] Tool category list with drag-and-drop reordering
+- [x] Skill category list with drag-and-drop reordering
+- [x] Add/edit/delete tools
+- [x] Add/edit/delete skills
+- [x] Category count display
 
 #### User Flows
 
@@ -578,33 +582,39 @@ User ─────────< Progress >───────── Course
 
 **Goal**: Ensure production readiness through comprehensive testing, CI/CD pipeline, API documentation, and code quality tooling.
 
-**Status**: 🔲 Not Started
+**Status**: ✅ Complete
 
 #### Feature Checklist
 
 **Testing**:
-- [ ] Go unit tests (service layer with mock repositories)
-- [ ] Go integration tests (testcontainers-go with real PostgreSQL)
-- [ ] Frontend unit tests (Vitest + React Testing Library)
-- [ ] E2E tests (Playwright)
-- [ ] Test coverage targets (Go: 80%+, Frontend: 70%+)
+- [x] Go unit tests (service layer with mock repositories)
+- [x] Go integration tests (testcontainers-go with real PostgreSQL)
+- [x] Frontend unit tests (Vitest + React Testing Library)
+- [x] E2E tests (Playwright)
+- [x] Test coverage targets (Go: 80%+, Frontend: 70%+)
 
 **CI/CD**:
-- [ ] GitHub Actions workflow: lint → test → build
-- [ ] Parallel test execution (Go tests + Frontend tests)
-- [ ] Docker image build and push
-- [ ] Branch protection rules
+- [x] GitHub Actions workflow: lint → test → build
+- [x] Parallel test execution (Go tests + Frontend tests)
+- [x] Docker image build and push
+- [x] Branch protection rules
 
 **Documentation**:
-- [ ] Swagger/OpenAPI spec for all API endpoints
-- [ ] README polish (setup guide, contributing guide)
-- [ ] Environment variables documentation
+- [x] Swagger/OpenAPI spec for all 39 API endpoints (swaggo/swag)
+- [x] Swagger UI at `/swagger/index.html`
+- [x] README polish (setup guide, contributing guide)
+- [x] Environment variables documentation
 
 **Code Quality**:
-- [ ] Go: golangci-lint, gofmt
-- [ ] Frontend: ESLint, Prettier
-- [ ] Pre-commit hooks (lint-staged + husky)
-- [ ] Structured logging with request IDs
+- [x] Go: golangci-lint (v2, Go 1.25), gofmt
+- [x] Frontend: ESLint, Prettier
+- [x] Pre-commit hooks (lint-staged + husky)
+- [x] Structured logging with request IDs (zap)
+
+**Observability**:
+- [x] Prometheus metrics middleware (`/metrics` endpoint)
+- [x] Grafana dashboard (request rate, latency p50/p95/p99, error rate, in-flight)
+- [x] Docker Compose monitoring profile (Prometheus + Grafana)
 
 #### Success Criteria
 
@@ -642,6 +652,10 @@ User ─────────< Progress >───────── Course
 - Cache: Redis
 
 **Infrastructure**: Docker Compose + GitHub Actions CI/CD
+
+**Monitoring** (optional, via `--profile monitoring`): Prometheus + Grafana
+
+**Documentation**: Swagger/OpenAPI (swaggo/swag)
 
 ### Architecture Diagram
 
@@ -726,3 +740,92 @@ Detailed technical selection rationales are documented in:
 - `docs/superpowers/specs/2026-04-01-frontend-tech-selection-design.md` — Next.js vs Nuxt vs SvelteKit
 - `docs/superpowers/specs/2026-04-01-production-ready-design.md` — 14 production readiness areas
 - `docs/superpowers/specs/2026-04-02-development-workflow-design.md` — Development workflow design
+
+---
+
+## 7. Future Roadmap
+
+Phases 1–6 are complete. The following phases outline the product's long-term evolution — from AI-driven learning to creator ecosystems, monetization, and cloud-native infrastructure.
+
+### Phase 7: AI-Powered Learning
+
+**Goal**: Leverage large language models to personalize the learning experience and reduce manual content creation.
+
+**Status**: 🔲 Planned
+
+#### Features
+
+- **AI Learning Path** — LLM analyzes a user's completed courses, quiz scores, and interests to recommend a personalized course sequence. Adapts as the user progresses.
+- **AI Chatbot Tutor** — Embedded AI assistant on each course page. Users can ask questions about the video content and get instant, context-aware answers powered by RAG (Retrieval-Augmented Generation) with video transcripts.
+
+#### Technical Approach
+
+- Go microservice calling OpenAI / Anthropic API
+- RAG pipeline: YouTube transcript → vector embedding → semantic search → LLM response
+- Prompt engineering for educational context (explain concepts, not just answer)
+
+---
+
+### Phase 8: Creator Ecosystem
+
+**Goal**: Empower YouTube creators to participate directly in the platform — submitting courses, grading student answers, and understanding their content performance.
+
+**Status**: 🔲 Planned
+
+#### Features
+
+- **Creator Self-Service** — Creators submit courses by providing a YouTube URL. The system auto-generates description, tags, and quiz suggestions. Admin reviews and publishes.
+- **Creator Application Flow** — Application form + review pipeline with quality gates. Ensures only vetted creators publish content.
+- **Creator Answer Review** — Creators can grade short-answer quiz responses and provide direct, personalized feedback to learners. Replaces keyword-only validation with human insight.
+- **Content Analytics for Creators** — Dashboard showing per-course metrics: answer accuracy rates by question, learner drop-off points, completion rates, and score distributions.
+
+#### Technical Approach
+
+- New `creator` role in auth system (alongside `user` and `admin`)
+- Notification system (email or in-app) for review assignments and feedback delivery
+- Analytics queries aggregating progress data per creator's courses
+
+---
+
+### Phase 9: Monetization & Growth
+
+**Goal**: Build sustainable revenue streams while growing the user base through social features and gamification.
+
+**Status**: 🔲 Planned
+
+#### Features
+
+- **Creator Revenue Sharing** — Creators earn based on course completion count. Transparent revenue dashboard with payout history.
+- **Certificates & Credentials** — Verifiable completion certificates. Options: digitally signed PDF (simple) or blockchain-backed credential (advanced).
+- **Enterprise / Team Plans** — Company accounts with bulk enrollment. Admin dashboard shows employee learning progress and completion rates.
+- **Sponsorship / Featured Courses** — AI tool vendors (OpenAI, Midjourney, etc.) can sponsor featured placement for courses using their tools.
+- **Course Reviews & Ratings** — Star ratings + text reviews from learners. Surfaces quality courses and helps new users choose.
+- **Gamification** — Learning streaks, XP system, achievement badges, and leaderboards. Increases daily active usage and course completion rates.
+
+#### Technical Approach
+
+- Stripe integration for payments (subscriptions, one-time purchases, payouts)
+- PDF generation for certificates (or smart contract for blockchain credentials)
+- Gamification engine: XP rules, streak tracking, badge unlock conditions
+
+---
+
+### Phase 10: Scale & Infrastructure
+
+**Goal**: Prepare the platform for production-scale traffic and global reach.
+
+**Status**: 🔲 Planned
+
+#### Features
+
+- **Kubernetes + Helm** — Container orchestration with horizontal pod autoscaling. Helm charts for reproducible deployments across environments.
+- **OpenTelemetry Distributed Tracing** — Replace current Prometheus-only monitoring with full distributed tracing. Trace requests across frontend → backend → database for precise performance debugging.
+- **CDN + ISR** — Next.js Incremental Static Regeneration + CDN edge caching. Course pages load in milliseconds globally.
+- **Internationalization (i18n)** — Multi-language UI support beyond English. Priority: Traditional Chinese, Simplified Chinese, Japanese — expanding reach across Asian markets.
+
+#### Technical Approach
+
+- Helm charts + GitHub Actions CD pipeline for K8s deployment
+- Jaeger or Grafana Tempo for trace visualization
+- Cloudflare or Vercel Edge for CDN
+- next-intl or similar i18n library with JSON translation files

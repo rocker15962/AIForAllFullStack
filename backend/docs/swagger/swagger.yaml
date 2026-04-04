@@ -1,0 +1,870 @@
+basePath: /api/v1
+host: localhost:8080
+info:
+  contact: {}
+  description: RESTful API for the AI for All education platform.
+  title: AI for All API
+  version: "1.0"
+paths:
+  /admin/categories:
+    get:
+      description: Returns all tools and skills
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List all categories
+      tags:
+      - admin
+  /admin/courses:
+    get:
+      description: Returns all courses with search and status filter
+      parameters:
+      - description: Search by title
+        in: query
+        name: search
+        type: string
+      - description: Filter by status (draft/published)
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List all courses (admin)
+      tags:
+      - admin
+    post:
+      consumes:
+      - application/json
+      description: Create a new course
+      parameters:
+      - description: Course data
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create course
+      tags:
+      - admin
+  /admin/courses/{id}:
+    delete:
+      description: Delete a course and its questions
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete course
+      tags:
+      - admin
+    get:
+      description: Returns full course with questions and answers
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get course detail (admin)
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Update an existing course
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Course data
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update course
+      tags:
+      - admin
+  /admin/courses/{id}/publish:
+    put:
+      description: Switch course between draft and published
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Toggle course publish status
+      tags:
+      - admin
+  /admin/dashboard:
+    get:
+      description: Returns platform stats, user trends, and popular courses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Admin dashboard
+      tags:
+      - admin
+  /admin/skills:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Skill data (name, icon)
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create skill
+      tags:
+      - admin
+  /admin/skills/{id}:
+    delete:
+      parameters:
+      - description: Skill ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete skill
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Skill ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Skill data (name, icon)
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update skill
+      tags:
+      - admin
+  /admin/skills/reorder:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Ordered skill IDs
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Reorder skills
+      tags:
+      - admin
+  /admin/tools:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Tool data (name, icon)
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create tool
+      tags:
+      - admin
+  /admin/tools/{id}:
+    delete:
+      parameters:
+      - description: Tool ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete tool
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Tool ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Tool data (name, icon)
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update tool
+      tags:
+      - admin
+  /admin/tools/reorder:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Ordered tool IDs
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Reorder tools
+      tags:
+      - admin
+  /admin/users:
+    get:
+      description: Returns all users with optional search
+      parameters:
+      - description: Search by name or email
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List all users
+      tags:
+      - admin
+  /admin/users/{id}/progress:
+    get:
+      description: Returns a user's course progress details
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user progress (admin)
+      tags:
+      - admin
+  /auth/google/callback:
+    get:
+      description: Handles Google OAuth callback and issues JWT tokens
+      parameters:
+      - description: OAuth state
+        in: query
+        name: state
+        required: true
+        type: string
+      - description: Authorization code
+        in: query
+        name: code
+        required: true
+        type: string
+      responses:
+        "307":
+          description: Temporary Redirect
+      summary: Google OAuth callback
+      tags:
+      - auth
+  /auth/google/login:
+    get:
+      description: Redirects to Google OAuth consent screen
+      parameters:
+      - description: Redirect path after login
+        in: query
+        name: redirect
+        type: string
+      responses:
+        "307":
+          description: Temporary Redirect
+      summary: Initiate Google OAuth login
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      description: Clears refresh token cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Logout
+      tags:
+      - auth
+  /auth/me:
+    get:
+      description: Returns the authenticated user's profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get current user
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      description: Uses refresh token cookie to issue a new access token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Refresh access token
+      tags:
+      - auth
+  /courses:
+    get:
+      description: Returns paginated courses with optional search and filters
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Search keyword
+        in: query
+        name: search
+        type: string
+      - description: Filter by tool ID
+        in: query
+        name: tool_id
+        type: string
+      - description: Filter by skill ID
+        in: query
+        name: skill_id
+        type: string
+      - description: Filter by difficulty
+        in: query
+        name: difficulty
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List courses
+      tags:
+      - courses
+  /courses/{id}:
+    get:
+      description: Returns course with questions
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get course detail
+      tags:
+      - courses
+  /courses/{id}/complete:
+    post:
+      description: Mark a course as completed and calculate score
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Complete course
+      tags:
+      - courses
+  /courses/{id}/recommended:
+    get:
+      description: Returns recommended courses based on the current course
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get recommended courses
+      tags:
+      - courses
+  /courses/{id}/submit:
+    post:
+      consumes:
+      - application/json
+      description: Submit an answer for a course question
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Answer submission
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Submit quiz answer
+      tags:
+      - courses
+  /creators:
+    get:
+      description: Returns all content creators
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List all creators
+      tags:
+      - categories
+  /health:
+    get:
+      description: Returns service health status including database and Redis connectivity
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Health check
+      tags:
+      - health
+  /my/avatar:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload a new profile avatar (max 2MB, jpg/png/webp)
+      parameters:
+      - description: Avatar image
+        in: formData
+        name: avatar
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Upload avatar
+      tags:
+      - user
+  /my/badges:
+    get:
+      description: Returns badges earned by completing courses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get earned badges
+      tags:
+      - user
+  /my/completed:
+    get:
+      description: Returns courses the user has completed with scores
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get completed courses
+      tags:
+      - user
+  /my/profile:
+    get:
+      description: Returns the user's profile with learning counts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user profile
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Update the user's display name
+      parameters:
+      - description: Profile update
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update user profile
+      tags:
+      - user
+  /my/progress:
+    get:
+      description: Returns courses the user is currently working on
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get in-progress courses
+      tags:
+      - user
+  /my/stats:
+    get:
+      description: Returns in-progress, completed, and badge counts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get learning stats
+      tags:
+      - user
+  /skills:
+    get:
+      description: Returns all skill categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List all skills
+      tags:
+      - categories
+  /tools:
+    get:
+      description: Returns all tool categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List all tools
+      tags:
+      - categories
+swagger: "2.0"

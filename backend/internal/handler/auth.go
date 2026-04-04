@@ -14,8 +14,8 @@ import (
 )
 
 type AuthHandler struct {
-	authService *service.AuthService
-	frontendURL string
+	authService  *service.AuthService
+	frontendURL  string
 	isProduction bool
 }
 
@@ -27,6 +27,14 @@ func NewAuthHandler(authService *service.AuthService, frontendURL string) *AuthH
 	}
 }
 
+// GoogleLogin godoc
+//
+//	@Summary		Initiate Google OAuth login
+//	@Description	Redirects to Google OAuth consent screen
+//	@Tags			auth
+//	@Param			redirect	query	string	false	"Redirect path after login"
+//	@Success		307
+//	@Router			/auth/google/login [get]
 func (h *AuthHandler) GoogleLogin(c *gin.Context) {
 	redirect := c.DefaultQuery("redirect", "/")
 
@@ -43,6 +51,15 @@ func (h *AuthHandler) GoogleLogin(c *gin.Context) {
 	c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
+// GoogleCallback godoc
+//
+//	@Summary		Google OAuth callback
+//	@Description	Handles Google OAuth callback and issues JWT tokens
+//	@Tags			auth
+//	@Param			state	query	string	true	"OAuth state"
+//	@Param			code	query	string	true	"Authorization code"
+//	@Success		307
+//	@Router			/auth/google/callback [get]
 func (h *AuthHandler) GoogleCallback(c *gin.Context) {
 	// Validate state
 	state := c.Query("state")
@@ -100,6 +117,15 @@ func (h *AuthHandler) GoogleCallback(c *gin.Context) {
 		h.frontendURL+"/auth/callback?token="+tokens.AccessToken+"&redirect="+redirect)
 }
 
+// Refresh godoc
+//
+//	@Summary		Refresh access token
+//	@Description	Uses refresh token cookie to issue a new access token
+//	@Tags			auth
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		401	{object}	map[string]interface{}
+//	@Router			/auth/refresh [post]
 func (h *AuthHandler) Refresh(c *gin.Context) {
 	refreshToken, err := c.Cookie("refresh_token")
 	if err != nil {
@@ -139,6 +165,14 @@ func (h *AuthHandler) Refresh(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"accessToken": tokens.AccessToken})
 }
 
+// Logout godoc
+//
+//	@Summary		Logout
+//	@Description	Clears refresh token cookie
+//	@Tags			auth
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Router			/auth/logout [post]
 func (h *AuthHandler) Logout(c *gin.Context) {
 	c.SetCookie("refresh_token", "", -1, "/api/v1/auth", "", h.isProduction, true)
 	c.JSON(http.StatusOK, gin.H{"message": "logged out"})
@@ -155,6 +189,15 @@ type meResponse struct {
 	LastActiveAt string `json:"lastActiveAt"`
 }
 
+// Me godoc
+//
+//	@Summary		Get current user
+//	@Description	Returns the authenticated user's profile
+//	@Tags			auth
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		401	{object}	map[string]interface{}
+//	@Router			/auth/me [get]
 func (h *AuthHandler) Me(c *gin.Context) {
 	userID, _ := c.Get(middleware.ContextKeyUserID)
 

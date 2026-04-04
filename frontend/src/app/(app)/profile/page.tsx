@@ -4,6 +4,9 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { ArrowLeft, Camera, User as UserIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/auth-context'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { profileFormSchema } from '@/lib/schemas'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
@@ -85,13 +88,22 @@ export default function ProfilePage() {
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
     if (!accessToken || !user) return
+
+    // Validate with Zod
+    const result = profileFormSchema.safeParse({ name })
+    if (!result.success) {
+      const firstError = result.error.issues[0]
+      setMessage({ type: 'error', text: firstError?.message || 'Validation failed' })
+      return
+    }
+
     setIsSaving(true)
     setMessage(null)
     try {
       const res = await fetch(`${API_URL}/api/v1/my/profile`, {
         method: 'PUT',
         headers: authHeaders(),
-        body: JSON.stringify({ name: name.trim() }),
+        body: JSON.stringify({ name: result.data.name }),
       })
       if (res.ok) {
         const data = (await res.json()) as { name: string }
@@ -126,12 +138,12 @@ export default function ProfilePage() {
             Sign in to view your profile
           </h2>
           <p className="mt-2 text-sm text-zinc-500">Log in to manage your account settings.</p>
-          <button
+          <Button
             onClick={() => login('/profile')}
-            className="mt-6 rounded-lg bg-cyan-500 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cyan-600"
+            className="mt-6 rounded-lg bg-cyan-500 px-6 py-2.5 text-sm font-medium text-white hover:bg-cyan-600"
           >
             Log In
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -147,7 +159,7 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-[840px] px-6 py-8">
-      {/* ← Back */}
+      {/* Back */}
       <Link
         href="/my-learning"
         className="mb-4 inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
@@ -201,17 +213,17 @@ export default function ProfilePage() {
 
         {/* Form */}
         <form onSubmit={handleSave} className="flex flex-col gap-5 px-8 pt-2 pb-8">
-          {/* Name field */}
+          {/* Name field — using shadcn/ui Input */}
           <div className="flex flex-col gap-1.5">
             <label htmlFor="name" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Name
             </label>
-            <input
+            <Input
               id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="h-11 rounded-lg border border-zinc-300 bg-white px-3.5 text-sm text-zinc-900 transition-colors outline-none focus:border-cyan-500 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
+              className="h-11 rounded-lg border-zinc-300 bg-white px-3.5 text-sm text-zinc-900 focus-visible:border-cyan-500 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
             />
           </div>
 
@@ -220,12 +232,12 @@ export default function ProfilePage() {
             <label htmlFor="email" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Email
             </label>
-            <input
+            <Input
               id="email"
               type="email"
               value={profile?.email || user.email}
               disabled
-              className="h-11 rounded-lg border border-zinc-200 bg-zinc-100 px-3.5 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-500"
+              className="h-11 rounded-lg border-zinc-200 bg-zinc-100 px-3.5 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-500"
             />
             <p className="text-xs text-zinc-400">Signed in via Google, cannot be changed</p>
           </div>
@@ -245,13 +257,13 @@ export default function ProfilePage() {
 
           {/* Buttons */}
           <div className="flex gap-3">
-            <button
+            <Button
               type="submit"
               disabled={isSaving || name.trim() === ''}
-              className="flex-1 rounded-lg bg-cyan-500 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex-1 rounded-lg bg-cyan-500 py-2.5 text-sm font-medium text-white hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSaving ? 'Saving...' : 'Save Changes'}
-            </button>
+            </Button>
             <Link
               href="/my-learning"
               className="flex items-center justify-center rounded-lg border border-zinc-200 px-6 py-2.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400"
