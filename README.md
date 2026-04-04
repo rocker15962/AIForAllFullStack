@@ -4,6 +4,10 @@
 
 A nonprofit AI education platform that partners with YouTube creators to deliver structured AI learning experiences. Users can watch tutorial videos, complete quizzes, track learning progress, and earn completion badges.
 
+<p align="center">
+  <img src="docs/screenshots/hero.png" alt="AI for All — Landing Page" width="800" />
+</p>
+
 ## Tech Stack
 
 ### Frontend: Next.js + TypeScript
@@ -66,21 +70,30 @@ This project is designed for long-term growth, targeting a large-scale education
 ## Architecture
 
 ```
-                    docker compose up
-┌──────────────────────────────────────────────────────┐
-│                   Docker Compose                      │
-│                                                       │
-│  ┌─────────────────┐     ┌──────────────────────┐    │
-│  │  Next.js Frontend│────▶│    Go API Server      │    │
-│  │   (port 3000)    │     │    (Gin + sqlc)       │    │
-│  └─────────────────┘     │    (port 8080)        │    │
-│                           └──────┬──────────┬─────┘    │
-│                                  │          │           │
-│                           ┌──────▼──┐  ┌───▼────┐     │
-│                           │PostgreSQL│  │ Redis  │     │
-│                           │ (5432)   │  │ (6379) │     │
-│                           └─────────┘  └────────┘     │
-└──────────────────────────────────────────────────────┘
+                    docker compose up [--profile monitoring]
+┌────────────────────────────────────────────────────────────┐
+│                       Docker Compose                        │
+│                                                             │
+│  ┌─────────────────┐     ┌──────────────────────┐          │
+│  │  Next.js Frontend│────▶│    Go API Server      │          │
+│  │   (port 3000)    │     │    (Gin + sqlc)       │          │
+│  └─────────────────┘     │    (port 8080)        │          │
+│                           └──┬──────────┬────┬───┘          │
+│                              │          │    │               │
+│                        ┌─────▼──┐  ┌───▼──┐ │               │
+│                        │PostgreSQL│  │Redis │ │               │
+│                        │ (5432)   │  │(6379)│ │               │
+│                        └─────────┘  └──────┘ │               │
+│                                               │               │
+│  ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘ ─ ─ ─ ─ ┐   │
+│    Optional: --profile monitoring                          │
+│  │                                                       │   │
+│    ┌───────────┐  scrape /metrics   ┌─────────┐         │   │
+│  │ │Prometheus │◀───────────────────│ Grafana │          │   │
+│    │  (9090)   │───────────────────▶│ (3001)  │         │   │
+│  │ └───────────┘                    └─────────┘          │   │
+│   ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘   │
+└────────────────────────────────────────────────────────────┘
 ```
 
 ## Getting Started
@@ -172,6 +185,23 @@ AIForAllFullStack/
 - Course search and filtering
 - Admin dashboard (course, user, and category management)
 
+### Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/course-discovery.png" alt="Course Discovery — Browse and filter courses" width="800" />
+  <br><em>Course Discovery — Browse and filter courses by tool, skill, and difficulty</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/course-learning.png" alt="Course Learning — Watch video and take quiz" width="800" />
+  <br><em>Course Learning — Embedded YouTube video with step-by-step quiz</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/admin-dashboard.png" alt="Admin Dashboard — Platform analytics" width="800" />
+  <br><em>Admin Dashboard — User trends, popular courses, and platform stats</em>
+</p>
+
 ## Design System
 
 - Primary: `cyan` — buttons, links, emphasis
@@ -232,18 +262,28 @@ HTTP Request
 | 13 | Code quality | 🟢 | golangci-lint, gofmt, ESLint, Prettier, pre-commit hooks |
 | 14 | Documentation | 🟢 | Swagger/OpenAPI UI, README, ADRs, environment docs |
 
+<p align="center">
+  <img src="docs/screenshots/grafana-dashboard.png" alt="Grafana Dashboard — HTTP metrics overview" width="800" />
+  <br><em>Grafana Dashboard — Request rate, latency percentiles, error rate, and in-flight requests</em>
+</p>
+
 ## API Overview
 
-38 endpoints across 6 domains, all under `/api/v1/`:
+39 endpoints across 7 domains, all under `/api/v1/`:
 
 | Domain | Endpoints | Auth | Description |
 |--------|-----------|------|-------------|
 | Health | `GET /health` | — | Service health check |
 | Auth | `GET /auth/google/login`, `GET /auth/google/callback`, `POST /auth/refresh`, `POST /auth/logout`, `GET /auth/me` | Partial | Google OAuth2 flow + session management |
 | Courses | `GET /courses`, `GET /courses/:id`, `GET /courses/:id/recommended`, `POST /courses/:id/submit`, `POST /courses/:id/complete` | Partial | Browse, learn, submit answers, complete courses |
-| Categories | `GET /tools`, `GET /skills` | — | Public tool/skill listings |
+| Categories | `GET /tools`, `GET /skills`, `GET /creators` | — | Public tool/skill/creator listings |
 | User | `GET /my/progress`, `GET /my/completed`, `GET /my/badges`, `GET /my/stats`, `GET /my/profile`, `PUT /my/profile`, `POST /my/avatar` | Required | Learning progress, profile management |
 | Admin | 18 endpoints (`/admin/dashboard`, `/admin/courses/*`, `/admin/users/*`, `/admin/tools/*`, `/admin/skills/*`) | Admin | Dashboard, course/user/category CRUD |
+
+<p align="center">
+  <img src="docs/screenshots/swagger-ui.png" alt="Swagger UI — Interactive API documentation" width="800" />
+  <br><em>Swagger UI — Interactive API documentation for all 39 endpoints</em>
+</p>
 
 ## Testing
 

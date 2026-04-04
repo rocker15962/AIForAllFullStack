@@ -596,7 +596,7 @@ User ─────────< Progress >───────── Course
 - [x] Branch protection rules
 
 **文件**：
-- [x] Swagger/OpenAPI 規格（38 個 API endpoint，swaggo/swag）
+- [x] Swagger/OpenAPI 規格（39 個 API endpoint，swaggo/swag）
 - [x] Swagger UI（`/swagger/index.html`）
 - [x] README 完善（設定指南、貢獻指南）
 - [x] 環境變數文件
