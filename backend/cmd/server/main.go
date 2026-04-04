@@ -96,7 +96,7 @@ func main() {
 	healthHandler := handler.NewHealthHandler(pool, rdb)
 	authHandler := handler.NewAuthHandler(authService, os.Getenv("FRONTEND_URL"))
 	courseHandler := handler.NewCourseHandler(courseService)
-	categoryHandler := handler.NewCategoryHandler(queries, queries)
+	categoryHandler := handler.NewCategoryHandler(queries, queries, queries)
 	userHandler := handler.NewUserHandler(queries)
 
 	// Gin setup
@@ -127,6 +127,7 @@ func main() {
 	// Category routes (public)
 	api.GET("/tools", categoryHandler.ListTools)
 	api.GET("/skills", categoryHandler.ListSkills)
+	api.GET("/creators", categoryHandler.ListCreators)
 
 	// Course routes
 	api.GET("/courses", courseHandler.List)

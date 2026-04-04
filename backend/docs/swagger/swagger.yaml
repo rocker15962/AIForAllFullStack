@@ -662,6 +662,20 @@ paths:
       summary: Submit quiz answer
       tags:
       - courses
+  /creators:
+    get:
+      description: Returns all content creators
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List all creators
+      tags:
+      - categories
   /health:
     get:
       description: Returns service health status including database and Redis connectivity

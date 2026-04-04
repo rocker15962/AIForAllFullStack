@@ -23,9 +23,10 @@ interface CourseGridProps {
   courses: Course[]
   toolNames: ToolMap
   skillNames: ToolMap
+  creatorNames?: ToolMap
 }
 
-export function CourseGrid({ courses, toolNames, skillNames }: CourseGridProps) {
+export function CourseGrid({ courses, toolNames, skillNames, creatorNames = {} }: CourseGridProps) {
   if (courses.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -45,6 +46,7 @@ export function CourseGrid({ courses, toolNames, skillNames }: CourseGridProps) 
           course={course}
           toolName={toolNames[course.toolId]}
           skillName={skillNames[course.skillId]}
+          creatorName={creatorNames[course.creatorId]}
         />
       ))}
     </div>

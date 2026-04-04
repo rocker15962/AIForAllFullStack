@@ -39,6 +39,7 @@ type SkillRepository interface {
 
 type CreatorRepository interface {
 	GetCreatorByID(ctx context.Context, id uuid.UUID) (repository.Creator, error)
+	ListCreators(ctx context.Context) ([]repository.Creator, error)
 }
 
 type ProgressRepository interface {
