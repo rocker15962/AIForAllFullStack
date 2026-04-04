@@ -26,6 +26,7 @@ type healthResponse struct {
 }
 
 // Check godoc
+//
 //	@Summary		Health check
 //	@Description	Returns service health status including database and Redis connectivity
 //	@Tags			health

@@ -19,6 +19,7 @@ func NewCourseHandler(courseService *service.CourseService) *CourseHandler {
 }
 
 // List godoc
+//
 //	@Summary		List courses
 //	@Description	Returns paginated courses with optional search and filters
 //	@Tags			courses
@@ -52,6 +53,7 @@ func (h *CourseHandler) List(c *gin.Context) {
 }
 
 // Get godoc
+//
 //	@Summary		Get course detail
 //	@Description	Returns course with questions
 //	@Tags			courses
@@ -82,6 +84,7 @@ type submitRequest struct {
 }
 
 // Submit godoc
+//
 //	@Summary		Submit quiz answer
 //	@Description	Submit an answer for a course question
 //	@Tags			courses
@@ -129,6 +132,7 @@ func (h *CourseHandler) Submit(c *gin.Context) {
 }
 
 // Complete godoc
+//
 //	@Summary		Complete course
 //	@Description	Mark a course as completed and calculate score
 //	@Tags			courses
@@ -156,6 +160,7 @@ func (h *CourseHandler) Complete(c *gin.Context) {
 }
 
 // Recommended godoc
+//
 //	@Summary		Get recommended courses
 //	@Description	Returns recommended courses based on the current course
 //	@Tags			courses

@@ -39,6 +39,7 @@ func (h *UserHandler) getSkillName(c *gin.Context, skillID uuid.UUID) string {
 }
 
 // GetProgress godoc
+//
 //	@Summary		Get in-progress courses
 //	@Description	Returns courses the user is currently working on
 //	@Tags			user
@@ -84,6 +85,7 @@ func (h *UserHandler) GetProgress(c *gin.Context) {
 }
 
 // GetCompleted godoc
+//
 //	@Summary		Get completed courses
 //	@Description	Returns courses the user has completed with scores
 //	@Tags			user
@@ -130,6 +132,7 @@ func (h *UserHandler) GetCompleted(c *gin.Context) {
 }
 
 // GetBadges godoc
+//
 //	@Summary		Get earned badges
 //	@Description	Returns badges earned by completing courses
 //	@Tags			user
@@ -165,6 +168,7 @@ func (h *UserHandler) GetBadges(c *gin.Context) {
 }
 
 // GetProfile godoc
+//
 //	@Summary		Get user profile
 //	@Description	Returns the user's profile with learning counts
 //	@Tags			user
@@ -201,6 +205,7 @@ type updateProfileRequest struct {
 }
 
 // UpdateProfile godoc
+//
 //	@Summary		Update user profile
 //	@Description	Update the user's display name
 //	@Tags			user
@@ -237,6 +242,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 }
 
 // GetStats godoc
+//
 //	@Summary		Get learning stats
 //	@Description	Returns in-progress, completed, and badge counts
 //	@Tags			user
@@ -261,6 +267,7 @@ func (h *UserHandler) GetStats(c *gin.Context) {
 }
 
 // UploadAvatar godoc
+//
 //	@Summary		Upload avatar
 //	@Description	Upload a new profile avatar (max 2MB, jpg/png/webp)
 //	@Tags			user
