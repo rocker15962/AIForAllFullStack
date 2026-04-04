@@ -268,3 +268,14 @@ All 6 phases completed, backend-first:
 | 4 | Admin API | ✅ Complete |
 | 5 | Frontend Migration | ✅ Complete |
 | 6 | Quality Assurance | ✅ Complete |
+
+## Future Roadmap
+
+| Phase | Name | Highlights |
+|-------|------|------------|
+| 7 | AI-Powered Learning | LLM-driven personalized learning paths, AI chatbot tutor with RAG |
+| 8 | Creator Ecosystem | Creator self-service course submission, short-answer grading with direct feedback, content analytics |
+| 9 | Monetization & Growth | Creator revenue sharing, verifiable certificates, enterprise plans, gamification |
+| 10 | Scale & Infrastructure | Kubernetes + Helm, OpenTelemetry distributed tracing, CDN + ISR, i18n |
+
+See [`PRODUCT_ROADMAP.md`](PRODUCT_ROADMAP.md) for detailed feature descriptions and technical approach.
