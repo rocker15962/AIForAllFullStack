@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/redis/go-redis/v9"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/handler"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/logger"
@@ -98,6 +99,7 @@ func main() {
 	r.Use(logger.RequestID())
 	r.Use(logger.RequestLogger())
 	r.Use(middleware.CORS(frontendURL))
+	r.Use(middleware.Metrics())
 	r.Use(middleware.RateLimit(rdb))
 
 	api := r.Group("/api/v1")
@@ -157,6 +159,9 @@ func main() {
 
 	// Static file serving for uploads
 	r.Static("/uploads", "./uploads")
+
+	// Prometheus metrics endpoint
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	// HTTP server with graceful shutdown
 	srv := &http.Server{
