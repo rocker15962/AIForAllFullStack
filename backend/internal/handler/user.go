@@ -22,19 +22,6 @@ func NewUserHandler(queries *repository.Queries) *UserHandler {
 	return &UserHandler{queries: queries}
 }
 
-func (h *UserHandler) resolveToolName(ctx interface{ Value(interface{}) interface{} }, toolID uuid.UUID) string {
-	tool, err := h.queries.GetToolByID(ctx.(interface {
-		Value(interface{}) interface{}
-		Deadline() (time.Time, bool)
-		Done() <-chan struct{}
-		Err() error
-	}), toolID)
-	if err != nil {
-		return ""
-	}
-	return tool.Name
-}
-
 func (h *UserHandler) getToolName(c *gin.Context, toolID uuid.UUID) string {
 	tool, err := h.queries.GetToolByID(c.Request.Context(), toolID)
 	if err != nil {
@@ -63,7 +50,7 @@ func (h *UserHandler) GetProgress(c *gin.Context) {
 	items := make([]gin.H, len(rows))
 	for i, r := range rows {
 		var answers []map[string]interface{}
-		json.Unmarshal(r.Answers, &answers)
+		_ = json.Unmarshal(r.Answers, &answers)
 		answeredCount := len(answers)
 		progressPct := 0
 		if r.TotalQuestions > 0 {
@@ -246,7 +233,10 @@ func (h *UserHandler) UploadAvatar(c *gin.Context) {
 	}
 
 	uploadDir := "uploads/avatars"
-	os.MkdirAll(uploadDir, 0755)
+	if err := os.MkdirAll(uploadDir, 0755); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create upload directory"})
+		return
+	}
 
 	filename := fmt.Sprintf("%s%s", userID.String(), ext)
 	savePath := filepath.Join(uploadDir, filename)

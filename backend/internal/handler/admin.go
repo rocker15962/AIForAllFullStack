@@ -150,11 +150,11 @@ func (h *AdminHandler) GetCourse(c *gin.Context) {
 		// Unmarshal json.RawMessage fields so they serialize as JSON objects, not base64
 		var options interface{}
 		if q.Options != nil {
-			json.Unmarshal(q.Options, &options)
+			_ = json.Unmarshal(q.Options, &options)
 		}
 		var keywords interface{}
 		if q.AcceptableKeywords != nil {
-			json.Unmarshal(q.AcceptableKeywords, &keywords)
+			_ = json.Unmarshal(q.AcceptableKeywords, &keywords)
 		}
 
 		qItems[i] = gin.H{
@@ -429,9 +429,9 @@ func (h *AdminHandler) GetUserProgress(c *gin.Context) {
 		items[i] = gin.H{
 			"courseId":        r.CourseID.String(),
 			"courseTitle":     r.CourseTitle,
-			"status":         string(r.Status),
-			"score":          score,
-			"completedAt":    completedAt,
+			"status":          string(r.Status),
+			"score":           score,
+			"completedAt":     completedAt,
 			"currentQuestion": currentQuestion,
 			"totalQuestions":  r.TotalQuestions,
 		}

@@ -21,7 +21,7 @@ import (
 
 func main() {
 	logger.Init(os.Getenv("GIN_MODE"))
-	defer logger.L.Sync()
+	defer func() { _ = logger.L.Sync() }()
 
 	port := os.Getenv("PORT")
 	if port == "" {

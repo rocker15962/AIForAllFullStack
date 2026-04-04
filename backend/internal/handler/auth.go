@@ -14,8 +14,8 @@ import (
 )
 
 type AuthHandler struct {
-	authService *service.AuthService
-	frontendURL string
+	authService  *service.AuthService
+	frontendURL  string
 	isProduction bool
 }
 

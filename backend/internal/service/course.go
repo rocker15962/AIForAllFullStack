@@ -128,17 +128,17 @@ func (s *CourseService) ListCourses(ctx context.Context, params ListCoursesParam
 }
 
 type CourseDetail struct {
-	ID           uuid.UUID        `json:"id"`
-	Title        string           `json:"title"`
-	Description  string           `json:"description"`
-	YoutubeID    string           `json:"youtubeId"`
-	ThumbnailUrl string           `json:"thumbnailUrl"`
-	Difficulty   string           `json:"difficulty"`
-	Duration     int32            `json:"duration"`
-	Tool         CategoryItem     `json:"tool"`
-	Skill        CategoryItem     `json:"skill"`
-	Creator      CreatorItem      `json:"creator"`
-	Questions    []QuestionItem   `json:"questions"`
+	ID           uuid.UUID      `json:"id"`
+	Title        string         `json:"title"`
+	Description  string         `json:"description"`
+	YoutubeID    string         `json:"youtubeId"`
+	ThumbnailUrl string         `json:"thumbnailUrl"`
+	Difficulty   string         `json:"difficulty"`
+	Duration     int32          `json:"duration"`
+	Tool         CategoryItem   `json:"tool"`
+	Skill        CategoryItem   `json:"skill"`
+	Creator      CreatorItem    `json:"creator"`
+	Questions    []QuestionItem `json:"questions"`
 }
 
 type CategoryItem struct {
@@ -155,11 +155,11 @@ type CreatorItem struct {
 }
 
 type QuestionItem struct {
-	ID       uuid.UUID        `json:"id"`
-	Type     string           `json:"type"`
-	Question string           `json:"question"`
-	Options  json.RawMessage  `json:"options,omitempty"`
-	Order    int32            `json:"order"`
+	ID       uuid.UUID       `json:"id"`
+	Type     string          `json:"type"`
+	Question string          `json:"question"`
+	Options  json.RawMessage `json:"options,omitempty"`
+	Order    int32           `json:"order"`
 }
 
 func (s *CourseService) GetCourse(ctx context.Context, id uuid.UUID) (*CourseDetail, error) {
@@ -254,7 +254,7 @@ func (s *CourseService) SubmitAnswer(ctx context.Context, userID, courseID, ques
 	} else {
 		// Append answer
 		var answers []map[string]interface{}
-		json.Unmarshal(prog.Answers, &answers)
+		_ = json.Unmarshal(prog.Answers, &answers)
 		answers = append(answers, map[string]interface{}{
 			"questionId": questionID.String(), "answer": answer, "isCorrect": correct,
 		})
@@ -286,7 +286,7 @@ func validateAnswer(question repository.Question, answer string) bool {
 			return answer != ""
 		}
 		var keywords []string
-		json.Unmarshal(question.AcceptableKeywords, &keywords)
+		_ = json.Unmarshal(question.AcceptableKeywords, &keywords)
 		lower := strings.ToLower(answer)
 		for _, kw := range keywords {
 			if strings.Contains(lower, strings.ToLower(kw)) {
@@ -302,7 +302,7 @@ func validateAnswer(question repository.Question, answer string) bool {
 type CompleteResult struct {
 	Score          float64 `json:"score"`
 	TotalQuestions int     `json:"totalQuestions"`
-	CorrectAnswers int    `json:"correctAnswers"`
+	CorrectAnswers int     `json:"correctAnswers"`
 }
 
 func (s *CourseService) CompleteCourse(ctx context.Context, userID, courseID uuid.UUID) (*CompleteResult, error) {
@@ -312,7 +312,7 @@ func (s *CourseService) CompleteCourse(ctx context.Context, userID, courseID uui
 	}
 
 	var answers []map[string]interface{}
-	json.Unmarshal(prog.Answers, &answers)
+	_ = json.Unmarshal(prog.Answers, &answers)
 
 	correctCount := 0
 	for _, a := range answers {
@@ -328,7 +328,9 @@ func (s *CourseService) CompleteCourse(ctx context.Context, userID, courseID uui
 	}
 
 	scoreNumeric := pgtype.Numeric{}
-	scoreNumeric.Scan(fmt.Sprintf("%.2f", score))
+	if err := scoreNumeric.Scan(fmt.Sprintf("%.2f", score)); err != nil {
+		return nil, fmt.Errorf("scan score: %w", err)
+	}
 
 	_, err = s.progress.CompleteProgress(ctx, repository.CompleteProgressParams{
 		Score:    scoreNumeric,
