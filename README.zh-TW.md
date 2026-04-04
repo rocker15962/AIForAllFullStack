@@ -70,21 +70,30 @@
 ## 架構
 
 ```
-                    docker compose up
-┌──────────────────────────────────────────────────────┐
-│                   Docker Compose                      │
-│                                                       │
-│  ┌─────────────────┐     ┌──────────────────────┐    │
-│  │   Next.js 前端   │────▶│    Go API Server      │    │
-│  │   (port 3000)    │     │    (Gin + sqlc)       │    │
-│  └─────────────────┘     │    (port 8080)        │    │
-│                           └──────┬──────────┬─────┘    │
-│                                  │          │           │
-│                           ┌──────▼──┐  ┌───▼────┐     │
-│                           │PostgreSQL│  │ Redis  │     │
-│                           │ (5432)   │  │ (6379) │     │
-│                           └─────────┘  └────────┘     │
-└──────────────────────────────────────────────────────┘
+                    docker compose up [--profile monitoring]
+┌────────────────────────────────────────────────────────────┐
+│                       Docker Compose                        │
+│                                                             │
+│  ┌─────────────────┐     ┌──────────────────────┐          │
+│  │   Next.js 前端   │────▶│    Go API Server      │          │
+│  │   (port 3000)    │     │    (Gin + sqlc)       │          │
+│  └─────────────────┘     │    (port 8080)        │          │
+│                           └──┬──────────┬────┬───┘          │
+│                              │          │    │               │
+│                        ┌─────▼──┐  ┌───▼──┐ │               │
+│                        │PostgreSQL│  │Redis │ │               │
+│                        │ (5432)   │  │(6379)│ │               │
+│                        └─────────┘  └──────┘ │               │
+│                                               │               │
+│  ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘ ─ ─ ─ ─ ┐   │
+│    選用：--profile monitoring                              │
+│  │                                                       │   │
+│    ┌───────────┐  抓取 /metrics     ┌─────────┐         │   │
+│  │ │Prometheus │◀───────────────────│ Grafana │          │   │
+│    │  (9090)   │───────────────────▶│ (3001)  │         │   │
+│  │ └───────────┘                    └─────────┘          │   │
+│   ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘   │
+└────────────────────────────────────────────────────────────┘
 ```
 
 ## 快速開始
@@ -260,14 +269,14 @@ HTTP Request
 
 ## API 概覽
 
-38 個端點，分為 6 個領域，皆位於 `/api/v1/` 下：
+39 個端點，分為 7 個領域，皆位於 `/api/v1/` 下：
 
 | 領域 | 端點 | 認證 | 說明 |
 |------|------|------|------|
 | Health | `GET /health` | — | 服務健康檢查 |
 | Auth | `GET /auth/google/login`, `GET /auth/google/callback`, `POST /auth/refresh`, `POST /auth/logout`, `GET /auth/me` | 部分 | Google OAuth2 流程 + session 管理 |
 | Courses | `GET /courses`, `GET /courses/:id`, `GET /courses/:id/recommended`, `POST /courses/:id/submit`, `POST /courses/:id/complete` | 部分 | 瀏覽、學習、答題、完課 |
-| Categories | `GET /tools`, `GET /skills` | — | 公開的工具/技能列表 |
+| Categories | `GET /tools`, `GET /skills`, `GET /creators` | — | 公開的工具/技能/創作者列表 |
 | User | `GET /my/progress`, `GET /my/completed`, `GET /my/badges`, `GET /my/stats`, `GET /my/profile`, `PUT /my/profile`, `POST /my/avatar` | 必要 | 學習進度、個人資料管理 |
 | Admin | 18 個端點（`/admin/dashboard`, `/admin/courses/*`, `/admin/users/*`, `/admin/tools/*`, `/admin/skills/*`） | 管理員 | 儀表板、課程/使用者/分類 CRUD |
 

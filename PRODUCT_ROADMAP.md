@@ -596,7 +596,7 @@ User ─────────< Progress >───────── Course
 - [x] Branch protection rules
 
 **Documentation**:
-- [x] Swagger/OpenAPI spec for all 38 API endpoints (swaggo/swag)
+- [x] Swagger/OpenAPI spec for all 39 API endpoints (swaggo/swag)
 - [x] Swagger UI at `/swagger/index.html`
 - [x] README polish (setup guide, contributing guide)
 - [x] Environment variables documentation

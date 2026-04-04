@@ -70,21 +70,30 @@ This project is designed for long-term growth, targeting a large-scale education
 ## Architecture
 
 ```
-                    docker compose up
-┌──────────────────────────────────────────────────────┐
-│                   Docker Compose                      │
-│                                                       │
-│  ┌─────────────────┐     ┌──────────────────────┐    │
-│  │  Next.js Frontend│────▶│    Go API Server      │    │
-│  │   (port 3000)    │     │    (Gin + sqlc)       │    │
-│  └─────────────────┘     │    (port 8080)        │    │
-│                           └──────┬──────────┬─────┘    │
-│                                  │          │           │
-│                           ┌──────▼──┐  ┌───▼────┐     │
-│                           │PostgreSQL│  │ Redis  │     │
-│                           │ (5432)   │  │ (6379) │     │
-│                           └─────────┘  └────────┘     │
-└──────────────────────────────────────────────────────┘
+                    docker compose up [--profile monitoring]
+┌────────────────────────────────────────────────────────────┐
+│                       Docker Compose                        │
+│                                                             │
+│  ┌─────────────────┐     ┌──────────────────────┐          │
+│  │  Next.js Frontend│────▶│    Go API Server      │          │
+│  │   (port 3000)    │     │    (Gin + sqlc)       │          │
+│  └─────────────────┘     │    (port 8080)        │          │
+│                           └──┬──────────┬────┬───┘          │
+│                              │          │    │               │
+│                        ┌─────▼──┐  ┌───▼──┐ │               │
+│                        │PostgreSQL│  │Redis │ │               │
+│                        │ (5432)   │  │(6379)│ │               │
+│                        └─────────┘  └──────┘ │               │
+│                                               │               │
+│  ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘ ─ ─ ─ ─ ┐   │
+│    Optional: --profile monitoring                          │
+│  │                                                       │   │
+│    ┌───────────┐  scrape /metrics   ┌─────────┐         │   │
+│  │ │Prometheus │◀───────────────────│ Grafana │          │   │
+│    │  (9090)   │───────────────────▶│ (3001)  │         │   │
+│  │ └───────────┘                    └─────────┘          │   │
+│   ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘   │
+└────────────────────────────────────────────────────────────┘
 ```
 
 ## Getting Started
@@ -260,14 +269,14 @@ HTTP Request
 
 ## API Overview
 
-38 endpoints across 6 domains, all under `/api/v1/`:
+39 endpoints across 7 domains, all under `/api/v1/`:
 
 | Domain | Endpoints | Auth | Description |
 |--------|-----------|------|-------------|
 | Health | `GET /health` | — | Service health check |
 | Auth | `GET /auth/google/login`, `GET /auth/google/callback`, `POST /auth/refresh`, `POST /auth/logout`, `GET /auth/me` | Partial | Google OAuth2 flow + session management |
 | Courses | `GET /courses`, `GET /courses/:id`, `GET /courses/:id/recommended`, `POST /courses/:id/submit`, `POST /courses/:id/complete` | Partial | Browse, learn, submit answers, complete courses |
-| Categories | `GET /tools`, `GET /skills` | — | Public tool/skill listings |
+| Categories | `GET /tools`, `GET /skills`, `GET /creators` | — | Public tool/skill/creator listings |
 | User | `GET /my/progress`, `GET /my/completed`, `GET /my/badges`, `GET /my/stats`, `GET /my/profile`, `PUT /my/profile`, `POST /my/avatar` | Required | Learning progress, profile management |
 | Admin | 18 endpoints (`/admin/dashboard`, `/admin/courses/*`, `/admin/users/*`, `/admin/tools/*`, `/admin/skills/*`) | Admin | Dashboard, course/user/category CRUD |
 

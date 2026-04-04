@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 AI for All is a nonprofit AI education platform that partners with YouTube creators. Users watch embedded tutorial videos, complete quizzes, and track learning progress. The platform is bilingual (English + Traditional Chinese / 繁體中文).
 
-**Current state**: All 6 development phases are complete. Next.js frontend in `frontend/`, Go API server in `backend/`, PostgreSQL + Redis, all orchestrated via Docker Compose. 38 API endpoints, Google OAuth2 authentication, full test suite (unit, integration, E2E), and GitHub Actions CI pipeline.
+**Current state**: All 6 development phases are complete. Next.js frontend in `frontend/`, Go API server in `backend/`, PostgreSQL + Redis, all orchestrated via Docker Compose. 39 API endpoints, Google OAuth2 authentication, full test suite (unit, integration, E2E), and GitHub Actions CI pipeline.
 
 ## Commands
 
@@ -269,7 +269,7 @@ The Go backend follows 3-Layer Clean Architecture: Handler (HTTP parsing) → Se
 - `AIForAll.pen` — Visual design file (open with Pencil MCP tools)
 - `frontend/src/types/index.ts` — TypeScript type definitions (source of truth for data shapes)
 - `frontend/src/app/globals.css` — Design tokens and color scale definitions
-- `backend/cmd/server/main.go` — All 38 API endpoint registrations + Swagger general info
+- `backend/cmd/server/main.go` — All 39 API endpoint registrations + Swagger general info
 - `backend/db/migrations/` — PostgreSQL schema (golang-migrate)
 - `backend/docs/swagger/` — Generated Swagger/OpenAPI spec (committed to git)
 - `backend/internal/middleware/metrics.go` — Prometheus HTTP metrics middleware
