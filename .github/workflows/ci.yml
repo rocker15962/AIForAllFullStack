@@ -63,10 +63,7 @@ jobs:
         run: go build ./...
 
       - name: Test with Coverage
-        run: go test ./... -v -coverprofile=coverage.out
-
-      - name: Coverage Summary
-        run: go tool cover -func=coverage.out | tail -1
+        run: go test ./... -v -cover
 
   integration:
     name: Integration Tests (testcontainers)
