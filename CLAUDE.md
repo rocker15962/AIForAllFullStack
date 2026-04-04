@@ -6,9 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 AI for All is a nonprofit AI education platform that partners with YouTube creators. Users watch embedded tutorial videos, complete quizzes, and track learning progress. The platform is bilingual (English + Traditional Chinese / 繁體中文).
 
-**Current state**: Next.js frontend in `frontend/`, Go backend scaffold in `backend/`, Docker Compose orchestrating all 4 services (frontend, backend, PostgreSQL, Redis).
-
-**Target architecture**: Next.js frontend (`frontend/`) + Go API server (`backend/`) + PostgreSQL + Redis, all orchestrated via Docker Compose. See `PRODUCT_ROADMAP.md` for the full 6-phase plan.
+**Current state**: All 6 development phases are complete. Next.js frontend in `frontend/`, Go API server in `backend/`, PostgreSQL + Redis, all orchestrated via Docker Compose. 38 API endpoints, Google OAuth2 authentication, full test suite (unit, integration, E2E), and GitHub Actions CI pipeline.
 
 ## Commands
 
@@ -42,14 +40,19 @@ go test ./...             # Run Go tests
 ### Docker Compose (from repo root)
 
 ```bash
-make dev                  # Start all 4 services (frontend, backend, PostgreSQL, Redis)
+make dev                  # Start all 4 services (foreground)
+make dev-detach           # Start all 4 services (background)
 make stop                 # Stop all services
 make clean                # Stop + remove volumes
 make migrate              # Run database migrations
 make migrate-down         # Rollback last migration
+make seed                 # Load seed data (courses, tools, skills)
 make sqlc                 # Regenerate sqlc code
 make health               # Quick health check
 make logs                 # Follow all service logs
+make logs-backend         # Follow backend logs only
+make build                # Build all Docker images
+make lint-backend         # Run Go linter
 ```
 
 ## Feature Development Lifecycle
@@ -203,45 +206,44 @@ If any step fails, the commit is blocked.
 
 ## Architecture
 
-### Current: Single-tier frontend
-
 ```
-frontend/src/
-├── app/              # Next.js App Router pages (9 routes)
-│   ├── api/          # API routes (SQLite-backed, to be replaced by Go API)
-│   ├── courses/      # /courses and /courses/[id]
-│   ├── my-learning/  # User dashboard
-│   ├── profile/      # User profile
-│   └── admin/        # Admin dashboard (4 sub-routes)
-├── components/       # React components organized by feature
-│   ├── shell/        # AppShell, TopNav, UserMenu
-│   ├── course-discovery/
-│   ├── course-learning/
-│   ├── my-learning/
-│   └── admin/
-├── contexts/         # AuthContext (React Context)
-├── lib/              # db.ts (SQLite), data.ts, seed.ts
-└── types/index.ts    # All TypeScript types (37 exports)
-```
-
-### Target: Frontend + Go Backend
-
-```
-frontend/  → Next.js (port 3000) — SSG for course pages, CSR for admin
+frontend/  → Next.js (port 3000) — route groups: (marketing), (app), (admin)
 backend/   → Go + Gin (port 8080) — 3-Layer Clean Architecture
              Handler → Service (interfaces) → Repository (sqlc-generated)
 PostgreSQL → Primary database (port 5432)
 Redis      → Cache + rate limiting (port 6379)
 ```
 
+### Frontend Structure
+
+```
+frontend/src/
+├── app/
+│   ├── (marketing)/      # Landing page, login, auth callback
+│   ├── (app)/            # Courses, my-learning, profile (user routes)
+│   └── (admin)/          # Admin dashboard, course/user/category management
+├── components/
+│   ├── ui/               # shadcn/ui components (8 installed)
+│   ├── shell/            # AppShell, TopNav, UserMenu
+│   ├── course-discovery/ # Course cards, filter sidebar
+│   ├── course-learning/  # Video player, quiz, completion view
+│   ├── my-learning/      # Progress, completed, badges tabs
+│   ├── admin/            # Dashboard stats, course editor, question editor
+│   └── shared/           # ConfirmDialog, Toast, EmptyState, ErrorState
+├── contexts/             # AuthContext (wraps Zustand store)
+├── stores/               # Zustand auth store
+├── lib/                  # API client, Zod schemas, query provider
+└── types/                # TypeScript type definitions
+```
+
 The Go backend follows 3-Layer Clean Architecture: Handler (HTTP parsing) → Service (business logic, defines interfaces) → Repository (data access, implements interfaces). Service defines the interface, Repository implements it — enabling dependency inversion for testing.
 
 ### Data Model
-7 entities: User, Course, Question, Tool, Skill, Progress, Creator. Full field definitions and relationships are in `PRODUCT_ROADMAP.md` Section 2. All TypeScript types are defined in `frontend/src/types/index.ts`.
+7 entities: User, Course, Question, Tool, Skill, Progress, Creator. Full field definitions and relationships are in `PRODUCT_ROADMAP.md` Section 2. TypeScript types are in `frontend/src/types/index.ts`.
 
 ## Language
 
-- UI text is in Traditional Chinese (繁體中文): 探索課程, 我的學習, etc.
+- UI text is in English (Explore, My Learning, etc.)
 - Code identifiers, comments, and docs use English
 - Key docs have paired `.zh-TW.md` versions — **always update both** when making changes
 
@@ -249,16 +251,19 @@ The Go backend follows 3-Layer Clean Architecture: Handler (HTTP parsing) → Se
 
 - **Gitignored work dirs**: `docs/superpowers/` (design specs) and `.claude/` (plans) are gitignored — don't `git add` them
 - **Working directory matters**: All `npm` commands must run from `frontend/`, not the repo root. husky pre-commit hook handles this automatically with `cd frontend`.
-- **Docker required**: `make dev` (or `docker compose up --build`) starts the full stack. PostgreSQL and Redis run in containers. First Go build in Docker on macOS is slow (~15 min) due to Linux emulation; subsequent builds are cached.
+- **Docker required**: `make dev` (or `docker compose up --build`) starts the full stack. PostgreSQL and Redis run in containers. First Go build in Docker on macOS is slow (~15 min) due to Linux emulation; subsequent builds are cached via named volumes.
 - **Go tooling on host**: `sqlc generate` runs on the host machine (not in Docker) so generated files are available for IDE support. Install with `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest`.
-- **`.env.example`**: Copy to `.env` if needed. Docker Compose hardcodes dev values, so `.env` is not required for local development.
+- **`.env` required for OAuth**: Copy `.env.example` to `.env` and fill in Google OAuth credentials. Without valid OAuth credentials, login will fail (but the rest of the app works).
 - **Root `package.json`**: A minimal `package.json` exists at the git root solely for husky's `prepare` script. It is NOT the app's package.json.
+- **`app/` is legacy**: The frontend source code is in `frontend/`, not `app/`. Any remaining `app/` references are outdated.
 
 ## Important Files
 
 - `PRODUCT_ROADMAP.md` — Complete product spec with 6 development phases, data model, API endpoints, success criteria
 - `README.md` — Tech stack rationale, architecture diagram, production readiness evaluation
 - `AIForAll.pen` — Visual design file (open with Pencil MCP tools)
-- `frontend/src/types/index.ts` — All TypeScript type definitions (source of truth for data shapes)
-- `frontend/src/lib/db.ts` — Current SQLite schema (reference for PostgreSQL migration design)
+- `frontend/src/types/index.ts` — TypeScript type definitions (source of truth for data shapes)
 - `frontend/src/app/globals.css` — Design tokens and color scale definitions
+- `backend/cmd/server/main.go` — All 38 API endpoint registrations
+- `backend/db/migrations/` — PostgreSQL schema (golang-migrate)
+- `docs/ENVIRONMENT.md` — All environment variables documentation
