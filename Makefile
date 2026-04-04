@@ -1,4 +1,4 @@
-.PHONY: dev dev-detach stop clean migrate migrate-down seed sqlc logs logs-backend health build lint-backend
+.PHONY: dev dev-detach stop clean migrate migrate-down seed sqlc logs logs-backend health build lint-backend monitoring
 
 # Start all services (foreground)
 dev:
@@ -51,3 +51,7 @@ build:
 # Run Go linter
 lint-backend:
 	cd backend && golangci-lint run ./...
+
+# Start with monitoring stack (Prometheus + Grafana)
+monitoring:
+	docker compose --profile monitoring up --build
