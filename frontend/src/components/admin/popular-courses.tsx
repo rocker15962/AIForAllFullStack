@@ -15,12 +15,10 @@ interface PopularCoursesProps {
 export function PopularCourses({ courses }: PopularCoursesProps) {
   return (
     <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
-      <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-        Popular Courses
-      </h2>
+      <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">熱門課程</h2>
 
       {courses.length === 0 ? (
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">No course data available yet.</p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">還沒有課程資料。</p>
       ) : (
         <ul className="space-y-3">
           {courses.map((course, index) => (

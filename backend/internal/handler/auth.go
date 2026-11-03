@@ -9,8 +9,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/rocker15962/AIForAllFullStack/backend/internal/logger"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/middleware"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/service"
+	"go.uber.org/zap"
 )
 
 type AuthHandler struct {
@@ -93,6 +95,7 @@ func (h *AuthHandler) GoogleCallback(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 		return
 	}
+	h.recordActivity(c, user.ID)
 
 	// Generate tokens
 	tokens, err := h.authService.GenerateTokens(user)
@@ -144,6 +147,8 @@ func (h *AuthHandler) Refresh(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
 		return
 	}
+	// A session refresh happens on every visit, so it marks the user active today (BR-39).
+	h.recordActivity(c, user.ID)
 
 	tokens, err := h.authService.GenerateTokens(user)
 	if err != nil {
@@ -225,4 +230,11 @@ func generateRandomState() (string, error) {
 		return "", err
 	}
 	return hex.EncodeToString(b), nil
+}
+
+// recordActivity is best effort: a failure must not block signing in.
+func (h *AuthHandler) recordActivity(c *gin.Context, userID uuid.UUID) {
+	if err := h.authService.RecordActivity(c.Request.Context(), userID); err != nil && logger.L != nil {
+		logger.L.Warn("failed to record user activity", zap.Error(err))
+	}
 }

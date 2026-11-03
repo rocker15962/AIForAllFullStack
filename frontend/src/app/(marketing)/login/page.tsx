@@ -4,6 +4,10 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 
+/** Shared by both sign-in buttons so they stay the same size and outline look. */
+const authButtonClasses =
+  'flex h-12 w-full items-center justify-center gap-2.5 rounded-[10px] border-zinc-300 text-sm font-medium text-zinc-700 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-200'
+
 export default function LoginPage() {
   const { login, logout } = useAuth()
   const router = useRouter()
@@ -24,10 +28,8 @@ export default function LoginPage() {
 
         {/* Title group */}
         <div className="flex flex-col items-center gap-2">
-          <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">Welcome Back</h1>
-          <p className="text-center text-sm text-zinc-500">
-            Sign in to track your progress and earn badges
-          </p>
+          <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">歡迎回來</h1>
+          <p className="text-center text-sm text-zinc-500">登入以記錄學習進度、獲得徽章</p>
         </div>
 
         {/* Auth buttons */}
@@ -37,9 +39,9 @@ export default function LoginPage() {
             variant="outline"
             size="lg"
             onClick={() => login('/courses')}
-            className="flex h-12 w-full items-center justify-center gap-2.5 rounded-[10px] border-zinc-300 text-sm font-medium text-zinc-700 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-200"
+            className={authButtonClasses}
           >
-            <svg width="18" height="18" viewBox="0 0 48 48">
+            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
               <path
                 fill="#EA4335"
                 d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
@@ -57,26 +59,22 @@ export default function LoginPage() {
                 d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
               />
             </svg>
-            Continue with Google
+            使用 Google 繼續
           </Button>
 
-          {/* Facebook — not supported yet (BR-22): kept visible but disabled */}
-          <Button
-            size="lg"
-            disabled
-            aria-describedby="facebook-coming-soon"
-            className="flex h-12 w-full items-center justify-center gap-2.5 rounded-[10px] bg-[#1877F2] text-sm font-medium text-white"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+          {/* Facebook — not supported yet (BR-22): disabled outline button, no Facebook blue */}
+          <Button variant="outline" size="lg" disabled className={authButtonClasses}>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+              className="text-zinc-500 dark:text-zinc-400"
+            >
               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
             </svg>
-            Continue with Facebook
-            <span
-              id="facebook-coming-soon"
-              className="rounded-full bg-white/25 px-2 py-0.5 text-[11px] font-semibold"
-            >
-              Coming soon
-            </span>
+            使用 Facebook 繼續 · 即將推出
           </Button>
         </div>
 
@@ -85,7 +83,7 @@ export default function LoginPage() {
 
         {/* Skip link */}
         <Button variant="link" onClick={handleSkip} className="text-sm font-medium text-cyan-600">
-          Continue without signing in
+          先不登入，直接逛逛
         </Button>
       </div>
     </div>

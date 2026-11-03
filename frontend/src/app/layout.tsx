@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { DM_Sans, JetBrains_Mono, Geist } from 'next/font/google'
+import { DM_Sans, JetBrains_Mono, Geist, Noto_Sans_TC } from 'next/font/google'
 import { AuthProvider } from '@/contexts/auth-context'
 import { ToastProvider } from '@/components/shared'
 import { QueryProvider } from '@/lib/query-provider'
@@ -14,6 +14,14 @@ const dmSans = DM_Sans({
   weight: ['400', '500', '600', '700'],
 })
 
+// CJK font for Traditional Chinese text; it has no CJK subset to preload, so preloading is off
+const notoSansTC = Noto_Sans_TC({
+  variable: '--font-noto-sans-tc',
+  weight: ['400', '500', '700'],
+  display: 'swap',
+  preload: false,
+})
+
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-jetbrains-mono',
@@ -21,8 +29,8 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'AI for All - AI Education Platform',
-  description: 'Learn AI skills through curated YouTube creator content',
+  title: 'AI for All - 人人都能免費學 AI',
+  description: '精選 YouTube 創作者的 AI 教學影片，搭配測驗，免費學會 AI 技能',
 }
 
 export default function RootLayout({
@@ -32,8 +40,14 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={cn(dmSans.variable, jetbrainsMono.variable, 'font-sans', geist.variable)}
+      lang="zh-Hant-TW"
+      className={cn(
+        dmSans.variable,
+        notoSansTC.variable,
+        jetbrainsMono.variable,
+        'font-sans',
+        geist.variable,
+      )}
     >
       <body className="font-sans antialiased">
         <QueryProvider>

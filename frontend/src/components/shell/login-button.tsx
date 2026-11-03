@@ -10,7 +10,7 @@ export function LoginButton() {
       onClick={() => login()}
       className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-cyan-600"
     >
-      Log In
+      登入
     </button>
   )
 }

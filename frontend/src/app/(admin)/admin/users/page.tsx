@@ -20,51 +20,36 @@ interface ApiUser {
   completedCount: number
 }
 
+// BR-38: no Facebook sign-in stat and no sign-in provider filter
 interface UserStats {
   totalUsers: number
   googleUsers: number
-  facebookUsers: number
   activeToday: number
 }
-
-type ProviderFilter = 'all' | 'google' | 'facebook'
 
 const statCards = [
   {
     key: 'totalUsers' as const,
-    label: 'Total Users',
+    label: '總用戶數',
     icon: Users,
     iconBg: 'bg-cyan-100 dark:bg-cyan-900/40',
     iconColor: 'text-cyan-600 dark:text-cyan-400',
   },
   {
     key: 'googleUsers' as const,
-    label: 'Google Login',
+    label: 'Google 登入',
     icon: Users,
     iconBg: 'bg-blue-100 dark:bg-blue-900/40',
     iconColor: 'text-blue-600 dark:text-blue-400',
   },
   {
-    key: 'facebookUsers' as const,
-    label: 'Facebook Login',
-    icon: Users,
-    iconBg: 'bg-indigo-100 dark:bg-indigo-900/40',
-    iconColor: 'text-indigo-600 dark:text-indigo-400',
-  },
-  {
     key: 'activeToday' as const,
-    label: 'Active Today',
+    label: '今日活躍',
     icon: Activity,
     iconBg: 'bg-green-100 dark:bg-green-900/40',
     iconColor: 'text-green-600 dark:text-green-400',
   },
 ] as const
-
-const filterChips: { value: ProviderFilter; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'google', label: 'Google' },
-  { value: 'facebook', label: 'Facebook' },
-]
 
 export default function UserManagementPage() {
   const { user, accessToken, isLoading: authLoading } = useAuth()
@@ -73,10 +58,9 @@ export default function UserManagementPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Search and filter
+  // Search
   const [searchInput, setSearchInput] = useState('')
   const [search, setSearch] = useState('')
-  const [providerFilter, setProviderFilter] = useState<ProviderFilter>('all')
 
   // Debounce search
   useEffect(() => {
@@ -102,8 +86,9 @@ export default function UserManagementPage() {
       }
       const data = (await res.json()) as { users: ApiUser[] }
       setUsers(data.users || [])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred')
+    } catch {
+      // The API error text is English; show a generic message instead.
+      setError('無法載入用戶列表，請再試一次。')
       setUsers([])
     } finally {
       setIsLoading(false)
@@ -139,9 +124,9 @@ export default function UserManagementPage() {
         if (!res.ok) throw new Error(`Failed to load progress (${res.status})`)
         const data = (await res.json()) as { progress: UserProgressRow[] }
         if (!cancelled) setProgressRows(data.progress || [])
-      } catch (err) {
+      } catch {
         if (!cancelled) {
-          setProgressError(err instanceof Error ? err.message : 'Failed to load progress')
+          setProgressError('無法載入學習進度，請再試一次。')
         }
       } finally {
         if (!cancelled) setProgressLoading(false)
@@ -157,15 +142,9 @@ export default function UserManagementPage() {
     setExpandedUserId((current) => (current === userId ? null : userId))
   }
 
-  // Apply client-side provider filter
-  const filteredUsers =
-    providerFilter === 'all' ? users : users.filter((u) => u.provider === providerFilter)
-
-  // Compute stats from unfiltered user list
   const stats: UserStats = {
     totalUsers: users.length,
     googleUsers: users.filter((u) => u.provider === 'google').length,
-    facebookUsers: users.filter((u) => u.provider === 'facebook').length,
     activeToday: users.filter((u) => {
       const lastActive = new Date(u.lastActiveAt)
       const today = new Date()
@@ -174,7 +153,7 @@ export default function UserManagementPage() {
   }
 
   // Map to table rows
-  const tableRows: UserRow[] = filteredUsers.map((u) => ({
+  const tableRows: UserRow[] = users.map((u) => ({
     id: u.id,
     name: u.name,
     email: u.email,
@@ -201,11 +180,9 @@ export default function UserManagementPage() {
         <div className="text-center">
           <ShieldAlert className="mx-auto h-12 w-12 text-zinc-400" />
           <h1 className="mt-4 text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            Admin access required
+            需要管理員權限
           </h1>
-          <p className="mt-2 text-sm text-zinc-500">
-            You must be an administrator to view this page.
-          </p>
+          <p className="mt-2 text-sm text-zinc-500">你必須是管理員才能查看此頁面。</p>
         </div>
       </div>
     )
@@ -216,9 +193,7 @@ export default function UserManagementPage() {
     return (
       <div className="flex min-h-[calc(100vh-56px)] items-center justify-center">
         <div className="text-center">
-          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            Failed to load users
-          </h1>
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">用戶載入失敗</h1>
           <p className="mt-2 text-sm text-zinc-500">{error}</p>
         </div>
       </div>
@@ -229,14 +204,12 @@ export default function UserManagementPage() {
     <div className="mx-auto max-w-7xl px-6 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">User Management</h1>
-        <p className="mt-1 text-[15px] text-zinc-500 dark:text-zinc-400">
-          View user profiles and learning progress
-        </p>
+        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">用戶管理</h1>
+        <p className="mt-1 text-[15px] text-zinc-500 dark:text-zinc-400">查看用戶資料與學習進度</p>
       </div>
 
       {/* Stat Cards */}
-      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {statCards.map((card) => {
           const Icon = card.icon
           const value = stats[card.key]
@@ -259,20 +232,21 @@ export default function UserManagementPage() {
         })}
       </div>
 
-      {/* Search + Filter Row */}
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-        {/* Search */}
-        <div className="relative flex-1">
+      {/* Search */}
+      <div className="mb-6">
+        <div className="relative">
           <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
           <input
             type="text"
-            placeholder="Search users..."
+            placeholder="搜尋用戶…"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full rounded-lg border border-zinc-200 bg-zinc-50 py-2.5 pr-10 pl-10 text-sm text-zinc-900 transition-colors outline-none focus:border-cyan-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:border-cyan-500"
           />
           {searchInput && (
             <button
+              type="button"
+              aria-label="清除搜尋"
               onClick={() => {
                 setSearchInput('')
                 setSearch('')
@@ -282,23 +256,6 @@ export default function UserManagementPage() {
               <X className="h-4 w-4" />
             </button>
           )}
-        </div>
-
-        {/* Provider filter chips */}
-        <div className="flex gap-2">
-          {filterChips.map((chip) => (
-            <button
-              key={chip.value}
-              onClick={() => setProviderFilter(chip.value)}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-                providerFilter === chip.value
-                  ? 'bg-cyan-500 text-white'
-                  : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-600'
-              }`}
-            >
-              {chip.label}
-            </button>
-          ))}
         </div>
       </div>
 

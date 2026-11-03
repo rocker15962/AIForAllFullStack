@@ -6,8 +6,9 @@ import Link from 'next/link'
 import { useAuth } from '@/contexts/auth-context'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { AvatarCropDialog } from '@/components/profile'
 import { profileFormSchema } from '@/lib/schemas'
-import { cropToSquare, validateAvatarFile } from '@/lib/avatar'
+import { validateAvatarFile } from '@/lib/avatar'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
@@ -28,25 +29,38 @@ export default function ProfilePage() {
   const [avatarPreview, setAvatarPreview] = useState<string>('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+  // BR-25: the picked image waits in the crop dialog; only 「套用」 uploads it.
+  const [cropSrc, setCropSrc] = useState<string | null>(null)
+
+  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     e.target.value = '' // allow choosing the same file again
     if (!file || !accessToken || !user) return
 
-    // BR-25: images up to 5MB, cropped to a centered square before upload.
+    // Not an image, or over 5MB: say so without opening the dialog.
     const invalid = validateAvatarFile(file)
     if (invalid) {
       setMessage({ type: 'error', text: invalid })
       return
     }
+    setMessage(null)
+    setCropSrc(URL.createObjectURL(file))
+  }
 
-    let square: Blob
-    try {
-      square = await cropToSquare(file)
-    } catch {
-      setMessage({ type: 'error', text: 'Could not read this image. Please try another one.' })
-      return
-    }
+  function closeCrop() {
+    if (cropSrc) URL.revokeObjectURL(cropSrc)
+    setCropSrc(null)
+  }
+
+  function handleCropError() {
+    closeCrop()
+    setMessage({ type: 'error', text: '無法讀取這張圖片，請換一張試試。' })
+  }
+
+  async function handleCropApply(square: Blob) {
+    closeCrop()
+    if (!accessToken || !user) return
+
     const previousPreview = avatarPreview
     setAvatarPreview(URL.createObjectURL(square))
 
@@ -65,15 +79,15 @@ export default function ProfilePage() {
         const fullUrl = `${API_URL}${data.avatarUrl}?v=${Date.now()}`
         setAvatarPreview(fullUrl)
         setAuth(accessToken, { ...user, avatarUrl: fullUrl })
-        setMessage({ type: 'success', text: 'Avatar updated' })
+        setMessage({ type: 'success', text: '已更新大頭貼' })
       } else {
-        const body = await res.json().catch(() => ({ error: 'Upload failed' }))
+        // The file was validated above; the API's English error is not shown to the learner.
         setAvatarPreview(previousPreview)
-        setMessage({ type: 'error', text: (body as { error?: string }).error || 'Upload failed' })
+        setMessage({ type: 'error', text: '上傳失敗' })
       }
     } catch {
       setAvatarPreview(previousPreview)
-      setMessage({ type: 'error', text: 'Failed to upload avatar' })
+      setMessage({ type: 'error', text: '大頭貼上傳失敗' })
     }
   }
 
@@ -109,7 +123,7 @@ export default function ProfilePage() {
     const result = profileFormSchema.safeParse({ name })
     if (!result.success) {
       const firstError = result.error.issues[0]
-      setMessage({ type: 'error', text: firstError?.message || 'Validation failed' })
+      setMessage({ type: 'error', text: firstError?.message || '請檢查輸入的內容' })
       return
     }
 
@@ -124,12 +138,12 @@ export default function ProfilePage() {
       if (res.ok) {
         const data = (await res.json()) as { name: string }
         setAuth(accessToken, { ...user, name: data.name })
-        setMessage({ type: 'success', text: 'Profile updated' })
+        setMessage({ type: 'success', text: '已更新個人資料' })
       } else {
-        setMessage({ type: 'error', text: 'Failed to update profile' })
+        setMessage({ type: 'error', text: '個人資料更新失敗' })
       }
     } catch {
-      setMessage({ type: 'error', text: 'Network error. Please try again.' })
+      setMessage({ type: 'error', text: '網路連線失敗，請檢查網路後再試一次。' })
     } finally {
       setIsSaving(false)
     }
@@ -151,14 +165,14 @@ export default function ProfilePage() {
             <UserIcon className="h-8 w-8 text-zinc-400" />
           </div>
           <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-            Sign in to view your profile
+            登入以查看個人資料
           </h2>
-          <p className="mt-2 text-sm text-zinc-500">Log in to manage your account settings.</p>
+          <p className="mt-2 text-sm text-zinc-500">登入後即可管理帳號設定。</p>
           <Button
             onClick={() => login('/profile')}
             className="mt-6 rounded-lg bg-cyan-500 px-6 py-2.5 text-sm font-medium text-white hover:bg-cyan-600"
           >
-            Log In
+            登入
           </Button>
         </div>
       </div>
@@ -166,9 +180,9 @@ export default function ProfilePage() {
   }
 
   const createdDate = profile?.createdAt
-    ? new Date(profile.createdAt).toLocaleDateString('en-US', {
+    ? new Date(profile.createdAt).toLocaleDateString('zh-TW', {
         year: 'numeric',
-        month: 'short',
+        month: 'long',
         day: 'numeric',
       })
     : ''
@@ -181,13 +195,13 @@ export default function ProfilePage() {
         className="mb-4 inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back
+        返回
       </Link>
 
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">Profile</h1>
-        <p className="mt-1 text-[15px] text-zinc-500">Manage your account information</p>
+        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">個人資料</h1>
+        <p className="mt-1 text-[15px] text-zinc-500">管理你的帳號資訊</p>
       </div>
 
       {/* Profile card */}
@@ -221,7 +235,8 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            aria-label="Change avatar (image up to 5MB, cropped to a square)"
+            aria-label="更換大頭貼"
+            title="更換大頭貼"
             className="absolute top-4 left-[88px] flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-cyan-500 transition-colors hover:bg-cyan-600"
           >
             <Camera className="h-3.5 w-3.5 text-white" />
@@ -233,7 +248,7 @@ export default function ProfilePage() {
           {/* Name field — using shadcn/ui Input */}
           <div className="flex flex-col gap-1.5">
             <label htmlFor="name" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Name
+              名字
             </label>
             <Input
               id="name"
@@ -247,7 +262,7 @@ export default function ProfilePage() {
           {/* Email field (disabled) */}
           <div className="flex flex-col gap-1.5">
             <label htmlFor="email" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Email
+              電子郵件
             </label>
             <Input
               id="email"
@@ -256,7 +271,7 @@ export default function ProfilePage() {
               disabled
               className="h-11 rounded-lg border-zinc-200 bg-zinc-100 px-3.5 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-500"
             />
-            <p className="text-xs text-zinc-400">Signed in via Google, cannot be changed</p>
+            <p className="text-xs text-zinc-400">透過 Google 登入，無法修改</p>
           </div>
 
           {/* Message */}
@@ -279,22 +294,27 @@ export default function ProfilePage() {
               disabled={isSaving || name.trim() === ''}
               className="flex-1 rounded-lg bg-cyan-500 py-2.5 text-sm font-medium text-white hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isSaving ? 'Saving...' : 'Save Changes'}
+              {isSaving ? '儲存中…' : '儲存變更'}
             </Button>
             <Link
               href="/my-learning"
               className="flex items-center justify-center rounded-lg border border-zinc-200 px-6 py-2.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400"
             >
-              Cancel
+              取消
             </Link>
           </div>
         </form>
       </div>
 
       {/* Account created */}
-      {createdDate && (
-        <p className="mt-4 text-[13px] text-zinc-400">Account created on {createdDate}</p>
-      )}
+      {createdDate && <p className="mt-4 text-[13px] text-zinc-400">帳號建立於 {createdDate}</p>}
+
+      <AvatarCropDialog
+        src={cropSrc}
+        onCancel={closeCrop}
+        onApply={(square) => void handleCropApply(square)}
+        onError={handleCropError}
+      />
     </div>
   )
 }

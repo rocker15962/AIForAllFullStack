@@ -66,6 +66,9 @@ export function CategoryList({
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
 
+  // e.g. '工具分類' → '工具', used by the add button and the archive dialog
+  const itemLabel = title.replace(/分類$/, '')
+
   function startEdit(item: CategoryItem) {
     setEditingId(item.id)
     setEditName(item.name)
@@ -179,14 +182,14 @@ export function CategoryList({
                   type="text"
                   value={editIcon}
                   onChange={(e) => setEditIcon(e.target.value)}
-                  placeholder="Icon name"
+                  placeholder="圖示名稱"
                   className="w-24 rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-xs text-zinc-900 outline-none focus:border-cyan-400 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
                 />
                 <input
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  placeholder="Category name"
+                  placeholder="分類名稱"
                   className="flex-1 rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-sm text-zinc-900 outline-none focus:border-cyan-400 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
                 />
                 <button
@@ -227,7 +230,7 @@ export function CategoryList({
                 <button
                   onClick={() => startEdit(item)}
                   className="rounded p-1 text-zinc-400 transition-colors hover:text-cyan-600 dark:hover:text-cyan-400"
-                  title="Edit"
+                  title="編輯"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
@@ -235,7 +238,7 @@ export function CategoryList({
                   onClick={() => setConfirmDeleteId(item.id)}
                   disabled={deletingId === item.id}
                   className="rounded p-1 text-red-400 transition-colors hover:text-red-600 disabled:opacity-50 dark:text-red-400 dark:hover:text-red-300"
-                  title="Archive"
+                  title="封存"
                 >
                   {deletingId === item.id ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -251,7 +254,7 @@ export function CategoryList({
         {/* Empty state */}
         {items.length === 0 && !isAdding && (
           <div className="px-5 py-8 text-center">
-            <p className="text-sm text-zinc-400">No categories yet</p>
+            <p className="text-sm text-zinc-400">尚無分類</p>
           </div>
         )}
 
@@ -262,14 +265,14 @@ export function CategoryList({
               type="text"
               value={addIcon}
               onChange={(e) => setAddIcon(e.target.value)}
-              placeholder="Icon name"
+              placeholder="圖示名稱"
               className="w-24 rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-xs text-zinc-900 outline-none focus:border-cyan-400 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
             />
             <input
               type="text"
               value={addName}
               onChange={(e) => setAddName(e.target.value)}
-              placeholder="Category name"
+              placeholder="分類名稱"
               className="flex-1 rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-sm text-zinc-900 outline-none focus:border-cyan-400 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
             />
             <button
@@ -302,7 +305,7 @@ export function CategoryList({
             className="flex items-center gap-2 text-sm font-medium text-cyan-600 transition-colors hover:text-cyan-700 dark:text-cyan-400 dark:hover:text-cyan-300"
           >
             <Plus className="h-4 w-4" />
-            Add {title.replace(' Categories', '')}
+            新增{itemLabel}
           </button>
         </div>
       )}
@@ -316,9 +319,9 @@ export function CategoryList({
             setConfirmDeleteId(null)
           }
         }}
-        title={`Archive ${title.replace(' Categories', '')}?`}
-        description="It will be hidden from course filters and can no longer be assigned. Courses already using it keep it."
-        confirmLabel="Archive"
+        title={`封存${itemLabel}？`}
+        description="封存後不會出現在課程篩選中，也無法再指派；已使用的課程會保留這個分類。"
+        confirmLabel="封存"
         isLoading={!!deletingId}
       />
     </div>

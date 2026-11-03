@@ -18,7 +18,7 @@ export function ConfirmDialog({
   onConfirm,
   title,
   description,
-  confirmLabel = 'Delete',
+  confirmLabel = '刪除',
   isLoading = false,
 }: ConfirmDialogProps) {
   if (!isOpen) return null
@@ -46,7 +46,7 @@ export function ConfirmDialog({
             disabled={isLoading}
             className="flex-1 rounded-lg border border-zinc-200 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300"
           >
-            Cancel
+            取消
           </button>
           <button
             onClick={onConfirm}

@@ -25,14 +25,14 @@ interface ApiSkill {
 const statCards = [
   {
     key: 'tools' as const,
-    label: 'Tool Categories',
+    label: '工具分類',
     icon: Wrench,
     iconBg: 'bg-cyan-100 dark:bg-cyan-900/40',
     iconColor: 'text-cyan-600 dark:text-cyan-400',
   },
   {
     key: 'skills' as const,
-    label: 'Skill Categories',
+    label: '技能分類',
     icon: Lightbulb,
     iconBg: 'bg-amber-100 dark:bg-amber-900/40',
     iconColor: 'text-amber-600 dark:text-amber-400',
@@ -61,8 +61,9 @@ export default function CategoryManagementPage() {
       const data = (await res.json()) as { tools: ApiTool[]; skills: ApiSkill[] }
       setTools(data.tools || [])
       setSkills(data.skills || [])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred')
+    } catch {
+      // The API error text is English; show a generic message instead.
+      setError('無法載入分類，請再試一次。')
     } finally {
       setIsLoading(false)
     }
@@ -208,11 +209,9 @@ export default function CategoryManagementPage() {
         <div className="text-center">
           <ShieldAlert className="mx-auto h-12 w-12 text-zinc-400" />
           <h1 className="mt-4 text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            Admin access required
+            需要管理員權限
           </h1>
-          <p className="mt-2 text-sm text-zinc-500">
-            You must be an administrator to view this page.
-          </p>
+          <p className="mt-2 text-sm text-zinc-500">你必須是管理員才能查看此頁面。</p>
         </div>
       </div>
     )
@@ -223,9 +222,7 @@ export default function CategoryManagementPage() {
     return (
       <div className="flex min-h-[calc(100vh-56px)] items-center justify-center">
         <div className="text-center">
-          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            Failed to load categories
-          </h1>
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">分類載入失敗</h1>
           <p className="mt-2 text-sm text-zinc-500">{error}</p>
         </div>
       </div>
@@ -236,11 +233,9 @@ export default function CategoryManagementPage() {
     <div className="mx-auto max-w-7xl px-6 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">
-          Category Management
-        </h1>
+        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">分類管理</h1>
         <p className="mt-1 text-[15px] text-zinc-500 dark:text-zinc-400">
-          Manage platform tool and skill categories, drag to reorder
+          管理平台的工具與技能分類，拖曳即可排序
         </p>
       </div>
 
@@ -276,7 +271,7 @@ export default function CategoryManagementPage() {
       ) : (
         <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <CategoryList
-            title="Tool Categories"
+            title="工具分類"
             items={sortedTools}
             headerColor="cyan"
             onAdd={handleAddTool}
@@ -285,7 +280,7 @@ export default function CategoryManagementPage() {
             onReorder={handleReorderTools}
           />
           <CategoryList
-            title="Skill Categories"
+            title="技能分類"
             items={sortedSkills}
             headerColor="amber"
             onAdd={handleAddSkill}
@@ -301,19 +296,13 @@ export default function CategoryManagementPage() {
         <div className="flex items-start gap-3">
           <Info className="mt-0.5 h-5 w-5 shrink-0 text-cyan-500" />
           <div>
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Tips</h3>
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">提示</h3>
             <ul className="mt-2 space-y-1.5 text-sm text-zinc-500 dark:text-zinc-400">
+              <li>拖曳即可調整分類順序，這個順序就是平台上顯示的順序。</li>
               <li>
-                Drag to reorder categories. The order determines how they appear on the platform.
+                圖示名稱使用 lucide-react 格式（例如「bot」、「brain」、「code」、「image」）。
               </li>
-              <li>
-                Icon names use lucide-react format (e.g. &ldquo;bot&rdquo;, &ldquo;brain&rdquo;,
-                &ldquo;code&rdquo;, &ldquo;image&rdquo;).
-              </li>
-              <li>
-                Deleting a category will not remove courses assigned to it, but those courses will
-                need to be reassigned.
-              </li>
+              <li>封存分類後，已指派的課程會保留原分類。</li>
             </ul>
           </div>
         </div>

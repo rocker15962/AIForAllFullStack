@@ -25,14 +25,14 @@ export function AnswerFeedback({
         <p
           className={`mb-1 text-sm font-semibold ${correct ? 'text-green-800 dark:text-green-300' : 'text-red-800 dark:text-red-300'}`}
         >
-          {correct ? '✓ Correct!' : '✗ Incorrect'}
+          {correct ? '✓ 答對了！' : '✗ 答錯了'}
         </p>
 
         {!correct && correctAnswer && (
           <p
             className={`mb-2 text-xs ${correct ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}
           >
-            Correct answer: {correctAnswer}
+            正確答案：{correctAnswer}
           </p>
         )}
 
@@ -49,7 +49,7 @@ export function AnswerFeedback({
         onClick={onNext}
         className="mt-4 rounded-lg bg-cyan-500 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-cyan-600"
       >
-        {isLast ? 'View Results' : 'Next →'}
+        {isLast ? '查看結果' : '下一題 →'}
       </button>
     </div>
   )

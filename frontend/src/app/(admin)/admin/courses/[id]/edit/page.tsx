@@ -46,8 +46,9 @@ export default function EditCoursePage() {
           questions: raw.questions || [],
         }
         setCourse(mapped)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load course')
+      } catch {
+        // The API error text is English; show a generic message instead.
+        setError('課程載入失敗')
       } finally {
         setIsLoading(false)
       }
@@ -74,7 +75,7 @@ export default function EditCoursePage() {
         <div className="text-center">
           <ShieldAlert className="mx-auto h-12 w-12 text-zinc-400" />
           <h1 className="mt-4 text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            Admin access required
+            需要管理員權限
           </h1>
         </div>
       </div>
@@ -86,7 +87,7 @@ export default function EditCoursePage() {
       <div className="flex min-h-[calc(100vh-56px)] items-center justify-center">
         <div className="text-center">
           <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            {error || 'Course not found'}
+            {error || '找不到課程'}
           </h1>
         </div>
       </div>

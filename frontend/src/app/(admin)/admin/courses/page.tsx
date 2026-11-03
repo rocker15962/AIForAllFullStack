@@ -55,28 +55,28 @@ interface AdminCourse {
 const statCards = [
   {
     key: 'total' as const,
-    label: 'Total Courses',
+    label: '課程總數',
     icon: BookOpen,
     iconBg: 'bg-cyan-100 dark:bg-cyan-900/40',
     iconColor: 'text-cyan-600 dark:text-cyan-400',
   },
   {
     key: 'published' as const,
-    label: 'Published',
+    label: '已發布',
     icon: CheckCircle,
     iconBg: 'bg-green-100 dark:bg-green-900/40',
     iconColor: 'text-green-600 dark:text-green-400',
   },
   {
     key: 'drafts' as const,
-    label: 'Drafts',
+    label: '草稿',
     icon: FileText,
     iconBg: 'bg-amber-100 dark:bg-amber-900/40',
     iconColor: 'text-amber-600 dark:text-amber-400',
   },
   {
     key: 'questions' as const,
-    label: 'Total Questions',
+    label: '題目總數',
     icon: HelpCircle,
     iconBg: 'bg-violet-100 dark:bg-violet-900/40',
     iconColor: 'text-violet-600 dark:text-violet-400',
@@ -105,9 +105,9 @@ export default function CourseManagementPage() {
 
   const { showToast } = useToast()
 
-  // Archive confirmation (BR-31: "delete" archives the course)
-  const [deletingCourse, setDeletingCourse] = useState<CourseCardItem | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
+  // Archive confirmation (BR-31)
+  const [archivingCourse, setArchivingCourse] = useState<CourseCardItem | null>(null)
+  const [isArchiving, setIsArchiving] = useState(false)
 
   // Debounce search
   useEffect(() => {
@@ -157,8 +157,9 @@ export default function CourseManagementPage() {
       }
       const data = (await res.json()) as { courses: AdminCourse[] }
       setCourses(data.courses || [])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred')
+    } catch {
+      // The API error text is English; show a generic message instead.
+      setError('無法載入課程列表，請再試一次。')
       setCourses([])
     } finally {
       setIsLoading(false)
@@ -217,28 +218,29 @@ export default function CourseManagementPage() {
     router.push(`/admin/courses/${card.id}/edit`)
   }
 
-  function handleDeleteRequest(card: CourseCardItem) {
-    setDeletingCourse(card)
+  function handleArchiveRequest(card: CourseCardItem) {
+    setArchivingCourse(card)
   }
 
-  async function handleDeleteConfirm() {
-    if (!deletingCourse || !accessToken) return
-    setIsDeleting(true)
+  // DELETE archives the course; it never removes data (BR-31)
+  async function handleArchiveConfirm() {
+    if (!archivingCourse || !accessToken) return
+    setIsArchiving(true)
     try {
-      const res = await fetch(`${API_URL}/api/v1/admin/courses/${deletingCourse.id}`, {
+      const res = await fetch(`${API_URL}/api/v1/admin/courses/${archivingCourse.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       if (!res.ok) {
         throw new Error(`Failed to archive course (${res.status})`)
       }
-      setDeletingCourse(null)
-      showToast('success', 'Course archived')
+      setArchivingCourse(null)
+      showToast('success', '已封存課程')
       await fetchCourses()
     } catch {
-      showToast('error', 'Could not archive the course. Please try again.')
+      showToast('error', '無法封存課程，請再試一次。')
     } finally {
-      setIsDeleting(false)
+      setIsArchiving(false)
     }
   }
 
@@ -250,10 +252,10 @@ export default function CourseManagementPage() {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       if (!res.ok) throw new Error(`Failed to restore course (${res.status})`)
-      showToast('success', 'Course restored as a draft')
+      showToast('success', '已還原成草稿')
       await fetchCourses()
     } catch {
-      showToast('error', 'Could not restore the course. Please try again.')
+      showToast('error', '無法還原課程，請再試一次。')
     }
   }
 
@@ -268,9 +270,9 @@ export default function CourseManagementPage() {
       if (!res.ok) throw new Error(`Failed to create preview link (${res.status})`)
       const data = (await res.json()) as { path: string }
       await navigator.clipboard.writeText(`${window.location.origin}${data.path}`)
-      showToast('success', 'Preview link copied. It works until the course is published.')
+      showToast('success', '已複製預覽連結，課程發布前都有效')
     } catch {
-      showToast('error', 'Could not create a preview link. Please try again.')
+      showToast('error', '無法產生預覽連結，請再試一次。')
     }
   }
 
@@ -306,11 +308,9 @@ export default function CourseManagementPage() {
         <div className="text-center">
           <ShieldAlert className="mx-auto h-12 w-12 text-zinc-400" />
           <h1 className="mt-4 text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            Admin access required
+            需要管理員權限
           </h1>
-          <p className="mt-2 text-sm text-zinc-500">
-            You must be an administrator to view this page.
-          </p>
+          <p className="mt-2 text-sm text-zinc-500">你必須是管理員才能查看此頁面。</p>
         </div>
       </div>
     )
@@ -321,9 +321,7 @@ export default function CourseManagementPage() {
     return (
       <div className="flex min-h-[calc(100vh-56px)] items-center justify-center">
         <div className="text-center">
-          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            Failed to load courses
-          </h1>
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">課程載入失敗</h1>
           <p className="mt-2 text-sm text-zinc-500">{error}</p>
         </div>
       </div>
@@ -335,11 +333,9 @@ export default function CourseManagementPage() {
       {/* Header */}
       <div className="mb-8 flex items-start justify-between">
         <div>
-          <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">
-            Course Management
-          </h1>
+          <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">課程管理</h1>
           <p className="mt-1 text-[15px] text-zinc-500 dark:text-zinc-400">
-            Add, edit, and manage platform course content
+            新增、編輯與管理平台課程內容
           </p>
         </div>
         <Link
@@ -347,7 +343,7 @@ export default function CourseManagementPage() {
           className="flex shrink-0 items-center gap-2 rounded-lg bg-cyan-500 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cyan-600"
         >
           <Plus className="h-4 w-4" />
-          Add Course
+          新增課程
         </Link>
       </div>
 
@@ -382,13 +378,15 @@ export default function CourseManagementPage() {
           <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
           <input
             type="text"
-            placeholder="Search courses..."
+            placeholder="搜尋課程…"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full rounded-lg border border-zinc-200 bg-zinc-50 py-2.5 pr-10 pl-10 text-sm text-zinc-900 transition-colors outline-none focus:border-cyan-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:border-cyan-500"
           />
           {searchInput && (
             <button
+              type="button"
+              aria-label="清除搜尋"
               onClick={() => {
                 setSearchInput('')
                 setSearch('')
@@ -402,35 +400,38 @@ export default function CourseManagementPage() {
 
         {/* Status filter */}
         <select
+          aria-label="狀態"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-[13px] text-zinc-600 transition-colors outline-none focus:border-cyan-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
         >
-          <option value="">All Statuses</option>
-          <option value="published">Published</option>
-          <option value="draft">Draft</option>
-          <option value="archived">Archived</option>
+          <option value="">全部狀態</option>
+          <option value="published">已發布</option>
+          <option value="draft">草稿</option>
+          <option value="archived">已封存</option>
         </select>
 
         {/* Level filter */}
         <select
+          aria-label="難度"
           value={levelFilter}
           onChange={(e) => setLevelFilter(e.target.value)}
           className="rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-[13px] text-zinc-600 transition-colors outline-none focus:border-cyan-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
         >
-          <option value="">All Levels</option>
-          <option value="beginner">Beginner</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="advanced">Advanced</option>
+          <option value="">全部難度</option>
+          <option value="beginner">入門</option>
+          <option value="intermediate">中級</option>
+          <option value="advanced">進階</option>
         </select>
 
         {/* Tool filter */}
         <select
+          aria-label="工具"
           value={toolFilter}
           onChange={(e) => setToolFilter(e.target.value)}
           className="rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-[13px] text-zinc-600 transition-colors outline-none focus:border-cyan-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
         >
-          <option value="">All Tools</option>
+          <option value="">全部工具</option>
           {tools.map((t) => (
             <option key={t.id} value={t.id}>
               {t.name}
@@ -440,11 +441,12 @@ export default function CourseManagementPage() {
 
         {/* Skill filter */}
         <select
+          aria-label="技能"
           value={skillFilter}
           onChange={(e) => setSkillFilter(e.target.value)}
           className="rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-[13px] text-zinc-600 transition-colors outline-none focus:border-cyan-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
         >
-          <option value="">All Skills</option>
+          <option value="">全部技能</option>
           {skills.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name}
@@ -464,22 +466,22 @@ export default function CourseManagementPage() {
           toolNames={toolNames}
           skillNames={skillNames}
           onEdit={handleEdit}
-          onDelete={handleDeleteRequest}
+          onArchive={handleArchiveRequest}
           onTogglePublish={handleTogglePublish}
           onRestore={handleRestore}
           onCopyPreviewLink={handleCopyPreviewLink}
         />
       )}
 
-      {/* Delete Confirmation Dialog */}
+      {/* Archive confirmation (BR-31) */}
       <ConfirmDialog
-        isOpen={!!deletingCourse}
-        onClose={() => setDeletingCourse(null)}
-        onConfirm={handleDeleteConfirm}
-        title="Archive Course"
-        description={`"${deletingCourse?.title ?? ''}" will be hidden from learners. Their progress and badges are kept, and you can restore the course from the Archived filter.`}
-        confirmLabel="Archive"
-        isLoading={isDeleting}
+        isOpen={!!archivingCourse}
+        onClose={() => setArchivingCourse(null)}
+        onConfirm={handleArchiveConfirm}
+        title="封存課程"
+        description={`封存「${archivingCourse?.title ?? ''}」後，前台看不到這堂課；上過的學員仍保留紀錄，「我的學習」會顯示「已無法觀看」。之後可以在「已封存」篩選裡還原。`}
+        confirmLabel="封存"
+        isLoading={isArchiving}
       />
     </div>
   )

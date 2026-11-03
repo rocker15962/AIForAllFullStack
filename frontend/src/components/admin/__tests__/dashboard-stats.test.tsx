@@ -13,16 +13,16 @@ describe('DashboardStatsCards', () => {
   it('renders all four stat cards with correct values', () => {
     render(<DashboardStatsCards stats={mockStats} />)
 
-    expect(screen.getByText('Total Users')).toBeInTheDocument()
+    expect(screen.getByText('總用戶數')).toBeInTheDocument()
     expect(screen.getByText('1250')).toBeInTheDocument()
 
-    expect(screen.getByText('Courses')).toBeInTheDocument()
+    expect(screen.getByText('課程數')).toBeInTheDocument()
     expect(screen.getByText('48')).toBeInTheDocument()
 
-    expect(screen.getByText('Completions')).toBeInTheDocument()
+    expect(screen.getByText('完課次數')).toBeInTheDocument()
     expect(screen.getByText('892')).toBeInTheDocument()
 
-    expect(screen.getByText('Active Users')).toBeInTheDocument()
+    expect(screen.getByText('活躍用戶')).toBeInTheDocument()
     expect(screen.getByText('347')).toBeInTheDocument()
   })
 

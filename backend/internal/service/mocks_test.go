@@ -57,3 +57,13 @@ func (m *mockUserRepo) GetUserByID(ctx context.Context, id uuid.UUID) (repositor
 	}
 	return repository.User{}, pgx.ErrNoRows
 }
+
+func (m *mockUserRepo) RecordUserActivity(ctx context.Context, id uuid.UUID) error {
+	for email, u := range m.users {
+		if u.ID == id {
+			m.users[email] = u
+			return nil
+		}
+	}
+	return pgx.ErrNoRows
+}

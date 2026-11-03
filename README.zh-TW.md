@@ -257,7 +257,7 @@ HTTP Request
 | 7 | 前端調整 | 🟢 | TanStack Query、Zustand、shadcn/ui、Zod |
 | 8 | 測試策略 | 🟢 | Go unit + integration（testcontainers-go）；前端 Vitest |
 | 9 | Docker 化 | 🟢 | Go multi-stage build（~20MB）、4 服務 compose + health check |
-| 10 | CI/CD | 🟢 | GitHub Actions（5 個 job：lint、unit test、integration test、E2E、Docker build） |
+| 10 | CI/CD | 🟡 | GitHub Actions（前端 lint + unit test、後端 lint + unit test、Docker build）。上線前開發期間暫停 integration 與 E2E job，上線前要在 `.github/workflows/ci.yml` 重新開啟 |
 | 11 | 安全性 | 🟢 | CORS、rate limiting、input sanitization、安全 headers |
 | 12 | 可觀測性 | 🟢 | Prometheus metrics + Grafana dashboard、structured logging + request ID |
 | 13 | 程式碼品質 | 🟢 | golangci-lint、gofmt、ESLint、Prettier、pre-commit hooks |
@@ -317,6 +317,6 @@ CI 會在 push/PR 至 `dev` 和 `main` 時自動執行所有 4 種測試。
 | 7 | AI 驅動學習 | LLM 個人化學習路徑、RAG 驅動的 AI 助教 |
 | 8 | 創作者生態系 | 創作者自助上架、簡答題批改回饋、內容數據分析 |
 | 9 | 商業化與成長 | 創作者分潤、可驗證證書、企業方案、遊戲化 |
-| 10 | 規模化與基礎設施 | Kubernetes + Helm、OpenTelemetry 分散式追蹤、CDN + ISR、i18n |
+| 10 | 規模化與基礎設施 | Kubernetes + Helm、OpenTelemetry 分散式追蹤、CDN + ISR |
 
 詳細功能描述與技術方向請參考 [`PRODUCT_ROADMAP.zh-TW.md`](PRODUCT_ROADMAP.zh-TW.md)。

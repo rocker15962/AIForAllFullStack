@@ -3,13 +3,13 @@ import { test, expect } from '@playwright/test'
 test.describe('Navigation', () => {
   test('Explore link navigates to courses', async ({ page }) => {
     await page.goto('/courses')
-    const navLink = page.locator('nav').getByText('Explore')
+    const navLink = page.locator('nav').getByText('探索課程')
     await expect(navLink).toBeVisible()
   })
 
   test('My Learning link exists', async ({ page }) => {
     await page.goto('/courses')
-    const navLink = page.locator('nav').getByText('My Learning')
+    const navLink = page.locator('nav').getByText('我的學習')
     await expect(navLink).toBeVisible()
   })
 

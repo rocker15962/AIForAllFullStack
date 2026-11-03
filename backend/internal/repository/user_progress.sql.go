@@ -83,7 +83,7 @@ func (q *Queries) GetUserBadges(ctx context.Context, userID uuid.UUID) ([]GetUse
 }
 
 const getUserCompleted = `-- name: GetUserCompleted :many
-SELECT p.id, p.course_id, p.score, p.completed_at,
+SELECT p.id, p.course_id, p.score, p.completed_at, p.latest_round_passed, p.badge_earned_at,
        c.title, c.thumbnail_url, c.difficulty, c.tool_id, c.skill_id, c.status AS course_status,
        (SELECT COUNT(*) FROM questions q WHERE q.course_id = c.id)::int AS total_questions
 FROM progress p
@@ -93,17 +93,19 @@ ORDER BY p.completed_at DESC
 `
 
 type GetUserCompletedRow struct {
-	ID             uuid.UUID          `json:"id"`
-	CourseID       uuid.UUID          `json:"course_id"`
-	Score          pgtype.Numeric     `json:"score"`
-	CompletedAt    pgtype.Timestamptz `json:"completed_at"`
-	Title          string             `json:"title"`
-	ThumbnailUrl   string             `json:"thumbnail_url"`
-	Difficulty     DifficultyLevel    `json:"difficulty"`
-	ToolID         uuid.UUID          `json:"tool_id"`
-	SkillID        uuid.UUID          `json:"skill_id"`
-	CourseStatus   CourseStatus       `json:"course_status"`
-	TotalQuestions int32              `json:"total_questions"`
+	ID                uuid.UUID          `json:"id"`
+	CourseID          uuid.UUID          `json:"course_id"`
+	Score             pgtype.Numeric     `json:"score"`
+	CompletedAt       pgtype.Timestamptz `json:"completed_at"`
+	LatestRoundPassed pgtype.Bool        `json:"latest_round_passed"`
+	BadgeEarnedAt     pgtype.Timestamptz `json:"badge_earned_at"`
+	Title             string             `json:"title"`
+	ThumbnailUrl      string             `json:"thumbnail_url"`
+	Difficulty        DifficultyLevel    `json:"difficulty"`
+	ToolID            uuid.UUID          `json:"tool_id"`
+	SkillID           uuid.UUID          `json:"skill_id"`
+	CourseStatus      CourseStatus       `json:"course_status"`
+	TotalQuestions    int32              `json:"total_questions"`
 }
 
 func (q *Queries) GetUserCompleted(ctx context.Context, userID uuid.UUID) ([]GetUserCompletedRow, error) {
@@ -120,6 +122,8 @@ func (q *Queries) GetUserCompleted(ctx context.Context, userID uuid.UUID) ([]Get
 			&i.CourseID,
 			&i.Score,
 			&i.CompletedAt,
+			&i.LatestRoundPassed,
+			&i.BadgeEarnedAt,
 			&i.Title,
 			&i.ThumbnailUrl,
 			&i.Difficulty,
@@ -140,6 +144,7 @@ func (q *Queries) GetUserCompleted(ctx context.Context, userID uuid.UUID) ([]Get
 
 const getUserInProgress = `-- name: GetUserInProgress :many
 SELECT p.id, p.course_id, p.current_question, p.answers, p.started_at, p.last_accessed_at,
+       p.score, p.latest_round_passed,
        c.title, c.thumbnail_url, c.difficulty, c.tool_id, c.skill_id, c.status AS course_status,
        (SELECT COUNT(*) FROM questions q WHERE q.course_id = c.id)::int AS total_questions
 FROM progress p
@@ -149,19 +154,21 @@ ORDER BY p.last_accessed_at DESC
 `
 
 type GetUserInProgressRow struct {
-	ID              uuid.UUID       `json:"id"`
-	CourseID        uuid.UUID       `json:"course_id"`
-	CurrentQuestion pgtype.Int4     `json:"current_question"`
-	Answers         json.RawMessage `json:"answers"`
-	StartedAt       time.Time       `json:"started_at"`
-	LastAccessedAt  time.Time       `json:"last_accessed_at"`
-	Title           string          `json:"title"`
-	ThumbnailUrl    string          `json:"thumbnail_url"`
-	Difficulty      DifficultyLevel `json:"difficulty"`
-	ToolID          uuid.UUID       `json:"tool_id"`
-	SkillID         uuid.UUID       `json:"skill_id"`
-	CourseStatus    CourseStatus    `json:"course_status"`
-	TotalQuestions  int32           `json:"total_questions"`
+	ID                uuid.UUID       `json:"id"`
+	CourseID          uuid.UUID       `json:"course_id"`
+	CurrentQuestion   pgtype.Int4     `json:"current_question"`
+	Answers           json.RawMessage `json:"answers"`
+	StartedAt         time.Time       `json:"started_at"`
+	LastAccessedAt    time.Time       `json:"last_accessed_at"`
+	Score             pgtype.Numeric  `json:"score"`
+	LatestRoundPassed pgtype.Bool     `json:"latest_round_passed"`
+	Title             string          `json:"title"`
+	ThumbnailUrl      string          `json:"thumbnail_url"`
+	Difficulty        DifficultyLevel `json:"difficulty"`
+	ToolID            uuid.UUID       `json:"tool_id"`
+	SkillID           uuid.UUID       `json:"skill_id"`
+	CourseStatus      CourseStatus    `json:"course_status"`
+	TotalQuestions    int32           `json:"total_questions"`
 }
 
 func (q *Queries) GetUserInProgress(ctx context.Context, userID uuid.UUID) ([]GetUserInProgressRow, error) {
@@ -180,6 +187,8 @@ func (q *Queries) GetUserInProgress(ctx context.Context, userID uuid.UUID) ([]Ge
 			&i.Answers,
 			&i.StartedAt,
 			&i.LastAccessedAt,
+			&i.Score,
+			&i.LatestRoundPassed,
 			&i.Title,
 			&i.ThumbnailUrl,
 			&i.Difficulty,

@@ -21,11 +21,9 @@ export default function NewCoursePage() {
         <div className="text-center">
           <ShieldAlert className="mx-auto h-12 w-12 text-zinc-400" />
           <h1 className="mt-4 text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            Admin access required
+            需要管理員權限
           </h1>
-          <p className="mt-2 text-sm text-zinc-500">
-            You must be an administrator to view this page.
-          </p>
+          <p className="mt-2 text-sm text-zinc-500">你必須是管理員才能查看此頁面。</p>
         </div>
       </div>
     )

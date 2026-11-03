@@ -31,7 +31,7 @@ function parseOptions(options: unknown): (string | QuestionOption)[] {
 function getQuestionTypeBadge(type: string) {
   const isMC = type === 'multiple_choice' || type === 'multiple-choice'
   return {
-    label: isMC ? 'Multiple Choice' : 'Short Answer',
+    label: isMC ? '單選題' : '簡答題',
     classes: isMC
       ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300'
       : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
@@ -107,21 +107,21 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
   function handleSave() {
     setFormError(null)
     if (!form.question.trim()) {
-      setFormError('Question text is required')
+      setFormError('請輸入題目')
       return
     }
     if (form.type === 'multiple_choice') {
       if (form.options.some((o) => !o.trim())) {
-        setFormError('All options are required')
+        setFormError('所有選項都必須填寫')
         return
       }
       if (form.correctAnswer < 0) {
-        setFormError('Select the correct answer')
+        setFormError('請選擇正確答案')
         return
       }
     }
     if (form.type === 'short_answer' && !form.sampleAnswer.trim()) {
-      setFormError('Sample answer is required')
+      setFormError('請輸入範例答案')
       return
     }
 
@@ -156,9 +156,9 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Quiz Questions</h2>
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">測驗題目</h2>
           <span className="text-sm text-zinc-500 dark:text-zinc-400">
-            {questions.length} {questions.length === 1 ? 'question' : 'questions'} added
+            已新增 {questions.length} 題
           </span>
         </div>
         <button
@@ -167,17 +167,15 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
           className="flex items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
         >
           <Plus className="h-4 w-4" />
-          Add Question
+          新增題目
         </button>
       </div>
 
       {/* Question List */}
       {questions.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-zinc-200 py-12 text-center dark:border-zinc-700">
-          <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">No questions yet</p>
-          <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
-            Click &quot;Add Question&quot; to get started
-          </p>
+          <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">尚未新增題目</p>
+          <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">點「新增題目」開始</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3">
@@ -198,7 +196,7 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
                       {badge.label}
                     </span>
                     <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                      Question {index + 1}
+                      第 {index + 1} 題
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5">
@@ -249,7 +247,7 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
 
                 {!isMC && question.sampleAnswer && (
                   <div className="mt-2 rounded-md bg-zinc-100 px-3 py-2 dark:bg-zinc-800">
-                    <p className="text-xs font-medium text-zinc-500">Sample answer:</p>
+                    <p className="text-xs font-medium text-zinc-500">範例答案：</p>
                     <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-300">
                       {question.sampleAnswer}
                     </p>
@@ -274,7 +272,7 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
             {/* Modal header */}
             <div className="mb-6 flex items-center justify-between">
               <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                {editingIndex !== null ? 'Edit Question' : 'Add Question'}
+                {editingIndex !== null ? '編輯題目' : '新增題目'}
               </h3>
               <button
                 onClick={() => setModalOpen(false)}
@@ -287,7 +285,7 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
             {/* Question Type toggle */}
             <div className="mb-6">
               <label className="mb-2 block text-[13px] font-medium text-zinc-700 dark:text-zinc-300">
-                Question Type
+                題型
               </label>
               <div className="flex gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-700">
                 <button
@@ -299,7 +297,7 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
                       : 'text-zinc-500 dark:text-zinc-400'
                   }`}
                 >
-                  Multiple Choice
+                  單選題
                 </button>
                 <button
                   type="button"
@@ -310,7 +308,7 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
                       : 'text-zinc-500 dark:text-zinc-400'
                   }`}
                 >
-                  Short Answer
+                  簡答題
                 </button>
               </div>
             </div>
@@ -318,12 +316,12 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
             {/* Question text */}
             <div className="mb-6">
               <label className="mb-2 block text-[13px] font-medium text-zinc-700 dark:text-zinc-300">
-                Question
+                題目
               </label>
               <textarea
                 value={form.question}
                 onChange={(e) => setForm((f) => ({ ...f, question: e.target.value }))}
-                placeholder="Enter your question..."
+                placeholder="輸入題目…"
                 rows={3}
                 className="w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-3 text-sm text-zinc-900 transition-colors outline-none focus:border-cyan-500 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
               />
@@ -333,7 +331,7 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
             {form.type === 'multiple_choice' && (
               <div className="mb-6">
                 <label className="mb-2 block text-[13px] font-medium text-zinc-700 dark:text-zinc-300">
-                  Options (click radio to mark correct answer)
+                  選項（點選圓鈕標記正確答案）
                 </label>
                 <div className="flex flex-col gap-2.5">
                   {form.options.map((opt, i) => (
@@ -359,7 +357,7 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
                           newOpts[i] = e.target.value
                           setForm((f) => ({ ...f, options: newOpts }))
                         }}
-                        placeholder={`Option ${String.fromCharCode(65 + i)}`}
+                        placeholder={`選項 ${String.fromCharCode(65 + i)}`}
                         className={`h-[42px] flex-1 rounded-lg border px-3 text-sm transition-colors outline-none ${
                           form.correctAnswer === i
                             ? 'border-cyan-300 bg-cyan-50 text-cyan-700 focus:border-cyan-500 dark:border-cyan-600 dark:bg-cyan-900/20 dark:text-cyan-300'
@@ -379,13 +377,13 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
                   htmlFor="sample-answer"
                   className="mb-2 block text-[13px] font-medium text-zinc-700 dark:text-zinc-300"
                 >
-                  Sample answer
+                  範例答案
                 </label>
                 <textarea
                   id="sample-answer"
                   value={form.sampleAnswer}
                   onChange={(e) => setForm((f) => ({ ...f, sampleAnswer: e.target.value }))}
-                  placeholder="Write a model answer…"
+                  placeholder="寫下一個標準答案…"
                   rows={2}
                   aria-describedby="sample-answer-hint"
                   className="w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-3 text-sm text-zinc-900 transition-colors outline-none focus:border-cyan-500 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
@@ -394,7 +392,7 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
                   id="sample-answer-hint"
                   className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400"
                 >
-                  AI grades learners&rsquo; answers against this sample answer.
+                  AI 會依範例答案判定學員的回答
                 </p>
               </div>
             )}
@@ -402,12 +400,12 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
             {/* Explanation */}
             <div className="mb-6">
               <label className="mb-2 block text-[13px] font-medium text-zinc-700 dark:text-zinc-300">
-                Explanation (optional)
+                解說（選填）
               </label>
               <textarea
                 value={form.explanation}
                 onChange={(e) => setForm((f) => ({ ...f, explanation: e.target.value }))}
-                placeholder="Explain why this is the correct answer..."
+                placeholder="說明為什麼這是正確答案…"
                 rows={2}
                 className="w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-3 text-sm text-zinc-900 transition-colors outline-none focus:border-cyan-500 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
               />
@@ -423,14 +421,14 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
                 onClick={() => setModalOpen(false)}
                 className="rounded-lg border border-zinc-200 px-5 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300"
               >
-                Cancel
+                取消
               </button>
               <button
                 type="button"
                 onClick={handleSave}
                 className="rounded-lg bg-cyan-500 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cyan-600"
               >
-                Save Question
+                儲存題目
               </button>
             </div>
           </div>

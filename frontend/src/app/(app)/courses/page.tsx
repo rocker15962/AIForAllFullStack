@@ -1,9 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { SlidersHorizontal } from 'lucide-react'
-import { SearchBar, FilterSidebar, CourseGrid, ResultsBar } from '@/components/course-discovery'
+import {
+  SearchBar,
+  FilterSidebar,
+  CourseGrid,
+  ResultsBar,
+  Pagination,
+  PAGE_SIZE,
+  getItemRange,
+  getTotalPages,
+  usePageParam,
+} from '@/components/course-discovery'
 import { useDebouncedValue } from '@/lib/use-debounced-value'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
@@ -70,12 +80,15 @@ async function fetchCourses(params: {
   toolId: string | null
   skillId: string | null
   difficulty: string | null
+  page: number
 }): Promise<{ courses: CourseItem[]; total: number }> {
   const searchParams = new URLSearchParams()
   if (params.search) searchParams.set('search', params.search)
   if (params.toolId) searchParams.set('tool_id', params.toolId)
   if (params.skillId) searchParams.set('skill_id', params.skillId)
   if (params.difficulty) searchParams.set('difficulty', params.difficulty)
+  searchParams.set('page', String(params.page))
+  searchParams.set('limit', String(PAGE_SIZE))
 
   const res = await fetch(`${API_URL}/api/v1/courses?${searchParams.toString()}`)
   if (!res.ok) return { courses: [], total: 0 }
@@ -83,8 +96,10 @@ async function fetchCourses(params: {
   return { courses: data.courses || [], total: data.total || 0 }
 }
 
-export default function CoursesPage() {
+function ExploreCourses() {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
+  // Current page, mirrored to ?page= (BR-40)
+  const [page, setPage] = usePageParam()
 
   // Filter state — the search box is controlled; the query uses a debounced copy (300ms)
   const [searchInput, setSearchInput] = useState('')
@@ -109,15 +124,33 @@ export default function CoursesPage() {
     queryFn: fetchCreators,
   })
 
-  // TanStack Query: fetch courses (re-fetches when filters change)
+  // TanStack Query: fetch courses (re-fetches when filters or the page change)
   const { data: courseData, isLoading } = useQuery({
-    queryKey: ['courses', search, toolId, skillId, difficulty],
-    queryFn: () => fetchCourses({ search, toolId, skillId, difficulty }),
+    queryKey: ['courses', search, toolId, skillId, difficulty, page],
+    queryFn: () => fetchCourses({ search, toolId, skillId, difficulty, page }),
   })
 
   const courses = courseData?.courses ?? []
-  // `total` is the filtered count across all pages, not just the first page
+  // `total` is the filtered count across all pages, not just this page
   const total = courseData?.total ?? 0
+  const totalPages = getTotalPages(total, PAGE_SIZE)
+
+  // A new search or filter starts again from page 1; a page past the end (an old link, or
+  // fewer courses than before) moves to the last page. Both adjust state while rendering, so
+  // the stale page is never requested or shown.
+  const filterKey = JSON.stringify([search, toolId, skillId, difficulty])
+  const [pagedFilterKey, setPagedFilterKey] = useState(filterKey)
+  if (filterKey !== pagedFilterKey) {
+    setPagedFilterKey(filterKey)
+    setPage(1, 'replace')
+  } else if (courseData && page > totalPages) {
+    setPage(totalPages, 'replace')
+  }
+
+  function handlePageChange(next: number) {
+    setPage(next)
+    window.scrollTo({ top: 0 })
+  }
 
   // Build name lookup maps
   const toolNames: Record<string, string> = {}
@@ -152,10 +185,8 @@ export default function CoursesPage() {
     <div className="px-6 py-8 sm:px-10">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">Explore Courses</h1>
-        <p className="mt-2 text-[15px] text-zinc-500">
-          Find the right AI courses for you and start your learning journey
-        </p>
+        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">探索課程</h1>
+        <p className="mt-2 text-[15px] text-zinc-500">找到適合你的 AI 課程，開始你的學習旅程</p>
       </div>
 
       {/* Body: Sidebar + Main Content */}
@@ -189,7 +220,7 @@ export default function CoursesPage() {
               className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
             >
               <SlidersHorizontal className="h-4 w-4" />
-              Filter
+              篩選
               {activeFilterCount > 0 && (
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500 text-xs text-white">
                   {activeFilterCount}
@@ -207,6 +238,7 @@ export default function CoursesPage() {
             <>
               <ResultsBar
                 count={total}
+                range={totalPages > 1 ? getItemRange(page, PAGE_SIZE, total) : undefined}
                 hasActiveFilters={hasActiveFilters}
                 onClearAll={clearAllFilters}
               />
@@ -217,6 +249,14 @@ export default function CoursesPage() {
                 creatorNames={creatorNames}
                 creatorAvatarUrls={creatorAvatarUrls}
               />
+              {courses.length > 0 && (
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  className="mt-8"
+                />
+              )}
             </>
           )}
         </div>
@@ -231,7 +271,7 @@ export default function CoursesPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Filter</h3>
+              <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">篩選</h3>
               <button
                 onClick={() => {
                   setToolId(null)
@@ -240,7 +280,7 @@ export default function CoursesPage() {
                 }}
                 className="text-sm text-zinc-500"
               >
-                Clear
+                清除
               </button>
             </div>
             <FilterSidebar
@@ -257,11 +297,25 @@ export default function CoursesPage() {
               onClick={() => setMobileFilterOpen(false)}
               className="mt-6 w-full rounded-lg bg-cyan-500 py-3 text-sm font-medium text-white"
             >
-              Apply
+              套用
             </button>
           </div>
         </div>
       )}
     </div>
+  )
+}
+
+export default function CoursesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center py-20">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+        </div>
+      }
+    >
+      <ExploreCourses />
+    </Suspense>
   )
 }

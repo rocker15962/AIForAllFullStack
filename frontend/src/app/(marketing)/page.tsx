@@ -14,13 +14,13 @@ export default function LandingPage() {
         </Link>
         <div className="flex items-center gap-3">
           <Link href="/login" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            Log In
+            登入
           </Link>
           <Link
             href="/login"
             className="rounded-lg bg-cyan-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-cyan-600"
           >
-            Get Started
+            立即開始
           </Link>
         </div>
       </header>
@@ -30,17 +30,17 @@ export default function LandingPage() {
         <div className="mb-8 flex items-center gap-1.5 rounded-full bg-cyan-100 px-4 py-1.5 dark:bg-cyan-900/40">
           <Sparkles className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
           <span className="text-[13px] font-medium text-cyan-700 dark:text-cyan-300">
-            Free AI Education for Everyone
+            人人都能免費學 AI
           </span>
         </div>
 
         <h1 className="max-w-[900px] text-4xl leading-[1.15] font-bold text-zinc-900 sm:text-[56px] dark:text-zinc-100">
-          Learn AI Skills That Transform Your Career
+          學會改變職涯的 AI 技能
         </h1>
 
         <p className="mt-6 max-w-[700px] text-base leading-relaxed text-zinc-500 sm:text-lg">
-          Curated video courses from top YouTube creators, with hands-on quizzes to ensure you truly
-          understand. No cost, no barriers — just learning.
+          精選 YouTube 頂尖創作者的教學影片，搭配實作測驗，確保你真的學會。免費、沒有門檻 —
+          專心學習就好。
         </p>
 
         <div className="mt-10 flex items-center gap-4">
@@ -48,14 +48,14 @@ export default function LandingPage() {
             href="/courses"
             className="flex items-center gap-2 rounded-xl bg-cyan-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-cyan-600"
           >
-            Explore Courses
+            探索課程
             <ArrowRight className="h-[18px] w-[18px]" />
           </Link>
           <a
             href="#how-it-works"
             className="rounded-xl border border-zinc-300 px-8 py-4 text-base font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300"
           >
-            How It Works
+            如何運作
           </a>
         </div>
       </section>
@@ -63,11 +63,10 @@ export default function LandingPage() {
       {/* Features */}
       <section className="flex flex-col items-center bg-white px-8 py-20 sm:px-[120px] dark:bg-zinc-900">
         <h2 className="text-center text-[36px] font-bold text-zinc-900 dark:text-zinc-100">
-          Everything You Need to Learn AI
+          學 AI 需要的，這裡都有
         </h2>
         <p className="mt-4 max-w-[650px] text-center text-base leading-relaxed text-zinc-500">
-          Our platform provides a structured, hands-on learning experience with curated video
-          courses, interactive quizzes, and progress tracking.
+          我們提供結構化、重實作的學習體驗：精選影片課程、互動測驗，以及學習進度追蹤。
         </p>
 
         <div className="mt-12 grid w-full grid-cols-1 gap-8 md:grid-cols-3">
@@ -76,12 +75,9 @@ export default function LandingPage() {
             <div className="flex h-14 w-14 items-center justify-center rounded-[28px] bg-cyan-500">
               <Play className="h-6 w-6 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-              Curated Video Courses
-            </h3>
+            <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">精選影片課程</h3>
             <p className="text-center text-sm leading-relaxed text-zinc-500">
-              Learn from the best YouTube creators with expert-selected tutorials organized by topic
-              and difficulty.
+              向優秀的 YouTube 創作者學習，教學影片經專人挑選，依主題與難度分類。
             </p>
           </div>
 
@@ -90,12 +86,9 @@ export default function LandingPage() {
             <div className="flex h-14 w-14 items-center justify-center rounded-[28px] bg-amber-500">
               <BookCheck className="h-6 w-6 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-              Interactive Quizzes
-            </h3>
+            <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">互動測驗</h3>
             <p className="text-center text-sm leading-relaxed text-zinc-500">
-              Test your understanding with multiple-choice and short-answer questions after each
-              course.
+              每堂課後用單選題與簡答題，檢驗你的理解。
             </p>
           </div>
 
@@ -104,11 +97,9 @@ export default function LandingPage() {
             <div className="flex h-14 w-14 items-center justify-center rounded-[28px] bg-zinc-700">
               <BarChart3 className="h-6 w-6 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-              Progress Tracking
-            </h3>
+            <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">進度追蹤</h3>
             <p className="text-center text-sm leading-relaxed text-zinc-500">
-              Track your learning journey with completion badges and a personalized dashboard.
+              用完課徽章與個人儀表板，記錄你的學習歷程。
             </p>
           </div>
         </div>
@@ -120,28 +111,26 @@ export default function LandingPage() {
         className="flex flex-col items-center bg-zinc-50 px-8 py-20 sm:px-[120px] dark:bg-zinc-800/50"
       >
         <h2 className="text-center text-[36px] font-bold text-zinc-900 dark:text-zinc-100">
-          How It Works
+          如何運作
         </h2>
-        <p className="mt-4 text-center text-base text-zinc-500">
-          Get started in three simple steps
-        </p>
+        <p className="mt-4 text-center text-base text-zinc-500">三個步驟就能開始</p>
 
         <div className="mt-12 grid w-full grid-cols-1 gap-8 md:grid-cols-3">
           {[
             {
               num: '1',
-              title: 'Browse Courses',
-              desc: 'Explore our library of AI courses filtered by tool, skill, and difficulty level.',
+              title: '瀏覽課程',
+              desc: '依工具、技能與難度，瀏覽我們的 AI 課程。',
             },
             {
               num: '2',
-              title: 'Watch & Learn',
-              desc: 'Watch expert-curated YouTube tutorials embedded right on the platform.',
+              title: '觀看學習',
+              desc: '直接在平台上觀看專人精選的 YouTube 教學影片。',
             },
             {
               num: '3',
-              title: 'Test & Track',
-              desc: 'Complete quizzes to test your knowledge and earn completion badges.',
+              title: '測驗與追蹤',
+              desc: '完成測驗檢驗所學，並獲得完課徽章。',
             },
           ].map((step) => (
             <div key={step.num} className="flex flex-col items-center gap-4">
@@ -160,16 +149,16 @@ export default function LandingPage() {
       {/* CTA */}
       <section className="flex flex-col items-center bg-gradient-to-b from-cyan-50 to-cyan-100 px-8 py-20 text-center dark:from-zinc-900 dark:to-zinc-800">
         <h2 className="text-[36px] font-bold text-zinc-900 dark:text-zinc-100">
-          Ready to Start Learning?
+          準備好開始學習了嗎？
         </h2>
         <p className="mt-4 max-w-[600px] text-base leading-relaxed text-zinc-600 dark:text-zinc-400">
-          Join our community of learners and start building real AI skills today — completely free.
+          加入我們的學習社群，今天就開始累積真正的 AI 技能 — 完全免費。
         </p>
         <Link
           href="/login"
           className="mt-8 flex items-center gap-2 rounded-xl bg-cyan-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-cyan-600"
         >
-          Get Started for Free
+          免費開始學習
           <ArrowRight className="h-5 w-5" />
         </Link>
       </section>
@@ -178,12 +167,10 @@ export default function LandingPage() {
       <footer className="flex items-center justify-between bg-zinc-900 px-10 py-8 sm:px-20">
         <div>
           <p className="text-lg font-bold text-white">AI for All</p>
-          <p className="mt-2 text-[13px] text-zinc-400">
-            © 2026 AI for All. Free AI education for everyone.
-          </p>
+          <p className="mt-2 text-[13px] text-zinc-400">© 2026 AI for All. 人人都能免費學 AI。</p>
         </div>
         <div className="flex gap-6">
-          {['About', 'Contact', 'Privacy', 'Terms'].map((link) => (
+          {['關於我們', '聯絡我們', '隱私權政策', '使用條款'].map((link) => (
             <span key={link} className="text-sm text-zinc-400">
               {link}
             </span>

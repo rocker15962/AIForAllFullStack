@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -84,15 +85,23 @@ func (f *fakeProgress) StartProgress(_ context.Context, arg repository.StartProg
 	}
 	return nil
 }
+
+// FinishAttempt mirrors the SQL: passing completes the course and earns the badge; a course
+// passed before stays completed (BR-36).
 func (f *fakeProgress) FinishAttempt(_ context.Context, arg repository.FinishAttemptParams) (repository.Progress, error) {
 	f.finished = &arg
 	p := f.rows[arg.CourseID]
-	if arg.Passed {
+	if arg.Passed && !p.BadgeEarnedAt.Valid {
+		p.BadgeEarnedAt = pgtype.Timestamptz{Time: time.Date(2026, 9, 23, 8, 0, 0, 0, time.UTC), Valid: true}
+	}
+	if arg.Passed || p.BadgeEarnedAt.Valid {
 		p.Status = repository.ProgressStatusCompleted
-		p.BadgeEarnedAt = pgtype.Timestamptz{Valid: true}
 	} else {
 		p.Status = repository.ProgressStatusInProgress
 	}
+	p.Score = arg.Score
+	p.LatestRoundPassed = pgtype.Bool{Bool: arg.Passed, Valid: true}
+	p.RoundFinished = true
 	f.rows[arg.CourseID] = p
 	return p, nil
 }
@@ -102,7 +111,12 @@ func (f *fakeProgress) RetakeProgress(_ context.Context, arg repository.RetakePr
 		return repository.Progress{}, pgx.ErrNoRows
 	}
 	p.Answers = json.RawMessage("[]")
-	p.Status = repository.ProgressStatusInProgress
+	p.RoundFinished = false
+	if p.BadgeEarnedAt.Valid {
+		p.Status = repository.ProgressStatusCompleted
+	} else {
+		p.Status = repository.ProgressStatusInProgress
+	}
 	f.rows[arg.CourseID] = p
 	return p, nil
 }
@@ -346,6 +360,39 @@ func TestRetakeThenNewRoundCanBeAnswered(t *testing.T) {
 	r, err := f.svc.SubmitAnswer(context.Background(), learner, f.published.ID, f.mc[0].ID, "a", "")
 	if err != nil || r.AlreadyAnswered || r.Correct {
 		t.Fatalf("after retake: %+v err=%v", r, err)
+	}
+}
+
+// BR-36: after passing, a failed retake keeps the course completed and the badge.
+func TestFailedRetakeAfterPassingStaysCompleted(t *testing.T) {
+	f := newFixture()
+	ctx := context.Background()
+	answerAll(t, f, 5)
+	first, err := f.svc.CompleteCourse(ctx, learner.UserID, f.published.ID)
+	if err != nil || !first.Passed || first.BadgeEarnedAt == nil {
+		t.Fatalf("first round: %+v err=%v", first, err)
+	}
+
+	if err := f.svc.RetakeCourse(ctx, learner.UserID, f.published.ID); err != nil {
+		t.Fatal(err)
+	}
+	during, _ := f.svc.GetMyProgress(ctx, learner.UserID, f.published.ID)
+	if during.Status != "completed" || during.Score != nil || len(during.Answers) != 0 {
+		t.Fatalf("during retake: %+v", during)
+	}
+
+	answerAll(t, f, 1) // 20%
+	second, err := f.svc.CompleteCourse(ctx, learner.UserID, f.published.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if second.Passed || !second.BadgeEarned || second.BadgeEarnedAt == nil || *second.BadgeEarnedAt != *first.BadgeEarnedAt {
+		t.Fatalf("second round: %+v", second)
+	}
+	after, _ := f.svc.GetMyProgress(ctx, learner.UserID, f.published.ID)
+	if after.Status != "completed" || after.Score == nil || *after.Score != 20 ||
+		after.LatestRoundPassed == nil || *after.LatestRoundPassed {
+		t.Fatalf("after failed retake: %+v", after)
 	}
 }
 

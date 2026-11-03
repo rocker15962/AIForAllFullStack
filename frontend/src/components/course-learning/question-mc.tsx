@@ -63,7 +63,7 @@ export function QuestionMC({
           disabled={!selectedAnswer || disabled}
           className="rounded-lg bg-cyan-500 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Submit Answer
+          送出答案
         </button>
       </div>
     </div>

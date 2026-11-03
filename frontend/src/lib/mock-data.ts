@@ -12,13 +12,13 @@ export const mockUser: User = {
 }
 
 export const mainNavLinks: NavigationItem[] = [
-  { label: 'Explore', href: '/courses' },
-  { label: 'My Learning', href: '/my-learning' },
+  { label: '探索課程', href: '/courses' },
+  { label: '我的學習', href: '/my-learning' },
 ]
 
 export const adminNavLinks: NavigationItem[] = [
-  { label: 'Dashboard', href: '/admin' },
-  { label: 'Courses', href: '/admin/courses' },
-  { label: 'Users', href: '/admin/users' },
-  { label: 'Categories', href: '/admin/categories' },
+  { label: '儀表板', href: '/admin' },
+  { label: '課程', href: '/admin/courses' },
+  { label: '用戶', href: '/admin/users' },
+  { label: '分類', href: '/admin/categories' },
 ]

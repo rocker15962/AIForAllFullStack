@@ -17,9 +17,9 @@ interface FilterSidebarProps {
 }
 
 const difficulties: FilterOption[] = [
-  { id: 'beginner', name: 'Beginner' },
-  { id: 'intermediate', name: 'Intermediate' },
-  { id: 'advanced', name: 'Advanced' },
+  { id: 'beginner', name: '入門' },
+  { id: 'intermediate', name: '中級' },
+  { id: 'advanced', name: '進階' },
 ]
 
 export function FilterSidebar({
@@ -36,7 +36,7 @@ export function FilterSidebar({
     <div className="flex w-60 shrink-0 flex-col gap-6">
       {/* Tools */}
       <FilterSection
-        title="Tools"
+        title="工具"
         options={tools}
         selectedId={selectedToolId}
         onChange={onToolChange}
@@ -44,7 +44,7 @@ export function FilterSidebar({
 
       {/* Skills */}
       <FilterSection
-        title="Skills"
+        title="技能"
         options={skills}
         selectedId={selectedSkillId}
         onChange={onSkillChange}
@@ -52,7 +52,7 @@ export function FilterSidebar({
 
       {/* Difficulty */}
       <FilterSection
-        title="Difficulty"
+        title="難度"
         options={difficulties}
         selectedId={selectedDifficulty}
         onChange={onDifficultyChange}

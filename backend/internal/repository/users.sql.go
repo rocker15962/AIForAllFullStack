@@ -85,6 +85,21 @@ func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
 	return i, err
 }
 
+const recordUserActivity = `-- name: RecordUserActivity :exec
+WITH touched AS (
+    UPDATE users SET last_active_at = NOW() WHERE id = $1 RETURNING id
+)
+INSERT INTO user_activity_days (user_id, day)
+SELECT id, CURRENT_DATE FROM touched
+ON CONFLICT DO NOTHING
+`
+
+// BR-39: mark the user active today (login and session refresh).
+func (q *Queries) RecordUserActivity(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, recordUserActivity, id)
+	return err
+}
+
 const updateUser = `-- name: UpdateUser :one
 UPDATE users
 SET name = $1, avatar_url = $2, last_active_at = NOW()

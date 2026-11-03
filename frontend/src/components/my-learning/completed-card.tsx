@@ -1,91 +1,88 @@
 'use client'
 
 import Link from 'next/link'
-import { isCourseAvailable } from '@/types'
+import { retakeHref, unavailableCourseLabel } from '@/lib/learning-rules'
 import type { CompletedCourse } from '@/types'
+import {
+  CardMeta,
+  CardProgressBar,
+  CardThumbnail,
+  CourseTags,
+  CourseTitle,
+  LatestRoundFailed,
+  UnavailableCourseCard,
+  cardClasses,
+  formatShortDate,
+  outlineFooterButton,
+} from './card-parts'
 
 interface CompletedCardProps {
   course: CompletedCourse
 }
 
-const difficultyStyles: Record<string, { classes: string; label: string }> = {
-  beginner: { classes: 'bg-green-100 text-green-700', label: 'Beginner' },
-  intermediate: { classes: 'bg-amber-100 text-amber-700', label: 'Intermediate' },
-  advanced: { classes: 'bg-rose-100 text-rose-700', label: 'Advanced' },
-}
-
-function formatShortDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-}
-
 export function CompletedCard({ course }: CompletedCardProps) {
-  const difficulty = difficultyStyles[course.difficulty] || difficultyStyles.beginner
+  const unavailable = unavailableCourseLabel(course.courseStatus)
+  if (unavailable) {
+    return (
+      <UnavailableCourseCard
+        title={course.courseTitle}
+        thumbnail={course.courseThumbnail}
+        toolName={course.toolName}
+        skillName={course.skillName}
+        difficulty={course.difficulty}
+        reason={unavailable}
+      />
+    )
+  }
 
-  const available = isCourseAvailable(course.courseStatus)
-
-  const card = (
-    <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white transition-shadow group-hover:shadow-md dark:border-zinc-700 dark:bg-zinc-800">
-      {/* Thumbnail — 200px */}
-      <div className="h-[200px] bg-zinc-200 dark:bg-zinc-700">
-        {course.courseThumbnail ? (
-          <img
-            src={course.courseThumbnail}
-            alt={course.courseTitle}
-            className="h-full w-full object-cover"
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-4xl text-zinc-400">▶</div>
-        )}
-      </div>
-
-      {/* Green bar — 100% complete */}
-      <div className="h-1 bg-green-500" />
-
-      {/* Body */}
-      <div className="flex flex-col gap-2.5 p-4">
-        {/* Title — first */}
-        <h3 className="line-clamp-2 text-[15px] leading-snug font-semibold text-zinc-900 dark:text-zinc-100">
-          {course.courseTitle}
-        </h3>
-
-        {/* Tags row */}
-        <div className="flex flex-wrap gap-1.5">
-          {course.toolName && (
-            <span className="rounded-full bg-cyan-50 px-2 py-0.5 text-[11px] font-medium text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300">
-              {course.toolName}
-            </span>
-          )}
-          {course.skillName && (
-            <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[11px] font-medium text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
-              {course.skillName}
-            </span>
-          )}
-          <span
-            className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${difficulty.classes}`}
-          >
-            {difficulty.label}
-          </span>
-        </div>
-
-        {/* Meta — Score + date */}
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-green-600 dark:text-green-400">
-            Score: {Math.round(course.score)}%
-          </span>
-          <span className="text-xs text-zinc-400">{formatShortDate(course.completedAt)}</span>
-        </div>
-        {!available && <span className="text-xs text-zinc-500">No longer available</span>}
-      </div>
-    </div>
+  const tags = (
+    <CourseTags
+      toolName={course.toolName}
+      skillName={course.skillName}
+      difficulty={course.difficulty}
+    />
   )
 
-  // Archived courses keep their record but can no longer be opened (BR-31).
-  if (!available) return card
+  // BR-36: a retake scored below 60% — the course stays completed and keeps its badge.
+  if (course.latestRoundPassed === false) {
+    return (
+      <div className={cardClasses}>
+        <CardThumbnail src={course.courseThumbnail} alt={course.courseTitle} />
+        <CardProgressBar
+          value={course.score}
+          tone="highlight"
+          label={`最新一輪未通過 · ${Math.round(course.score)}%`}
+        />
+        <div className="flex flex-col gap-2.5 p-4">
+          <CourseTitle>{course.courseTitle}</CourseTitle>
+          {tags}
+          <CardMeta left={<LatestRoundFailed score={course.score} />} right="徽章保留" />
+          <Link href={retakeHref(course.courseId)} className={outlineFooterButton}>
+            重做測驗
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <Link href={`/courses/${course.courseId}`} className="group block">
-      {card}
+      <div className={`${cardClasses} transition-shadow group-hover:shadow-md`}>
+        <CardThumbnail src={course.courseThumbnail} alt={course.courseTitle} />
+        <CardProgressBar value={100} tone="success" label={`分數：${Math.round(course.score)}%`} />
+        <div className="flex flex-col gap-2.5 p-4">
+          <CourseTitle>{course.courseTitle}</CourseTitle>
+          {tags}
+          <CardMeta
+            left={
+              <span className="font-medium text-green-600 dark:text-green-400">
+                分數：{Math.round(course.score)}%
+              </span>
+            }
+            right={formatShortDate(course.completedAt)}
+          />
+        </div>
+      </div>
     </Link>
   )
 }
