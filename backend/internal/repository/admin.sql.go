@@ -633,14 +633,24 @@ SELECT
   (SELECT COUNT(*) FROM users)::int AS total_users,
   (SELECT COUNT(*) FROM courses WHERE status = 'published')::int AS total_courses,
   (SELECT COUNT(*) FROM progress WHERE status = 'completed')::int AS total_completions,
-  (SELECT COUNT(*) FROM users WHERE last_active_at > NOW() - INTERVAL '7 days')::int AS active_users
+  (SELECT COUNT(*) FROM users WHERE last_active_at > NOW() - INTERVAL '7 days')::int AS active_users,
+  -- The same stats one week earlier, for the week-over-week trend on the stat cards.
+  -- Courses have no publish date, so the course count has no trend.
+  (SELECT COUNT(*) FROM users WHERE created_at <= NOW() - INTERVAL '7 days')::int AS total_users_last_week,
+  (SELECT COUNT(*) FROM progress WHERE status = 'completed'
+     AND badge_earned_at <= NOW() - INTERVAL '7 days')::int AS total_completions_last_week,
+  (SELECT COUNT(DISTINCT user_id) FROM user_activity_days
+     WHERE day BETWEEN CURRENT_DATE - 13 AND CURRENT_DATE - 7)::int AS active_users_last_week
 `
 
 type GetDashboardStatsRow struct {
-	TotalUsers       int32 `json:"total_users"`
-	TotalCourses     int32 `json:"total_courses"`
-	TotalCompletions int32 `json:"total_completions"`
-	ActiveUsers      int32 `json:"active_users"`
+	TotalUsers               int32 `json:"total_users"`
+	TotalCourses             int32 `json:"total_courses"`
+	TotalCompletions         int32 `json:"total_completions"`
+	ActiveUsers              int32 `json:"active_users"`
+	TotalUsersLastWeek       int32 `json:"total_users_last_week"`
+	TotalCompletionsLastWeek int32 `json:"total_completions_last_week"`
+	ActiveUsersLastWeek      int32 `json:"active_users_last_week"`
 }
 
 // Dashboard stats
@@ -652,6 +662,9 @@ func (q *Queries) GetDashboardStats(ctx context.Context) (GetDashboardStatsRow, 
 		&i.TotalCourses,
 		&i.TotalCompletions,
 		&i.ActiveUsers,
+		&i.TotalUsersLastWeek,
+		&i.TotalCompletionsLastWeek,
+		&i.ActiveUsersLastWeek,
 	)
 	return i, err
 }

@@ -1,10 +1,21 @@
 'use client'
 
-import { Users, BookOpen, CheckCircle, Activity } from 'lucide-react'
+import {
+  Users,
+  BookOpen,
+  CheckCircle,
+  Activity,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+} from 'lucide-react'
 import type { DashboardStats } from '@/types'
+import { cn } from '@/lib/utils'
 
 interface DashboardStatsProps {
   stats: DashboardStats
+  /** The same stats a week ago; cards without a baseline show no trend. */
+  lastWeek?: Partial<DashboardStats>
 }
 
 const statCards = [
@@ -38,12 +49,40 @@ const statCards = [
   },
 ] as const
 
-export function DashboardStatsCards({ stats }: DashboardStatsProps) {
+/** Week-over-week change in whole percent; null when last week is missing or zero. */
+export function weekOverWeek(current: number, lastWeek: number | undefined): number | null {
+  if (!lastWeek) return null
+  return Math.round(((current - lastWeek) / lastWeek) * 100)
+}
+
+const trendStyles = {
+  up: { icon: TrendingUp, sign: '+', className: 'text-green-600 dark:text-green-400' },
+  down: { icon: TrendingDown, sign: '−', className: 'text-red-500 dark:text-red-400' },
+  flat: { icon: Minus, sign: '', className: 'text-zinc-500 dark:text-zinc-400' },
+}
+
+function Trend({ percent }: { percent: number }) {
+  const style = trendStyles[percent > 0 ? 'up' : percent < 0 ? 'down' : 'flat']
+  const Icon = style.icon
+  return (
+    <p className={cn('mt-0.5 flex items-center gap-1 text-xs', style.className)}>
+      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+      <span className="font-medium">
+        {style.sign}
+        {Math.abs(percent)}%
+      </span>
+      <span className="text-zinc-500 dark:text-zinc-400">比上週</span>
+    </p>
+  )
+}
+
+export function DashboardStatsCards({ stats, lastWeek }: DashboardStatsProps) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {statCards.map((card) => {
         const Icon = card.icon
         const value = stats[card.key]
+        const percent = weekOverWeek(value, lastWeek?.[card.key])
 
         return (
           <div
@@ -58,6 +97,7 @@ export function DashboardStatsCards({ stats }: DashboardStatsProps) {
             <div>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">{card.label}</p>
               <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{value}</p>
+              {percent !== null && <Trend percent={percent} />}
             </div>
           </div>
         )
