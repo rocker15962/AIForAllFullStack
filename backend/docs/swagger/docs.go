@@ -62,7 +62,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Filter by status (draft/published)",
+                        "description": "Filter by status (draft/published/archived). Archived courses are listed only with status=archived.",
                         "name": "status",
                         "in": "query"
                     }
@@ -85,7 +85,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create a new course",
+                "description": "Create a new course together with its questions (one transaction)",
                 "consumes": [
                     "application/json"
                 ],
@@ -98,7 +98,7 @@ const docTemplate = `{
                 "summary": "Create course",
                 "parameters": [
                     {
-                        "description": "Course data",
+                        "description": "Course data with questions",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -110,6 +110,13 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -162,7 +169,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update an existing course",
+                "description": "Update a course, its status and its questions (one transaction). Questions left out of the list are deleted.",
                 "consumes": [
                     "application/json"
                 ],
@@ -182,7 +189,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Course data",
+                        "description": "Course data with questions",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -199,6 +206,13 @@ const docTemplate = `{
                             "additionalProperties": true
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
@@ -209,14 +223,14 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete a course and its questions",
+                "description": "Archives the course (BR-31): hidden from learners, progress and badges are kept",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "admin"
                 ],
-                "summary": "Delete course",
+                "summary": "Archive course",
                 "parameters": [
                     {
                         "type": "string",
@@ -236,6 +250,43 @@ const docTemplate = `{
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/courses/{id}/preview-link": {
+            "post": {
+                "description": "Returns a shareable preview link for a draft course (BR-05). The same link is returned until the course is published, which invalidates it.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Create preview link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -273,6 +324,43 @@ const docTemplate = `{
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/courses/{id}/restore": {
+            "put": {
+                "description": "Moves an archived course back to draft",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Restore archived course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -418,13 +506,14 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "description": "Archives the skill (BR-33): hidden from filters, courses keep it",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "admin"
                 ],
-                "summary": "Delete skill",
+                "summary": "Archive skill",
                 "parameters": [
                     {
                         "type": "string",
@@ -554,13 +643,14 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "description": "Archives the tool (BR-33): hidden from filters, courses keep it",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "admin"
                 ],
-                "summary": "Delete tool",
+                "summary": "Archive tool",
                 "parameters": [
                     {
                         "type": "string",
@@ -846,7 +936,7 @@ const docTemplate = `{
         },
         "/courses/{id}": {
             "get": {
-                "description": "Returns course with questions",
+                "description": "Returns a course with its questions (without answers). Unpublished courses are visible only to admins or with a valid preview token; archived courses only to admins.",
                 "produces": [
                     "application/json"
                 ],
@@ -861,6 +951,12 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Preview token for an unpublished course",
+                        "name": "preview",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -883,7 +979,7 @@ const docTemplate = `{
         },
         "/courses/{id}/complete": {
             "post": {
-                "description": "Mark a course as completed and calculate score",
+                "description": "Scores the current round once every question is answered. 60% or more completes the course and earns the badge; badges are never taken back.",
                 "produces": [
                     "application/json"
                 ],
@@ -914,13 +1010,57 @@ const docTemplate = `{
                             "type": "object",
                             "additionalProperties": true
                         }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/{id}/progress": {
+            "get": {
+                "description": "Returns the signed-in learner's current round, used to resume at the first unanswered question",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "courses"
+                ],
+                "summary": "My progress in a course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
                     }
                 }
             }
         },
         "/courses/{id}/recommended": {
             "get": {
-                "description": "Returns recommended courses based on the current course",
+                "description": "Up to 4 published courses with the same tool or skill, excluding this course and, when signed in, courses the learner has completed",
                 "produces": [
                     "application/json"
                 ],
@@ -948,9 +1088,83 @@ const docTemplate = `{
                 }
             }
         },
+        "/courses/{id}/retake": {
+            "post": {
+                "description": "Starts a new round: previous answers and score are replaced; an earned badge is kept",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "courses"
+                ],
+                "summary": "Retake course quiz",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/{id}/start": {
+            "post": {
+                "description": "Creates the in-progress record once the video has played 10% of its length (idempotent)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "courses"
+                ],
+                "summary": "Start course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/courses/{id}/submit": {
             "post": {
-                "description": "Submit an answer for a course question",
+                "description": "Grades an answer. Answers to published courses are recorded once per question per round; previews are graded only. Short answers are graded by AI against the sample answer; 503 means try again later (not recorded).",
                 "consumes": [
                     "application/json"
                 ],
@@ -968,6 +1182,12 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Preview token for an unpublished course",
+                        "name": "preview",
+                        "in": "query"
                     },
                     {
                         "description": "Answer submission",
@@ -989,6 +1209,13 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -1041,7 +1268,7 @@ const docTemplate = `{
         },
         "/my/avatar": {
             "post": {
-                "description": "Upload a new profile avatar (max 2MB, jpg/png/webp)",
+                "description": "Upload a new profile avatar (max 5MB, jpg/png/webp). The web app crops it to a square before uploading.",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -1261,7 +1488,7 @@ const docTemplate = `{
         },
         "/skills": {
             "get": {
-                "description": "Returns all skill categories",
+                "description": "Returns all skill categories, including archived ones (archived_at set) so existing courses can show their names. Hide archived ones in filters.",
                 "produces": [
                     "application/json"
                 ],
@@ -1282,7 +1509,7 @@ const docTemplate = `{
         },
         "/tools": {
             "get": {
-                "description": "Returns all tool categories",
+                "description": "Returns all tool categories, including archived ones (archived_at set) so existing courses can show their names. Hide archived ones in filters.",
                 "produces": [
                     "application/json"
                 ],

@@ -12,7 +12,7 @@ import (
 )
 
 const getToolByID = `-- name: GetToolByID :one
-SELECT id, name, icon, "order" FROM tools WHERE id = $1
+SELECT id, name, icon, "order", archived_at FROM tools WHERE id = $1
 `
 
 func (q *Queries) GetToolByID(ctx context.Context, id uuid.UUID) (Tool, error) {
@@ -23,12 +23,13 @@ func (q *Queries) GetToolByID(ctx context.Context, id uuid.UUID) (Tool, error) {
 		&i.Name,
 		&i.Icon,
 		&i.Order,
+		&i.ArchivedAt,
 	)
 	return i, err
 }
 
 const listTools = `-- name: ListTools :many
-SELECT id, name, icon, "order" FROM tools ORDER BY "order"
+SELECT id, name, icon, "order", archived_at FROM tools ORDER BY "order"
 `
 
 func (q *Queries) ListTools(ctx context.Context) ([]Tool, error) {
@@ -45,6 +46,7 @@ func (q *Queries) ListTools(ctx context.Context) ([]Tool, error) {
 			&i.Name,
 			&i.Icon,
 			&i.Order,
+			&i.ArchivedAt,
 		); err != nil {
 			return nil, err
 		}

@@ -43,7 +43,7 @@ func (q *Queries) CountCourses(ctx context.Context, arg CountCoursesParams) (int
 }
 
 const getCourseByID = `-- name: GetCourseByID :one
-SELECT id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at FROM courses WHERE id = $1
+SELECT id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at, preview_token FROM courses WHERE id = $1
 `
 
 func (q *Queries) GetCourseByID(ctx context.Context, id uuid.UUID) (Course, error) {
@@ -64,27 +64,40 @@ func (q *Queries) GetCourseByID(ctx context.Context, id uuid.UUID) (Course, erro
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PreviewToken,
 	)
 	return i, err
 }
 
 const getRecommendedCourses = `-- name: GetRecommendedCourses :many
-SELECT id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at FROM courses
-WHERE status = 'published'
-  AND id != $1
-  AND (tool_id = $2 OR skill_id = $3)
-ORDER BY created_at DESC
+SELECT c.id, c.title, c.description, c.youtube_url, c.youtube_id, c.thumbnail_url, c.tool_id, c.skill_id, c.creator_id, c.difficulty, c.duration, c.status, c.created_at, c.updated_at, c.preview_token FROM courses c
+WHERE c.status = 'published'
+  AND c.id != $1
+  AND (c.tool_id = $2 OR c.skill_id = $3)
+  AND ($4::uuid IS NULL OR c.id NOT IN (
+        SELECT p.course_id FROM progress p
+        WHERE p.user_id = $4
+          AND (p.status = 'completed' OR p.badge_earned_at IS NOT NULL)))
+ORDER BY c.created_at DESC
 LIMIT 4
 `
 
 type GetRecommendedCoursesParams struct {
-	ID      uuid.UUID `json:"id"`
-	ToolID  uuid.UUID `json:"tool_id"`
-	SkillID uuid.UUID `json:"skill_id"`
+	CourseID uuid.UUID   `json:"course_id"`
+	ToolID   uuid.UUID   `json:"tool_id"`
+	SkillID  uuid.UUID   `json:"skill_id"`
+	UserID   pgtype.UUID `json:"user_id"`
 }
 
+// BR-15: same tool or skill, published, excluding this course and (when signed in)
+// courses the learner has already completed.
 func (q *Queries) GetRecommendedCourses(ctx context.Context, arg GetRecommendedCoursesParams) ([]Course, error) {
-	rows, err := q.db.Query(ctx, getRecommendedCourses, arg.ID, arg.ToolID, arg.SkillID)
+	rows, err := q.db.Query(ctx, getRecommendedCourses,
+		arg.CourseID,
+		arg.ToolID,
+		arg.SkillID,
+		arg.UserID,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -107,6 +120,7 @@ func (q *Queries) GetRecommendedCourses(ctx context.Context, arg GetRecommendedC
 			&i.Status,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.PreviewToken,
 		); err != nil {
 			return nil, err
 		}

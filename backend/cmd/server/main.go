@@ -90,7 +90,11 @@ func main() {
 		os.Getenv("JWT_SECRET"),
 	)
 
-	courseService := service.NewCourseService(queries, queries, queries, queries, queries, queries)
+	// BR-09: short answers are graded by Claude against the sample answer.
+	// Credentials come from ANTHROPIC_API_KEY; CLAUDE_GRADER_MODEL overrides the model.
+	grader := service.NewClaudeGrader(os.Getenv("CLAUDE_GRADER_MODEL"))
+	courseService := service.NewCourseService(queries, queries, queries, queries, queries, queries, grader)
+	adminCourseService := service.NewAdminCourseService(pool)
 
 	// Handlers
 	healthHandler := handler.NewHealthHandler(pool, rdb)
@@ -131,10 +135,13 @@ func main() {
 
 	// Course routes
 	api.GET("/courses", courseHandler.List)
-	api.GET("/courses/:id", courseHandler.Get)
-	api.GET("/courses/:id/recommended", courseHandler.Recommended)
+	api.GET("/courses/:id", middleware.OptionalAuth(authService), courseHandler.Get)
+	api.GET("/courses/:id/recommended", middleware.OptionalAuth(authService), courseHandler.Recommended)
+	api.GET("/courses/:id/progress", middleware.Auth(authService), courseHandler.MyProgress)
+	api.POST("/courses/:id/start", middleware.Auth(authService), courseHandler.Start)
 	api.POST("/courses/:id/submit", middleware.Auth(authService), courseHandler.Submit)
 	api.POST("/courses/:id/complete", middleware.Auth(authService), courseHandler.Complete)
+	api.POST("/courses/:id/retake", middleware.Auth(authService), courseHandler.Retake)
 
 	// User routes (all require auth)
 	my := api.Group("/my", middleware.Auth(authService))
@@ -147,7 +154,7 @@ func main() {
 	my.POST("/avatar", userHandler.UploadAvatar)
 
 	// Admin routes (require auth + admin)
-	adminHandler := handler.NewAdminHandler(queries)
+	adminHandler := handler.NewAdminHandler(queries, adminCourseService)
 
 	admin := api.Group("/admin", middleware.Auth(authService), middleware.Admin())
 	admin.GET("/dashboard", adminHandler.Dashboard)
@@ -157,6 +164,8 @@ func main() {
 	admin.PUT("/courses/:id", adminHandler.UpdateCourse)
 	admin.DELETE("/courses/:id", adminHandler.DeleteCourse)
 	admin.PUT("/courses/:id/publish", adminHandler.TogglePublish)
+	admin.PUT("/courses/:id/restore", adminHandler.RestoreCourse)
+	admin.POST("/courses/:id/preview-link", adminHandler.CreatePreviewLink)
 	admin.GET("/users", adminHandler.ListUsers)
 	admin.GET("/users/:id/progress", adminHandler.GetUserProgress)
 	admin.GET("/categories", adminHandler.ListCategories)

@@ -12,7 +12,7 @@ import (
 )
 
 const getSkillByID = `-- name: GetSkillByID :one
-SELECT id, name, icon, "order" FROM skills WHERE id = $1
+SELECT id, name, icon, "order", archived_at FROM skills WHERE id = $1
 `
 
 func (q *Queries) GetSkillByID(ctx context.Context, id uuid.UUID) (Skill, error) {
@@ -23,12 +23,13 @@ func (q *Queries) GetSkillByID(ctx context.Context, id uuid.UUID) (Skill, error)
 		&i.Name,
 		&i.Icon,
 		&i.Order,
+		&i.ArchivedAt,
 	)
 	return i, err
 }
 
 const listSkills = `-- name: ListSkills :many
-SELECT id, name, icon, "order" FROM skills ORDER BY "order"
+SELECT id, name, icon, "order", archived_at FROM skills ORDER BY "order"
 `
 
 func (q *Queries) ListSkills(ctx context.Context) ([]Skill, error) {
@@ -45,6 +46,7 @@ func (q *Queries) ListSkills(ctx context.Context) ([]Skill, error) {
 			&i.Name,
 			&i.Icon,
 			&i.Order,
+			&i.ArchivedAt,
 		); err != nil {
 			return nil, err
 		}

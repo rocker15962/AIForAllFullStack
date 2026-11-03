@@ -411,3 +411,12 @@ INSERT INTO progress (id, user_id, course_id, status, current_question, score, a
   ('00e00000-0000-0000-0000-000000000003', 'f1000000-0000-0000-0000-000000000005', 'd1000000-0000-0000-0000-000000000008', 'completed', 4, 75.00, '[]', NOW() - INTERVAL '30 days', NOW() - INTERVAL '28 days', NOW() - INTERVAL '28 days'),
   ('00e00000-0000-0000-0000-000000000004', 'f1000000-0000-0000-0000-000000000005', 'd1000000-0000-0000-0000-000000000005', 'in_progress', 2, NULL, '[]', NOW() - INTERVAL '10 days', NULL, NOW() - INTERVAL '2 days'),
   ('00e00000-0000-0000-0000-000000000005', 'f1000000-0000-0000-0000-000000000005', 'd1000000-0000-0000-0000-000000000006', 'in_progress', 1, NULL, '[]', NOW() - INTERVAL '5 days', NULL, NOW());
+
+-- BR-09 / BR-29: short-answer questions are graded by AI against a sample answer.
+-- The seed's canonical answers live in the explanation.
+UPDATE questions SET sample_answer = explanation
+WHERE type = 'short_answer' AND sample_answer = '';
+
+-- BR-12: seeded completions hold their badge.
+UPDATE progress SET badge_earned_at = COALESCE(completed_at, last_accessed_at)
+WHERE status = 'completed' AND badge_earned_at IS NULL;

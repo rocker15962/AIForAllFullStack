@@ -61,6 +61,7 @@ type CourseStatus string
 const (
 	CourseStatusDraft     CourseStatus = "draft"
 	CourseStatusPublished CourseStatus = "published"
+	CourseStatusArchived  CourseStatus = "archived"
 )
 
 func (e *CourseStatus) Scan(src interface{}) error {
@@ -240,6 +241,7 @@ type Course struct {
 	Status       CourseStatus    `json:"status"`
 	CreatedAt    time.Time       `json:"created_at"`
 	UpdatedAt    time.Time       `json:"updated_at"`
+	PreviewToken pgtype.Text     `json:"preview_token"`
 }
 
 type Creator struct {
@@ -260,6 +262,7 @@ type Progress struct {
 	StartedAt       time.Time          `json:"started_at"`
 	CompletedAt     pgtype.Timestamptz `json:"completed_at"`
 	LastAccessedAt  time.Time          `json:"last_accessed_at"`
+	BadgeEarnedAt   pgtype.Timestamptz `json:"badge_earned_at"`
 }
 
 type Question struct {
@@ -272,20 +275,23 @@ type Question struct {
 	AcceptableKeywords []byte       `json:"acceptable_keywords"`
 	Explanation        string       `json:"explanation"`
 	Order              int32        `json:"order"`
+	SampleAnswer       string       `json:"sample_answer"`
 }
 
 type Skill struct {
-	ID    uuid.UUID `json:"id"`
-	Name  string    `json:"name"`
-	Icon  string    `json:"icon"`
-	Order int32     `json:"order"`
+	ID         uuid.UUID          `json:"id"`
+	Name       string             `json:"name"`
+	Icon       string             `json:"icon"`
+	Order      int32              `json:"order"`
+	ArchivedAt pgtype.Timestamptz `json:"archived_at"`
 }
 
 type Tool struct {
-	ID    uuid.UUID `json:"id"`
-	Name  string    `json:"name"`
-	Icon  string    `json:"icon"`
-	Order int32     `json:"order"`
+	ID         uuid.UUID          `json:"id"`
+	Name       string             `json:"name"`
+	Icon       string             `json:"icon"`
+	Order      int32              `json:"order"`
+	ArchivedAt pgtype.Timestamptz `json:"archived_at"`
 }
 
 type User struct {

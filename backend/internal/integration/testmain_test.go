@@ -26,28 +26,34 @@ var (
 func TestMain(m *testing.M) {
 	ctx := context.Background()
 
-	pgContainer, err := postgres.Run(ctx, "postgres:16-alpine",
-		postgres.WithDatabase("aiforall_test"),
-		postgres.WithUsername("test"),
-		postgres.WithPassword("test"),
-		testcontainers.WithWaitStrategy(
-			wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).
-				WithStartupTimeout(30*time.Second),
-		),
-	)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to start postgres container: %v\n", err)
-		os.Exit(1)
-	}
-	defer pgContainer.Terminate(ctx)
+	// TEST_DATABASE_URL points the suite at an existing, empty database (e.g. a local
+	// Postgres when Docker is not available). Otherwise a throwaway container is started.
+	connStr := os.Getenv("TEST_DATABASE_URL")
+	if connStr == "" {
+		pgContainer, err := postgres.Run(ctx, "postgres:16-alpine",
+			postgres.WithDatabase("aiforall_test"),
+			postgres.WithUsername("test"),
+			postgres.WithPassword("test"),
+			testcontainers.WithWaitStrategy(
+				wait.ForLog("database system is ready to accept connections").
+					WithOccurrence(2).
+					WithStartupTimeout(30*time.Second),
+			),
+		)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "failed to start postgres container: %v\n", err)
+			os.Exit(1)
+		}
+		defer func() { _ = pgContainer.Terminate(ctx) }()
 
-	connStr, err := pgContainer.ConnectionString(ctx, "sslmode=disable")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to get connection string: %v\n", err)
-		os.Exit(1)
+		connStr, err = pgContainer.ConnectionString(ctx, "sslmode=disable")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "failed to get connection string: %v\n", err)
+			os.Exit(1)
+		}
 	}
 
+	var err error
 	testPool, err = pgxpool.New(ctx, connStr)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to connect: %v\n", err)

@@ -20,7 +20,7 @@ func NewCategoryHandler(tools service.ToolRepository, skills service.SkillReposi
 // ListTools godoc
 //
 //	@Summary		List all tools
-//	@Description	Returns all tool categories
+//	@Description	Returns all tool categories, including archived ones (archived_at set) so existing courses can show their names. Hide archived ones in filters.
 //	@Tags			categories
 //	@Produce		json
 //	@Success		200	{object}	map[string]interface{}
@@ -37,7 +37,7 @@ func (h *CategoryHandler) ListTools(c *gin.Context) {
 // ListSkills godoc
 //
 //	@Summary		List all skills
-//	@Description	Returns all skill categories
+//	@Description	Returns all skill categories, including archived ones (archived_at set) so existing courses can show their names. Hide archived ones in filters.
 //	@Tags			categories
 //	@Produce		json
 //	@Success		200	{object}	map[string]interface{}

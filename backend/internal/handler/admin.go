@@ -3,22 +3,25 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/repository"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/service"
 )
 
 type AdminHandler struct {
-	queries *repository.Queries
+	queries       *repository.Queries
+	courseService *service.AdminCourseService
 }
 
-func NewAdminHandler(queries *repository.Queries) *AdminHandler {
-	return &AdminHandler{queries: queries}
+func NewAdminHandler(queries *repository.Queries, courseService *service.AdminCourseService) *AdminHandler {
+	return &AdminHandler{queries: queries, courseService: courseService}
 }
 
 // Dashboard godoc
@@ -131,6 +134,7 @@ func (h *AdminHandler) formatFullCourse(ctx context.Context, course repository.C
 		"difficulty":   string(course.Difficulty),
 		"duration":     course.Duration,
 		"status":       string(course.Status),
+		"previewToken": course.PreviewToken.String,
 		"createdAt":    course.CreatedAt.Format(time.RFC3339),
 		"updatedAt":    course.UpdatedAt.Format(time.RFC3339),
 	}
@@ -181,6 +185,7 @@ func (h *AdminHandler) GetCourse(c *gin.Context) {
 			"question":           q.Question,
 			"options":            options,
 			"correctAnswer":      q.CorrectAnswer,
+			"sampleAnswer":       q.SampleAnswer,
 			"acceptableKeywords": keywords,
 			"explanation":        q.Explanation,
 			"order":              q.Order,
@@ -214,7 +219,7 @@ func (h *AdminHandler) resolveSkillName(ctx context.Context, skillID uuid.UUID) 
 //	@Tags			admin
 //	@Produce		json
 //	@Param			search	query	string	false	"Search by title"
-//	@Param			status	query	string	false	"Filter by status (draft/published)"
+//	@Param			status	query	string	false	"Filter by status (draft/published/archived). Archived courses are listed only with status=archived."
 //	@Success		200	{object}	map[string]interface{}
 //	@Failure		403	{object}	map[string]interface{}
 //	@Router			/admin/courses [get]
@@ -248,19 +253,64 @@ type adminCourseRequest struct {
 	SkillID      string `json:"skillId" binding:"required"`
 	CreatorID    string `json:"creatorId" binding:"required"`
 	Difficulty   string `json:"difficulty" binding:"required"`
-	Duration     int32  `json:"duration"`
-	Status       string `json:"status"`
+	// Duration is the video length in seconds.
+	Duration int32  `json:"duration"`
+	Status   string `json:"status"`
+	// Questions, when present, replaces the course's questions in this order.
+	Questions *[]service.QuestionInput `json:"questions"`
+}
+
+func (r adminCourseRequest) toInput() (service.CourseInput, error) {
+	toolID, err := uuid.Parse(r.ToolID)
+	if err != nil {
+		return service.CourseInput{}, &service.ValidationError{Message: "invalid tool ID"}
+	}
+	skillID, err := uuid.Parse(r.SkillID)
+	if err != nil {
+		return service.CourseInput{}, &service.ValidationError{Message: "invalid skill ID"}
+	}
+	creatorID, err := uuid.Parse(r.CreatorID)
+	if err != nil {
+		return service.CourseInput{}, &service.ValidationError{Message: "invalid creator ID"}
+	}
+	return service.CourseInput{
+		Title:        r.Title,
+		Description:  r.Description,
+		YoutubeURL:   r.YoutubeURL,
+		YoutubeID:    r.YoutubeID,
+		ThumbnailURL: r.ThumbnailURL,
+		ToolID:       toolID,
+		SkillID:      skillID,
+		CreatorID:    creatorID,
+		Difficulty:   r.Difficulty,
+		Duration:     r.Duration,
+		Status:       r.Status,
+		Questions:    r.Questions,
+	}, nil
+}
+
+func writeAdminSaveError(c *gin.Context, err error, action string) {
+	var verr *service.ValidationError
+	switch {
+	case errors.As(err, &verr):
+		c.JSON(http.StatusBadRequest, gin.H{"error": verr.Message})
+	case errors.Is(err, service.ErrCourseNotFound):
+		c.JSON(http.StatusNotFound, gin.H{"error": "course not found"})
+	default:
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to " + action + " course"})
+	}
 }
 
 // CreateCourse godoc
 //
 //	@Summary		Create course
-//	@Description	Create a new course
+//	@Description	Create a new course together with its questions (one transaction)
 //	@Tags			admin
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body	object	true	"Course data"
+//	@Param			body	body	object	true	"Course data with questions"
 //	@Success		201	{object}	map[string]interface{}
+//	@Failure		400	{object}	map[string]interface{}
 //	@Failure		403	{object}	map[string]interface{}
 //	@Router			/admin/courses [post]
 func (h *AdminHandler) CreateCourse(c *gin.Context) {
@@ -269,43 +319,15 @@ func (h *AdminHandler) CreateCourse(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
-
-	toolID, err := uuid.Parse(req.ToolID)
+	in, err := req.toInput()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid tool ID"})
-		return
-	}
-	skillID, err := uuid.Parse(req.SkillID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid skill ID"})
-		return
-	}
-	creatorID, err := uuid.Parse(req.CreatorID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid creator ID"})
+		writeAdminSaveError(c, err, "create")
 		return
 	}
 
-	status := repository.CourseStatusDraft
-	if req.Status == "published" {
-		status = repository.CourseStatusPublished
-	}
-
-	course, err := h.queries.AdminCreateCourse(c.Request.Context(), repository.AdminCreateCourseParams{
-		Title:        req.Title,
-		Description:  req.Description,
-		YoutubeUrl:   req.YoutubeURL,
-		YoutubeID:    req.YoutubeID,
-		ThumbnailUrl: req.ThumbnailURL,
-		ToolID:       toolID,
-		SkillID:      skillID,
-		CreatorID:    creatorID,
-		Difficulty:   repository.DifficultyLevel(req.Difficulty),
-		Duration:     req.Duration,
-		Status:       status,
-	})
+	course, err := h.courseService.SaveCourse(c.Request.Context(), nil, in)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create course"})
+		writeAdminSaveError(c, err, "create")
 		return
 	}
 
@@ -315,13 +337,14 @@ func (h *AdminHandler) CreateCourse(c *gin.Context) {
 // UpdateCourse godoc
 //
 //	@Summary		Update course
-//	@Description	Update an existing course
+//	@Description	Update a course, its status and its questions (one transaction). Questions left out of the list are deleted.
 //	@Tags			admin
 //	@Accept			json
 //	@Produce		json
 //	@Param			id		path	string	true	"Course ID"
-//	@Param			body	body	object	true	"Course data"
+//	@Param			body	body	object	true	"Course data with questions"
 //	@Success		200	{object}	map[string]interface{}
+//	@Failure		400	{object}	map[string]interface{}
 //	@Failure		403	{object}	map[string]interface{}
 //	@Router			/admin/courses/{id} [put]
 func (h *AdminHandler) UpdateCourse(c *gin.Context) {
@@ -336,38 +359,15 @@ func (h *AdminHandler) UpdateCourse(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
-
-	toolID, err := uuid.Parse(req.ToolID)
+	in, err := req.toInput()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid tool ID"})
-		return
-	}
-	skillID, err := uuid.Parse(req.SkillID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid skill ID"})
-		return
-	}
-	creatorID, err := uuid.Parse(req.CreatorID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid creator ID"})
+		writeAdminSaveError(c, err, "update")
 		return
 	}
 
-	course, err := h.queries.AdminUpdateCourse(c.Request.Context(), repository.AdminUpdateCourseParams{
-		Title:        req.Title,
-		Description:  req.Description,
-		YoutubeUrl:   req.YoutubeURL,
-		YoutubeID:    req.YoutubeID,
-		ThumbnailUrl: req.ThumbnailURL,
-		ToolID:       toolID,
-		SkillID:      skillID,
-		CreatorID:    creatorID,
-		Difficulty:   repository.DifficultyLevel(req.Difficulty),
-		Duration:     req.Duration,
-		ID:           id,
-	})
+	course, err := h.courseService.SaveCourse(c.Request.Context(), &id, in)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update course"})
+		writeAdminSaveError(c, err, "update")
 		return
 	}
 
@@ -376,8 +376,8 @@ func (h *AdminHandler) UpdateCourse(c *gin.Context) {
 
 // DeleteCourse godoc
 //
-//	@Summary		Delete course
-//	@Description	Delete a course and its questions
+//	@Summary		Archive course
+//	@Description	Archives the course (BR-31): hidden from learners, progress and badges are kept
 //	@Tags			admin
 //	@Produce		json
 //	@Param			id	path	string	true	"Course ID"
@@ -391,12 +391,89 @@ func (h *AdminHandler) DeleteCourse(c *gin.Context) {
 		return
 	}
 
-	if err := h.queries.AdminDeleteCourse(c.Request.Context(), id); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete course"})
+	course, err := h.queries.AdminArchiveCourse(c.Request.Context(), id)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "course not found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to archive course"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "course deleted"})
+	c.JSON(http.StatusOK, h.formatFullCourse(c.Request.Context(), course))
+}
+
+// RestoreCourse godoc
+//
+//	@Summary		Restore archived course
+//	@Description	Moves an archived course back to draft
+//	@Tags			admin
+//	@Produce		json
+//	@Param			id	path	string	true	"Course ID"
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		404	{object}	map[string]interface{}
+//	@Router			/admin/courses/{id}/restore [put]
+func (h *AdminHandler) RestoreCourse(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid course ID"})
+		return
+	}
+
+	course, err := h.queries.AdminRestoreCourse(c.Request.Context(), id)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "archived course not found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to restore course"})
+		return
+	}
+
+	c.JSON(http.StatusOK, h.formatFullCourse(c.Request.Context(), course))
+}
+
+// CreatePreviewLink godoc
+//
+//	@Summary		Create preview link
+//	@Description	Returns a shareable preview link for a draft course (BR-05). The same link is returned until the course is published, which invalidates it.
+//	@Tags			admin
+//	@Produce		json
+//	@Param			id	path	string	true	"Course ID"
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		409	{object}	map[string]interface{}
+//	@Router			/admin/courses/{id}/preview-link [post]
+func (h *AdminHandler) CreatePreviewLink(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid course ID"})
+		return
+	}
+
+	token, err := service.NewPreviewToken()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create preview link"})
+		return
+	}
+
+	stored, err := h.queries.AdminEnsurePreviewToken(c.Request.Context(), repository.AdminEnsurePreviewTokenParams{
+		Token: token,
+		ID:    id,
+	})
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			c.JSON(http.StatusConflict, gin.H{"error": "preview links are only available for draft courses"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create preview link"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"token": stored.String,
+		"path":  fmt.Sprintf("/courses/%s?preview=%s", id, stored.String),
+	})
 }
 
 // TogglePublish godoc
@@ -421,6 +498,11 @@ func (h *AdminHandler) TogglePublish(c *gin.Context) {
 	currentStatus, err := h.queries.AdminGetCourseStatus(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "course not found"})
+		return
+	}
+
+	if currentStatus == repository.CourseStatusArchived {
+		c.JSON(http.StatusConflict, gin.H{"error": "restore the archived course before publishing"})
 		return
 	}
 
@@ -458,14 +540,15 @@ func (h *AdminHandler) ListUsers(c *gin.Context) {
 	items := make([]gin.H, len(users))
 	for i, u := range users {
 		items[i] = gin.H{
-			"id":           u.ID.String(),
-			"name":         u.Name,
-			"email":        u.Email,
-			"avatarUrl":    u.AvatarUrl,
-			"provider":     string(u.Provider),
-			"isAdmin":      u.IsAdmin,
-			"createdAt":    u.CreatedAt.Format(time.RFC3339),
-			"lastActiveAt": u.LastActiveAt.Format(time.RFC3339),
+			"id":             u.ID.String(),
+			"name":           u.Name,
+			"email":          u.Email,
+			"avatarUrl":      u.AvatarUrl,
+			"provider":       string(u.Provider),
+			"isAdmin":        u.IsAdmin,
+			"createdAt":      u.CreatedAt.Format(time.RFC3339),
+			"lastActiveAt":   u.LastActiveAt.Format(time.RFC3339),
+			"completedCount": u.CompletedCount,
 		}
 	}
 
@@ -501,10 +584,11 @@ func (h *AdminHandler) GetUserProgress(c *gin.Context) {
 		if r.CompletedAt.Valid {
 			completedAt = r.CompletedAt.Time.Format(time.RFC3339)
 		}
-		score := 0.0
+		// Score of the latest finished round; nil while a round is in progress.
+		var score *float64
 		if r.Score.Valid {
 			f, _ := r.Score.Float64Value()
-			score = f.Float64
+			score = &f.Float64
 		}
 		currentQuestion := 0
 		if r.CurrentQuestion.Valid {
@@ -514,10 +598,13 @@ func (h *AdminHandler) GetUserProgress(c *gin.Context) {
 		items[i] = gin.H{
 			"courseId":        r.CourseID.String(),
 			"courseTitle":     r.CourseTitle,
+			"courseStatus":    string(r.CourseStatus),
 			"status":          string(r.Status),
 			"score":           score,
 			"completedAt":     completedAt,
+			"lastAccessedAt":  r.LastAccessedAt.Format(time.RFC3339),
 			"currentQuestion": currentQuestion,
+			"answeredCount":   r.AnsweredCount,
 			"totalQuestions":  r.TotalQuestions,
 		}
 	}
@@ -537,13 +624,14 @@ func (h *AdminHandler) GetUserProgress(c *gin.Context) {
 func (h *AdminHandler) ListCategories(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	tools, err := h.queries.ListTools(ctx)
+	// Archived categories are no longer managed here (BR-33).
+	tools, err := h.queries.AdminListActiveTools(ctx)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list tools"})
 		return
 	}
 
-	skills, err := h.queries.ListSkills(ctx)
+	skills, err := h.queries.AdminListActiveSkills(ctx)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list skills"})
 		return
@@ -576,8 +664,8 @@ func (h *AdminHandler) CreateTool(c *gin.Context) {
 		return
 	}
 
-	// Auto-assign order: count existing tools
-	tools, err := h.queries.ListTools(c.Request.Context())
+	// Auto-assign order: count active tools
+	tools, err := h.queries.AdminListActiveTools(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create tool"})
 		return
@@ -634,7 +722,8 @@ func (h *AdminHandler) UpdateTool(c *gin.Context) {
 
 // DeleteTool godoc
 //
-//	@Summary		Delete tool
+//	@Summary		Archive tool
+//	@Description	Archives the tool (BR-33): hidden from filters, courses keep it
 //	@Tags			admin
 //	@Produce		json
 //	@Param			id	path	string	true	"Tool ID"
@@ -647,12 +736,13 @@ func (h *AdminHandler) DeleteTool(c *gin.Context) {
 		return
 	}
 
-	if err := h.queries.AdminDeleteTool(c.Request.Context(), id); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete tool"})
+	// BR-33: archive; courses keep this tool and learners still see its name.
+	if err := h.queries.AdminArchiveTool(c.Request.Context(), id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to archive tool"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "tool deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "tool archived"})
 }
 
 type reorderRequest struct {
@@ -691,7 +781,7 @@ func (h *AdminHandler) ReorderTools(c *gin.Context) {
 		}
 	}
 
-	tools, err := h.queries.ListTools(ctx)
+	tools, err := h.queries.AdminListActiveTools(ctx)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list tools"})
 		return
@@ -716,7 +806,7 @@ func (h *AdminHandler) CreateSkill(c *gin.Context) {
 		return
 	}
 
-	skills, err := h.queries.ListSkills(c.Request.Context())
+	skills, err := h.queries.AdminListActiveSkills(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create skill"})
 		return
@@ -773,7 +863,8 @@ func (h *AdminHandler) UpdateSkill(c *gin.Context) {
 
 // DeleteSkill godoc
 //
-//	@Summary		Delete skill
+//	@Summary		Archive skill
+//	@Description	Archives the skill (BR-33): hidden from filters, courses keep it
 //	@Tags			admin
 //	@Produce		json
 //	@Param			id	path	string	true	"Skill ID"
@@ -786,12 +877,13 @@ func (h *AdminHandler) DeleteSkill(c *gin.Context) {
 		return
 	}
 
-	if err := h.queries.AdminDeleteSkill(c.Request.Context(), id); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete skill"})
+	// BR-33: archive; courses keep this skill and learners still see its name.
+	if err := h.queries.AdminArchiveSkill(c.Request.Context(), id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to archive skill"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "skill deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "skill archived"})
 }
 
 // ReorderSkills godoc
@@ -826,7 +918,7 @@ func (h *AdminHandler) ReorderSkills(c *gin.Context) {
 		}
 	}
 
-	skills, err := h.queries.ListSkills(ctx)
+	skills, err := h.queries.AdminListActiveSkills(ctx)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list skills"})
 		return

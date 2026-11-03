@@ -11,8 +11,116 @@ import (
 	"github.com/google/uuid"
 )
 
+const adminDeleteQuestionsNotIn = `-- name: AdminDeleteQuestionsNotIn :exec
+DELETE FROM questions
+WHERE course_id = $1 AND NOT (id = ANY($2::uuid[]))
+`
+
+type AdminDeleteQuestionsNotInParams struct {
+	CourseID uuid.UUID   `json:"course_id"`
+	KeepIds  []uuid.UUID `json:"keep_ids"`
+}
+
+func (q *Queries) AdminDeleteQuestionsNotIn(ctx context.Context, arg AdminDeleteQuestionsNotInParams) error {
+	_, err := q.db.Exec(ctx, adminDeleteQuestionsNotIn, arg.CourseID, arg.KeepIds)
+	return err
+}
+
+const adminInsertQuestion = `-- name: AdminInsertQuestion :one
+INSERT INTO questions (course_id, type, question, options, correct_answer, sample_answer, explanation, "order")
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING id, course_id, type, question, options, correct_answer, acceptable_keywords, explanation, "order", sample_answer
+`
+
+type AdminInsertQuestionParams struct {
+	CourseID      uuid.UUID    `json:"course_id"`
+	Type          QuestionType `json:"type"`
+	Question      string       `json:"question"`
+	Options       []byte       `json:"options"`
+	CorrectAnswer string       `json:"correct_answer"`
+	SampleAnswer  string       `json:"sample_answer"`
+	Explanation   string       `json:"explanation"`
+	Order         int32        `json:"order"`
+}
+
+// Admin: questions are saved together with their course (BR-29)
+func (q *Queries) AdminInsertQuestion(ctx context.Context, arg AdminInsertQuestionParams) (Question, error) {
+	row := q.db.QueryRow(ctx, adminInsertQuestion,
+		arg.CourseID,
+		arg.Type,
+		arg.Question,
+		arg.Options,
+		arg.CorrectAnswer,
+		arg.SampleAnswer,
+		arg.Explanation,
+		arg.Order,
+	)
+	var i Question
+	err := row.Scan(
+		&i.ID,
+		&i.CourseID,
+		&i.Type,
+		&i.Question,
+		&i.Options,
+		&i.CorrectAnswer,
+		&i.AcceptableKeywords,
+		&i.Explanation,
+		&i.Order,
+		&i.SampleAnswer,
+	)
+	return i, err
+}
+
+const adminUpdateQuestion = `-- name: AdminUpdateQuestion :one
+UPDATE questions
+SET type = $1, question = $2, options = $3, correct_answer = $4, sample_answer = $5,
+    explanation = $6, "order" = $7
+WHERE id = $8 AND course_id = $9
+RETURNING id, course_id, type, question, options, correct_answer, acceptable_keywords, explanation, "order", sample_answer
+`
+
+type AdminUpdateQuestionParams struct {
+	Type          QuestionType `json:"type"`
+	Question      string       `json:"question"`
+	Options       []byte       `json:"options"`
+	CorrectAnswer string       `json:"correct_answer"`
+	SampleAnswer  string       `json:"sample_answer"`
+	Explanation   string       `json:"explanation"`
+	Order         int32        `json:"order"`
+	ID            uuid.UUID    `json:"id"`
+	CourseID      uuid.UUID    `json:"course_id"`
+}
+
+func (q *Queries) AdminUpdateQuestion(ctx context.Context, arg AdminUpdateQuestionParams) (Question, error) {
+	row := q.db.QueryRow(ctx, adminUpdateQuestion,
+		arg.Type,
+		arg.Question,
+		arg.Options,
+		arg.CorrectAnswer,
+		arg.SampleAnswer,
+		arg.Explanation,
+		arg.Order,
+		arg.ID,
+		arg.CourseID,
+	)
+	var i Question
+	err := row.Scan(
+		&i.ID,
+		&i.CourseID,
+		&i.Type,
+		&i.Question,
+		&i.Options,
+		&i.CorrectAnswer,
+		&i.AcceptableKeywords,
+		&i.Explanation,
+		&i.Order,
+		&i.SampleAnswer,
+	)
+	return i, err
+}
+
 const getQuestionByID = `-- name: GetQuestionByID :one
-SELECT id, course_id, type, question, options, correct_answer, acceptable_keywords, explanation, "order" FROM questions WHERE id = $1
+SELECT id, course_id, type, question, options, correct_answer, acceptable_keywords, explanation, "order", sample_answer FROM questions WHERE id = $1
 `
 
 func (q *Queries) GetQuestionByID(ctx context.Context, id uuid.UUID) (Question, error) {
@@ -28,12 +136,13 @@ func (q *Queries) GetQuestionByID(ctx context.Context, id uuid.UUID) (Question, 
 		&i.AcceptableKeywords,
 		&i.Explanation,
 		&i.Order,
+		&i.SampleAnswer,
 	)
 	return i, err
 }
 
 const getQuestionsByCourse = `-- name: GetQuestionsByCourse :many
-SELECT id, course_id, type, question, options, correct_answer, acceptable_keywords, explanation, "order" FROM questions WHERE course_id = $1 ORDER BY "order"
+SELECT id, course_id, type, question, options, correct_answer, acceptable_keywords, explanation, "order", sample_answer FROM questions WHERE course_id = $1 ORDER BY "order"
 `
 
 func (q *Queries) GetQuestionsByCourse(ctx context.Context, courseID uuid.UUID) ([]Question, error) {
@@ -55,6 +164,7 @@ func (q *Queries) GetQuestionsByCourse(ctx context.Context, courseID uuid.UUID) 
 			&i.AcceptableKeywords,
 			&i.Explanation,
 			&i.Order,
+			&i.SampleAnswer,
 		); err != nil {
 			return nil, err
 		}

@@ -46,7 +46,9 @@ type ProgressRepository interface {
 	GetProgress(ctx context.Context, arg repository.GetProgressParams) (repository.Progress, error)
 	CreateProgress(ctx context.Context, arg repository.CreateProgressParams) (repository.Progress, error)
 	UpdateProgressAnswers(ctx context.Context, arg repository.UpdateProgressAnswersParams) (repository.Progress, error)
-	CompleteProgress(ctx context.Context, arg repository.CompleteProgressParams) (repository.Progress, error)
+	StartProgress(ctx context.Context, arg repository.StartProgressParams) error
+	FinishAttempt(ctx context.Context, arg repository.FinishAttemptParams) (repository.Progress, error)
+	RetakeProgress(ctx context.Context, arg repository.RetakeProgressParams) (repository.Progress, error)
 }
 
 // Ensure *repository.Queries implements all interfaces.

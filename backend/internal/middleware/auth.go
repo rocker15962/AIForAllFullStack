@@ -40,3 +40,19 @@ func Auth(authService *service.AuthService) gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+// OptionalAuth reads the bearer token when one is sent and valid, so handlers can tell
+// guests, learners and admins apart on public routes. It never rejects the request.
+func OptionalAuth(authService *service.AuthService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		parts := strings.SplitN(c.GetHeader("Authorization"), " ", 2)
+		if len(parts) == 2 && parts[0] == "Bearer" {
+			if claims, err := authService.ValidateAccessToken(parts[1]); err == nil {
+				c.Set(ContextKeyUserID, claims.UserID)
+				c.Set(ContextKeyEmail, claims.Email)
+				c.Set(ContextKeyIsAdmin, claims.IsAdmin)
+			}
+		}
+		c.Next()
+	}
+}
