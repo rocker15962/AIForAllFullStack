@@ -18,10 +18,19 @@ describe('LoginPage', () => {
     expect(login).toHaveBeenCalledWith('/courses')
   })
 
-  it('shows Facebook as disabled with "Coming soon" (BR-22)', () => {
+  it('shows Facebook as a disabled outline button marked "coming soon" (BR-22)', () => {
     render(<LoginPage />)
-    const fb = screen.getByRole('button', { name: /使用 Facebook 繼續/ })
+    const fb = screen.getByRole('button', { name: '使用 Facebook 繼續 · 即將推出' })
     expect(fb).toBeDisabled()
-    expect(screen.getByText('即將推出')).toBeInTheDocument()
+    // No Facebook blue: same neutral outline look as the Google button
+    expect(fb.className).not.toMatch(/1877F2/i)
+    expect(fb.querySelector('svg')).not.toHaveAttribute('fill', 'white')
+  })
+
+  it('gives the Facebook button the same size as the Google button', () => {
+    render(<LoginPage />)
+    const google = screen.getByRole('button', { name: '使用 Google 繼續' })
+    const fb = screen.getByRole('button', { name: '使用 Facebook 繼續 · 即將推出' })
+    expect(fb.className).toBe(google.className)
   })
 })

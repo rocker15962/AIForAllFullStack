@@ -14,6 +14,18 @@ describe('ResultsBar', () => {
     expect(screen.getByText('共 1 堂課')).toBeInTheDocument()
   })
 
+  it('adds the range shown on this page when results span several pages (BR-40)', () => {
+    render(
+      <ResultsBar
+        count={45}
+        range={{ from: 21, to: 40 }}
+        hasActiveFilters={false}
+        onClearAll={() => {}}
+      />,
+    )
+    expect(screen.getByText('共 45 堂課 · 第 21–40 堂')).toBeInTheDocument()
+  })
+
   it('hides "Clear all filters" when nothing is filtered', () => {
     render(<ResultsBar count={8} hasActiveFilters={false} onClearAll={() => {}} />)
     expect(screen.queryByRole('button', { name: '清除全部篩選' })).not.toBeInTheDocument()

@@ -5,7 +5,7 @@ test.describe('Login Page', () => {
     await page.goto('/login')
     await expect(page.getByText('歡迎回來')).toBeVisible()
     await expect(page.getByText('使用 Google 繼續')).toBeVisible()
-    await expect(page.getByText('使用 Facebook 繼續')).toBeVisible()
+    await expect(page.getByRole('button', { name: '使用 Facebook 繼續 · 即將推出' })).toBeDisabled()
     await expect(page.getByText('先不登入，直接逛逛')).toBeVisible()
   })
 
