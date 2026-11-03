@@ -21,8 +21,10 @@ export interface UserProgressRow {
   courseTitle: string
   courseStatus: CourseStatus
   status: 'in_progress' | 'completed'
-  /** Latest finished round; null while a round is in progress. */
+  /** Score of the latest scored round; null if no round has been scored yet. */
   score: number | null
+  /** Result of the latest scored round (BR-36); null if never scored. */
+  latestRoundPassed: boolean | null
   answeredCount: number
   totalQuestions: number
   completedAt?: string

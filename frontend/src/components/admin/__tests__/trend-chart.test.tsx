@@ -3,9 +3,9 @@ import { describe, it, expect, beforeAll } from 'vitest'
 import { TrendChart } from '../trend-chart'
 
 const mockTrendData = [
-  { date: '2026-03-26', totalUsers: 280, newUsers: 15 },
-  { date: '2026-03-27', totalUsers: 290, newUsers: 20 },
-  { date: '2026-03-28', totalUsers: 300, newUsers: 25 },
+  { date: '2026-03-26', newUsers: 15, activeUsers: 40 },
+  { date: '2026-03-27', newUsers: 20, activeUsers: 51 },
+  { date: '2026-03-28', newUsers: 25, activeUsers: 33 },
 ]
 
 // Recharts requires ResizeObserver
@@ -32,14 +32,25 @@ describe('TrendChart', () => {
     expect(screen.getByText('60')).toBeInTheDocument()
 
     expect(screen.getByText('平均活躍用戶')).toBeInTheDocument()
-    // avg totalUsers = (280 + 290 + 300) / 3 = 290
-    expect(screen.getByText('290')).toBeInTheDocument()
+    // avg activeUsers = (40 + 51 + 33) / 3 = 41.33 → 41
+    expect(screen.getByText('41')).toBeInTheDocument()
+  })
+
+  it('averages daily active users across every day in the range (BR-39)', () => {
+    const thirtyDays = Array.from({ length: 30 }, (_, i) => ({
+      date: `2026-03-${String(i + 1).padStart(2, '0')}`,
+      newUsers: 0,
+      // 15 days with 10 active users, 15 days with 21 → average 15.5 → rounds to 16
+      activeUsers: i < 15 ? 10 : 21,
+    }))
+    render(<TrendChart data={thirtyDays} />)
+    expect(screen.getByText('16')).toBeInTheDocument()
   })
 
   it('counts new users from the last 7 days only (BR-35)', () => {
     const tenDays = Array.from({ length: 10 }, (_, i) => ({
       date: `2026-03-${String(i + 1).padStart(2, '0')}`,
-      totalUsers: 100 + i,
+      activeUsers: 100 + i,
       // first 3 days: 100 each (must be ignored); last 7 days: 1 each
       newUsers: i < 3 ? 100 : 1,
     }))

@@ -7,26 +7,34 @@ interface UserProgressPanelProps {
   error: string | null
 }
 
+/**
+ * Latest scored round was below the pass line (BR-36). A passed course stays completed
+ * (badge kept); a never-passed course stays in progress. Both show the latest score.
+ */
+function latestRoundFailed(row: UserProgressRow): boolean {
+  return row.latestRoundPassed === false
+}
+
+function roundedScore(row: UserProgressRow): number {
+  return Math.min(100, Math.max(0, Math.round(row.score ?? 0)))
+}
+
 function progressPercent(row: UserProgressRow): number {
+  if (latestRoundFailed(row)) return roundedScore(row)
   if (row.status === 'completed') return 100
   if (row.totalQuestions <= 0) return 0
   return Math.min(100, Math.round((row.answeredCount / row.totalQuestions) * 100))
 }
 
-/** Latest round finished below the pass line (BR-12): not completed, but scored. */
-function isNotPassed(row: UserProgressRow): boolean {
-  return row.status === 'in_progress' && row.score !== null
-}
-
 function statusLabel(row: UserProgressRow): string {
-  if (row.status === 'completed') return `已完成 · ${Math.round(row.score ?? 0)}%`
-  if (isNotPassed(row)) return `未及格 · ${Math.round(row.score ?? 0)}%`
+  if (latestRoundFailed(row)) return `最新一輪未通過 · ${roundedScore(row)}%`
+  if (row.status === 'completed') return `已完成 · ${roundedScore(row)}%`
   return `進行中 · ${progressPercent(row)}%`
 }
 
 function barColor(row: UserProgressRow): string {
+  if (latestRoundFailed(row)) return 'bg-amber-500'
   if (row.status === 'completed') return 'bg-green-500'
-  if (isNotPassed(row)) return 'bg-zinc-400'
   return 'bg-cyan-500'
 }
 
@@ -64,7 +72,7 @@ export function UserProgressPanel({ userName, rows, isLoading, error }: UserProg
             return (
               <li
                 key={row.courseId}
-                className="grid grid-cols-1 items-center gap-2 border-b border-zinc-100 py-3 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_180px_110px] sm:gap-4 dark:border-zinc-700/50"
+                className="grid grid-cols-1 items-center gap-2 border-b border-zinc-100 py-3 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_180px_160px] sm:gap-4 dark:border-zinc-700/50"
               >
                 <span className="text-sm text-zinc-900 dark:text-zinc-100">
                   {row.courseTitle}
@@ -87,7 +95,7 @@ export function UserProgressPanel({ userName, rows, isLoading, error }: UserProg
                     style={{ width: `${pct}%` }}
                   />
                 </div>
-                <span className="text-[13px] text-zinc-500 sm:text-right dark:text-zinc-400">
+                <span className="text-[13px] whitespace-nowrap text-zinc-500 sm:text-right dark:text-zinc-400">
                   {statusLabel(row)}
                 </span>
               </li>

@@ -105,9 +105,9 @@ export default function CourseManagementPage() {
 
   const { showToast } = useToast()
 
-  // Archive confirmation (BR-31: "delete" archives the course)
-  const [deletingCourse, setDeletingCourse] = useState<CourseCardItem | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
+  // Archive confirmation (BR-31)
+  const [archivingCourse, setArchivingCourse] = useState<CourseCardItem | null>(null)
+  const [isArchiving, setIsArchiving] = useState(false)
 
   // Debounce search
   useEffect(() => {
@@ -218,28 +218,29 @@ export default function CourseManagementPage() {
     router.push(`/admin/courses/${card.id}/edit`)
   }
 
-  function handleDeleteRequest(card: CourseCardItem) {
-    setDeletingCourse(card)
+  function handleArchiveRequest(card: CourseCardItem) {
+    setArchivingCourse(card)
   }
 
-  async function handleDeleteConfirm() {
-    if (!deletingCourse || !accessToken) return
-    setIsDeleting(true)
+  // DELETE archives the course; it never removes data (BR-31)
+  async function handleArchiveConfirm() {
+    if (!archivingCourse || !accessToken) return
+    setIsArchiving(true)
     try {
-      const res = await fetch(`${API_URL}/api/v1/admin/courses/${deletingCourse.id}`, {
+      const res = await fetch(`${API_URL}/api/v1/admin/courses/${archivingCourse.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       if (!res.ok) {
         throw new Error(`Failed to archive course (${res.status})`)
       }
-      setDeletingCourse(null)
+      setArchivingCourse(null)
       showToast('success', '已封存課程')
       await fetchCourses()
     } catch {
       showToast('error', '無法封存課程，請再試一次。')
     } finally {
-      setIsDeleting(false)
+      setIsArchiving(false)
     }
   }
 
@@ -251,7 +252,7 @@ export default function CourseManagementPage() {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       if (!res.ok) throw new Error(`Failed to restore course (${res.status})`)
-      showToast('success', '已將課程還原為草稿')
+      showToast('success', '已還原成草稿')
       await fetchCourses()
     } catch {
       showToast('error', '無法還原課程，請再試一次。')
@@ -269,7 +270,7 @@ export default function CourseManagementPage() {
       if (!res.ok) throw new Error(`Failed to create preview link (${res.status})`)
       const data = (await res.json()) as { path: string }
       await navigator.clipboard.writeText(`${window.location.origin}${data.path}`)
-      showToast('success', '已複製預覽連結，課程發布前都有效。')
+      showToast('success', '已複製預覽連結，課程發布前都有效')
     } catch {
       showToast('error', '無法產生預覽連結，請再試一次。')
     }
@@ -384,6 +385,8 @@ export default function CourseManagementPage() {
           />
           {searchInput && (
             <button
+              type="button"
+              aria-label="清除搜尋"
               onClick={() => {
                 setSearchInput('')
                 setSearch('')
@@ -397,6 +400,7 @@ export default function CourseManagementPage() {
 
         {/* Status filter */}
         <select
+          aria-label="狀態"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-[13px] text-zinc-600 transition-colors outline-none focus:border-cyan-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
@@ -409,6 +413,7 @@ export default function CourseManagementPage() {
 
         {/* Level filter */}
         <select
+          aria-label="難度"
           value={levelFilter}
           onChange={(e) => setLevelFilter(e.target.value)}
           className="rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-[13px] text-zinc-600 transition-colors outline-none focus:border-cyan-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
@@ -421,6 +426,7 @@ export default function CourseManagementPage() {
 
         {/* Tool filter */}
         <select
+          aria-label="工具"
           value={toolFilter}
           onChange={(e) => setToolFilter(e.target.value)}
           className="rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-[13px] text-zinc-600 transition-colors outline-none focus:border-cyan-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
@@ -435,6 +441,7 @@ export default function CourseManagementPage() {
 
         {/* Skill filter */}
         <select
+          aria-label="技能"
           value={skillFilter}
           onChange={(e) => setSkillFilter(e.target.value)}
           className="rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-[13px] text-zinc-600 transition-colors outline-none focus:border-cyan-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
@@ -459,22 +466,22 @@ export default function CourseManagementPage() {
           toolNames={toolNames}
           skillNames={skillNames}
           onEdit={handleEdit}
-          onDelete={handleDeleteRequest}
+          onArchive={handleArchiveRequest}
           onTogglePublish={handleTogglePublish}
           onRestore={handleRestore}
           onCopyPreviewLink={handleCopyPreviewLink}
         />
       )}
 
-      {/* Delete Confirmation Dialog */}
+      {/* Archive confirmation (BR-31) */}
       <ConfirmDialog
-        isOpen={!!deletingCourse}
-        onClose={() => setDeletingCourse(null)}
-        onConfirm={handleDeleteConfirm}
+        isOpen={!!archivingCourse}
+        onClose={() => setArchivingCourse(null)}
+        onConfirm={handleArchiveConfirm}
         title="封存課程"
-        description={`「${deletingCourse?.title ?? ''}」將不再對學員顯示。學員的進度與徽章都會保留，之後可以從「已封存」篩選還原。`}
+        description={`封存「${archivingCourse?.title ?? ''}」後，前台看不到這堂課；上過的學員仍保留紀錄，「我的學習」會顯示「已無法觀看」。之後可以在「已封存」篩選裡還原。`}
         confirmLabel="封存"
-        isLoading={isDeleting}
+        isLoading={isArchiving}
       />
     </div>
   )

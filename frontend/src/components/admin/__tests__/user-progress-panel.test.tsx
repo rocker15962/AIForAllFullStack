@@ -10,6 +10,7 @@ const rows: UserProgressRow[] = [
     courseStatus: 'published',
     status: 'in_progress',
     score: null,
+    latestRoundPassed: null,
     answeredCount: 2,
     totalQuestions: 4,
   },
@@ -19,10 +20,15 @@ const rows: UserProgressRow[] = [
     courseStatus: 'published',
     status: 'completed',
     score: 80,
+    latestRoundPassed: true,
     answeredCount: 5,
     totalQuestions: 5,
   },
 ]
+
+function barFill(bar: HTMLElement): HTMLElement {
+  return bar.firstElementChild as HTMLElement
+}
 
 describe('UserProgressPanel', () => {
   it('shows title and completed / in-progress counts', () => {
@@ -37,7 +43,9 @@ describe('UserProgressPanel', () => {
     expect(screen.getByText('已完成 · 80%')).toBeInTheDocument()
     const bars = screen.getAllByRole('progressbar')
     expect(bars[0]).toHaveAttribute('aria-valuenow', '50')
+    expect(barFill(bars[0])).toHaveClass('bg-cyan-500')
     expect(bars[1]).toHaveAttribute('aria-valuenow', '100')
+    expect(barFill(bars[1])).toHaveClass('bg-green-500')
   })
 
   it('shows empty state when there is no activity', () => {
@@ -45,15 +53,51 @@ describe('UserProgressPanel', () => {
     expect(screen.getByText('還沒有學習紀錄')).toBeInTheDocument()
   })
 
-  it('marks a finished round below 60% as not passed (BR-12)', () => {
+  it('marks a failed retake of a completed course as latest round not passed (BR-36)', () => {
     render(
       <UserProgressPanel
         userName="Amy"
-        rows={[{ ...rows[0], answeredCount: 4, score: 25 }]}
+        rows={[{ ...rows[1], score: 40, latestRoundPassed: false }]}
         isLoading={false}
         error={null}
       />,
     )
-    expect(screen.getByText('未及格 · 25%')).toBeInTheDocument()
+    expect(screen.getByText('最新一輪未通過 · 40%')).toBeInTheDocument()
+    expect(screen.queryByText(/已完成 ·/)).not.toBeInTheDocument()
+    // Still counted as completed: the course stays in 已完成
+    expect(screen.getByText('已完成 1 堂 · 進行中 0 堂')).toBeInTheDocument()
+    const bar = screen.getByRole('progressbar')
+    expect(bar).toHaveAttribute('aria-valuenow', '40')
+    expect(barFill(bar)).toHaveClass('bg-amber-500')
+    expect(barFill(bar)).toHaveStyle({ width: '40%' })
+  })
+
+  it('marks a failed first round of an in-progress course the same way (BR-36)', () => {
+    render(
+      <UserProgressPanel
+        userName="Amy"
+        rows={[{ ...rows[0], answeredCount: 4, score: 25, latestRoundPassed: false }]}
+        isLoading={false}
+        error={null}
+      />,
+    )
+    expect(screen.getByText('最新一輪未通過 · 25%')).toBeInTheDocument()
+    expect(screen.queryByText(/未及格/)).not.toBeInTheDocument()
+    const bar = screen.getByRole('progressbar')
+    expect(bar).toHaveAttribute('aria-valuenow', '25')
+    expect(barFill(bar)).toHaveClass('bg-amber-500')
+  })
+
+  it('marks archived courses', () => {
+    render(
+      <UserProgressPanel
+        userName="Amy"
+        rows={[{ ...rows[1], courseStatus: 'archived' }]}
+        isLoading={false}
+        error={null}
+      />,
+    )
+    expect(screen.getByText('已封存')).toBeInTheDocument()
+    expect(screen.getByText('已完成 · 80%')).toBeInTheDocument()
   })
 })

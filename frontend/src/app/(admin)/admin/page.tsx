@@ -5,15 +5,9 @@ import Link from 'next/link'
 import { BookOpen, Users as UsersIcon, FolderOpen, Loader2, ShieldAlert } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { DashboardStatsCards, TrendChart, PopularCourses } from '@/components/admin'
-import type { DashboardStats } from '@/types'
+import type { DashboardStats, TrendDataPoint } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-
-interface TrendDataPoint {
-  date: string
-  totalUsers: number
-  newUsers: number
-}
 
 interface PopularCourse {
   id: string

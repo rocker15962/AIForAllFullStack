@@ -20,14 +20,12 @@ interface ApiUser {
   completedCount: number
 }
 
+// BR-38: no Facebook sign-in stat and no sign-in provider filter
 interface UserStats {
   totalUsers: number
   googleUsers: number
-  facebookUsers: number
   activeToday: number
 }
-
-type ProviderFilter = 'all' | 'google' | 'facebook'
 
 const statCards = [
   {
@@ -45,13 +43,6 @@ const statCards = [
     iconColor: 'text-blue-600 dark:text-blue-400',
   },
   {
-    key: 'facebookUsers' as const,
-    label: 'Facebook 登入',
-    icon: Users,
-    iconBg: 'bg-indigo-100 dark:bg-indigo-900/40',
-    iconColor: 'text-indigo-600 dark:text-indigo-400',
-  },
-  {
     key: 'activeToday' as const,
     label: '今日活躍',
     icon: Activity,
@@ -60,12 +51,6 @@ const statCards = [
   },
 ] as const
 
-const filterChips: { value: ProviderFilter; label: string }[] = [
-  { value: 'all', label: '全部' },
-  { value: 'google', label: 'Google' },
-  { value: 'facebook', label: 'Facebook' },
-]
-
 export default function UserManagementPage() {
   const { user, accessToken, isLoading: authLoading } = useAuth()
 
@@ -73,10 +58,9 @@ export default function UserManagementPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Search and filter
+  // Search
   const [searchInput, setSearchInput] = useState('')
   const [search, setSearch] = useState('')
-  const [providerFilter, setProviderFilter] = useState<ProviderFilter>('all')
 
   // Debounce search
   useEffect(() => {
@@ -158,15 +142,9 @@ export default function UserManagementPage() {
     setExpandedUserId((current) => (current === userId ? null : userId))
   }
 
-  // Apply client-side provider filter
-  const filteredUsers =
-    providerFilter === 'all' ? users : users.filter((u) => u.provider === providerFilter)
-
-  // Compute stats from unfiltered user list
   const stats: UserStats = {
     totalUsers: users.length,
     googleUsers: users.filter((u) => u.provider === 'google').length,
-    facebookUsers: users.filter((u) => u.provider === 'facebook').length,
     activeToday: users.filter((u) => {
       const lastActive = new Date(u.lastActiveAt)
       const today = new Date()
@@ -175,7 +153,7 @@ export default function UserManagementPage() {
   }
 
   // Map to table rows
-  const tableRows: UserRow[] = filteredUsers.map((u) => ({
+  const tableRows: UserRow[] = users.map((u) => ({
     id: u.id,
     name: u.name,
     email: u.email,
@@ -231,7 +209,7 @@ export default function UserManagementPage() {
       </div>
 
       {/* Stat Cards */}
-      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {statCards.map((card) => {
           const Icon = card.icon
           const value = stats[card.key]
@@ -254,10 +232,9 @@ export default function UserManagementPage() {
         })}
       </div>
 
-      {/* Search + Filter Row */}
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-        {/* Search */}
-        <div className="relative flex-1">
+      {/* Search */}
+      <div className="mb-6">
+        <div className="relative">
           <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
           <input
             type="text"
@@ -268,6 +245,8 @@ export default function UserManagementPage() {
           />
           {searchInput && (
             <button
+              type="button"
+              aria-label="清除搜尋"
               onClick={() => {
                 setSearchInput('')
                 setSearch('')
@@ -277,23 +256,6 @@ export default function UserManagementPage() {
               <X className="h-4 w-4" />
             </button>
           )}
-        </div>
-
-        {/* Provider filter chips */}
-        <div className="flex gap-2">
-          {filterChips.map((chip) => (
-            <button
-              key={chip.value}
-              onClick={() => setProviderFilter(chip.value)}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-                providerFilter === chip.value
-                  ? 'bg-cyan-500 text-white'
-                  : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-600'
-              }`}
-            >
-              {chip.label}
-            </button>
-          ))}
         </div>
       </div>
 
