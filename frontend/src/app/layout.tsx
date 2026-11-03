@@ -1,12 +1,10 @@
 import type { Metadata } from 'next'
-import { DM_Sans, JetBrains_Mono, Geist, Noto_Sans_TC } from 'next/font/google'
+import { DM_Sans, JetBrains_Mono, Noto_Sans_TC } from 'next/font/google'
 import { AuthProvider } from '@/contexts/auth-context'
 import { ToastProvider } from '@/components/shared'
 import { QueryProvider } from '@/lib/query-provider'
 import './globals.css'
 import { cn } from '@/lib/utils'
-
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -41,13 +39,7 @@ export default function RootLayout({
   return (
     <html
       lang="zh-Hant-TW"
-      className={cn(
-        dmSans.variable,
-        notoSansTC.variable,
-        jetbrainsMono.variable,
-        'font-sans',
-        geist.variable,
-      )}
+      className={cn(dmSans.variable, notoSansTC.variable, jetbrainsMono.variable, 'font-sans')}
     >
       <body className="font-sans antialiased">
         <QueryProvider>
