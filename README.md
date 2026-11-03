@@ -257,7 +257,7 @@ HTTP Request
 | 7 | Frontend adjustments | 🟢 | TanStack Query, Zustand, shadcn/ui, Zod |
 | 8 | Testing | 🟢 | Go unit + integration (testcontainers-go); Vitest frontend |
 | 9 | Dockerization | 🟢 | Multi-stage Go build (~20MB), 4-service compose with health checks |
-| 10 | CI/CD | 🟢 | GitHub Actions (5 jobs: lint, unit test, integration test, E2E, Docker build) |
+| 10 | CI/CD | 🟡 | GitHub Actions (frontend lint + unit test, backend lint + unit test, Docker build). Integration and E2E jobs are paused during pre-launch development — re-enable in `.github/workflows/ci.yml` before launch |
 | 11 | Security | 🟢 | CORS, rate limiting, input sanitization, secure headers |
 | 12 | Observability | 🟢 | Prometheus metrics + Grafana dashboard, structured logging + request ID |
 | 13 | Code quality | 🟢 | golangci-lint, gofmt, ESLint, Prettier, pre-commit hooks |
@@ -317,6 +317,6 @@ All 6 phases completed, backend-first:
 | 7 | AI-Powered Learning | LLM-driven personalized learning paths, AI chatbot tutor with RAG |
 | 8 | Creator Ecosystem | Creator self-service course submission, short-answer grading with direct feedback, content analytics |
 | 9 | Monetization & Growth | Creator revenue sharing, verifiable certificates, enterprise plans, gamification |
-| 10 | Scale & Infrastructure | Kubernetes + Helm, OpenTelemetry distributed tracing, CDN + ISR, i18n |
+| 10 | Scale & Infrastructure | Kubernetes + Helm, OpenTelemetry distributed tracing, CDN + ISR |
 
 See [`PRODUCT_ROADMAP.md`](PRODUCT_ROADMAP.md) for detailed feature descriptions and technical approach.
