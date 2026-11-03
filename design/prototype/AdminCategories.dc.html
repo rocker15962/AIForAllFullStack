@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/palette.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
+<script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
+<style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
+</helmet>
+<div lang="zh-Hant-TW" data-screen-label="Admin Categories" class="{{ themeClass }}" style="min-height:100vh;background:var(--surface-page);font-family:var(--font-sans)">
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.TopNav" brand="{{ brand }}" links="{{ navLinks }}" active-id="categories" on-navigate="{{ onNav }}" right="{{ navRight }}" hint-size="100%,56px"></x-import>
+  <main style="max-width:1280px;margin:0 auto;padding:32px 24px;box-sizing:border-box">
+    <div style="margin-bottom:32px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.PageHeader" title="分類管理" subtitle="管理平台的工具與技能分類，拖曳即可排序" hint-size="100%,68px"></x-import>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:32px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" variant="compact" icon="wrench" label="工具分類" value="{{ nTools }}" hint-size="100%,74px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" variant="compact" icon="lightbulb" tone="highlight" label="技能分類" value="{{ nSkills }}" hint-size="100%,74px"></x-import>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-bottom:32px;align-items:start">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SortableList" title="工具分類" tone="accent" items="{{ tools }}" on-change="{{ setTools }}" add-label="新增工具" empty-text="尚無分類" hint-size="100%,330px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SortableList" title="技能分類" tone="highlight" items="{{ skills }}" on-change="{{ setSkills }}" add-label="新增技能" empty-text="尚無分類" hint-size="100%,330px"></x-import>
+    </div>
+    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.InlineBanner" variant="note" title="提示" hint-size="100%,130px">
+      <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px">
+        <li>拖曳即可調整分類順序，這個順序就是平台上顯示的順序。</li>
+        <li>圖示名稱使用 lucide-react 格式（例如「bot」、「brain」、「code」、「image」）。</li>
+        <li>刪除分類不會移除已指派的課程，但這些課程需要重新指派分類。</li>
+      </ul>
+    </x-import>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;dark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  mp() { const o = {}; const q = this.props || {}; Object.keys(q).forEach((k) => { if (q[k] !== undefined) o[k] = q[k]; }); new URLSearchParams(window.location.search).forEach((v, k) => { o[k] = v === '1' ? true : v === '0' ? false : v; }); return o; }
+  qs() { const u = new URLSearchParams(window.location.search); const o = new URLSearchParams(); ['signedIn', 'isAdmin', 'dark', 'showThumbnails'].forEach((k) => { if (u.has(k)) o.set(k, u.get(k)); }); const s = o.toString(); return s ? '?' + s : ''; }
+  // Source icon names: palette, pen-tool, image-plus, terminal, bar-chart-3, presentation are not in the DS glyph set — closest DS glyph used.
+  state = {
+    tools: [
+      { id: 't1', name: 'ChatGPT', icon: 'bot' },
+      { id: 't2', name: 'Midjourney', icon: 'image' },
+      { id: 't3', name: 'Cursor', icon: 'code' },
+      { id: 't4', name: 'Claude', icon: 'brain' },
+      { id: 't5', name: 'Stable Diffusion', icon: 'image' },
+    ],
+    skills: [
+      { id: 's1', name: '文案寫作', icon: 'pencil' },
+      { id: 's2', name: '圖像生成', icon: 'image' },
+      { id: 's3', name: '程式開發', icon: 'code' },
+      { id: 's4', name: '資料分析', icon: 'chart-column' },
+      { id: 's5', name: '簡報製作', icon: 'chart-column' },
+    ],
+  };
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentWillUnmount() { clearInterval(this._t); }
+  renderVals() {
+    const D = window.AIForAllNeutralDS_acd6b1 || {};
+    const h = React.createElement;
+    const E = (n, p, ...c) => (D[n] ? h(D[n], p, ...c) : null);
+    const go = (f) => () => { window.location.href = f + this.qs(); };
+    const p = this.mp();
+    const routes = { dashboard: 'AdminDashboard.dc.html', courses: 'AdminCourses.dc.html', users: 'AdminUsers.dc.html', categories: 'AdminCategories.dc.html' };
+    return {
+      themeClass: p.dark ? 'dark' : '',
+      brand: E('Wordmark', { accent: 'AI', text: 'for All', onClick: go('Landing.dc.html') }),
+      navLinks: [{ id: 'dashboard', label: '儀表板' }, { id: 'courses', label: '課程' }, { id: 'users', label: '用戶' }, { id: 'categories', label: '分類' }],
+      onNav: (id) => { window.location.href = routes[id] + this.qs(); },
+      navRight: E('UserMenu', { name: '系統管理員', email: 'admin@example.com', items: [{ label: '我的學習', onClick: go('MyLearning.dc.html') }, { label: '個人資料', onClick: go('Profile.dc.html') }], onSignOut: go('Login.dc.html'), signOutLabel: '登出' }),
+      tools: this.state.tools, skills: this.state.skills,
+      nTools: this.state.tools.length, nSkills: this.state.skills.length,
+      setTools: (v) => this.setState({ tools: v }),
+      setSkills: (v) => this.setState({ skills: v }),
+    };
+  }
+}
+</script>
+</body>
+</html>

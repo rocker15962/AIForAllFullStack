@@ -1,0 +1,72 @@
+/* Spacing, radii, elevation, motion, layout. Exact values from the source. */
+:root{
+  /* spacing — named by px value (Tailwind 4px grid, incl. half steps) */
+  --space-2:2px;
+  --space-4:4px;
+  --space-6:6px;
+  --space-8:8px;
+  --space-10:10px;
+  --space-12:12px;
+  --space-14:14px;
+  --space-16:16px;
+  --space-20:20px;
+  --space-24:24px;
+  --space-28:28px;
+  --space-32:32px;
+  --space-40:40px;
+  --space-48:48px;
+  --space-56:56px;
+  --space-64:64px;
+  --space-80:80px;
+  --space-120:120px;
+
+  /* radii — the source's shadcn theme sets --radius:0.625rem, so rounded-lg = 10px, rounded-xl = 14px */
+  --radius-xs:4px;
+  --radius-sm:6px;
+  --radius-md:8px;
+  --radius-lg:10px;   /* buttons, inputs, list rows */
+  --radius-xl:14px;   /* cards, panels, video */
+  --radius-2xl:18px;  /* dialogs, auth card, feature tiles, profile card */
+  --radius-3xl:22px;
+  --radius-4xl:26px;  /* shadcn badge */
+  --radius-full:9999px;
+
+  /* elevation */
+  --shadow-sm:0 1px 3px 0 rgb(0 0 0 / 0.1),0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1),0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg:0 10px 15px -3px rgb(0 0 0 / 0.1),0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl:0 20px 25px -5px rgb(0 0 0 / 0.1),0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-float:0 4px 24px rgba(0,0,0,0.07); /* auth card */
+
+  /* motion */
+  --duration-fast:100ms; /* @kind other */
+  --duration-base:150ms; /* @kind other */
+  --ease-standard:cubic-bezier(0.4,0,0.2,1); /* @kind other */
+  --transition-colors:color var(--duration-base) var(--ease-standard),background-color var(--duration-base) var(--ease-standard),border-color var(--duration-base) var(--ease-standard);
+  --transition-shadow:box-shadow var(--duration-base) var(--ease-standard);
+
+  /* layout */
+  --nav-height:56px;
+  --nav-height-marketing:64px;
+  --container-wide:1280px;
+  --container-detail:1040px;
+  --container-narrow:840px;
+  --sidebar-width:240px;
+  --media-height:190px;
+  --media-height-lg:200px;
+  --menu-width:220px;
+  --toast-width:420px;
+  --dialog-sm:400px;
+  --dialog-md:520px;
+  --auth-card-width:440px;
+  --page-pad-x:40px;
+  --page-pad-x-mobile:24px;
+  --page-pad-y:32px;
+  --section-pad-y:80px;
+  --section-pad-x:120px;
+
+  /* gradients (soft, top-to-bottom tints only) */
+  --gradient-hero:linear-gradient(to bottom,var(--primary-50),var(--white));
+  --gradient-cta:linear-gradient(to bottom,var(--primary-50),var(--primary-100));
+  --gradient-cover:linear-gradient(to right,var(--primary-100),var(--primary-50),var(--neutral-100));
+}

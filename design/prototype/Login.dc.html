@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/palette.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
+<script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
+<style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
+</helmet>
+<div lang="zh-Hant-TW" data-screen-label="Login" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;box-sizing:border-box;background:var(--gradient-hero);font-family:var(--font-sans)">
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.AuthCard" brand="{{ brand }}" title="歡迎回來" subtitle="登入以記錄學習進度、獲得徽章" footer="{{ footer }}" hint-size="440px,390px">
+    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" variant="outline-strong" size="lg" full-width="{{ true }}" on-click="{{ signIn }}" hint-size="100%,48px">使用 Google 繼續</x-import>
+    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" variant="outline-strong" size="lg" full-width="{{ true }}" disabled="{{ true }}" hint-size="100%,48px">使用 Facebook 繼續 · 即將推出</x-import>
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  mp() { const o = {}; const q = this.props || {}; Object.keys(q).forEach((k) => { if (q[k] !== undefined) o[k] = q[k]; }); new URLSearchParams(window.location.search).forEach((v, k) => { o[k] = v === '1' ? true : v === '0' ? false : v; }); return o; }
+  qs() { const u = new URLSearchParams(window.location.search); const o = new URLSearchParams(); ['signedIn', 'isAdmin', 'dark', 'showThumbnails'].forEach((k) => { if (u.has(k)) o.set(k, u.get(k)); }); const s = o.toString(); return s ? '?' + s : ''; }
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentWillUnmount() { clearInterval(this._t); }
+  renderVals() {
+    const D = window.AIForAllNeutralDS_acd6b1 || {};
+    const h = React.createElement;
+    const E = (n, p, ...c) => (D[n] ? h(D[n], p, ...c) : null);
+    const go = (f) => () => { window.location.href = f + this.qs(); };
+    return {
+      brand: E('Wordmark', { accent: 'AI', text: 'for All', tone: 'strong', onClick: go('Landing.dc.html') }),
+      footer: E('Button', { variant: 'link', onClick: go('Explore.dc.html') }, '先不登入，直接逛逛'),
+      signIn: go('Explore.dc.html'),
+      facebookProps: { style: { background: '#1877F2' } },
+    };
+  }
+}
+</script>
+</body>
+</html>

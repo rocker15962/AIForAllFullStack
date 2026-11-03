@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/palette.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
+<script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
+<style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
+</helmet>
+<div lang="zh-Hant-TW" data-screen-label="Explore" class="{{ themeClass }}" style="min-height:100vh;background:var(--surface-page);font-family:var(--font-sans)">
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.TopNav" brand="{{ brand }}" links="{{ navLinks }}" active-id="explore" on-navigate="{{ onNav }}" right="{{ navRight }}" hint-size="100%,56px"></x-import>
+  <main style="padding:32px 40px">
+    <div style="margin-bottom:24px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.PageHeader" title="探索課程" subtitle="找到適合你的 AI 課程，開始你的學習旅程" hint-size="100%,72px"></x-import>
+    </div>
+    <div style="display:flex;gap:32px;align-items:flex-start">
+      <aside style="width:240px;flex-shrink:0;display:flex;flex-direction:column;gap:24px">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SearchInput" placeholder="搜尋課程…" value="{{ q }}" on-change="{{ setSearch }}" hint-size="240px,42px"></x-import>
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FilterGroup" title="工具" options="{{ tools }}" value="{{ toolId }}" on-change="{{ setTool }}" hint-size="240px,160px"></x-import>
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FilterGroup" title="技能" options="{{ skills }}" value="{{ skillId }}" on-change="{{ setSkill }}" hint-size="240px,160px"></x-import>
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FilterGroup" title="難度" options="{{ levels }}" value="{{ level }}" on-change="{{ setLevel }}" hint-size="240px,110px"></x-import>
+      </aside>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:32px;margin-bottom:12px">
+          <span style="font-size:14px;color:var(--text-muted)">{{ countText }}</span>
+          <sc-if value="{{ anyFilter }}" hint-placeholder-val="{{ false }}">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" variant="link" on-click="{{ clearAll }}" hint-size="100px,32px">清除全部篩選</x-import>
+          </sc-if>
+        </div>
+        <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
+            <sc-for list="{{ list }}" as="c" hint-placeholder-count="6">
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.MediaCard" image="{{ c.image }}" title="{{ c.title }}" description="{{ c.description }}" tags="{{ c.tags }}" author="{{ c.author }}" on-click="{{ c.open }}" hint-size="100%,350px"></x-import>
+            </sc-for>
+          </div>
+          <sc-if value="{{ multiPage }}" hint-placeholder-val="{{ false }}">
+            <nav aria-label="分頁" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:32px">
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" size="sm" variant="outline" disabled="{{ noPrevPage }}" on-click="{{ prevPage }}" hint-size="72px,32px">上一頁</x-import>
+              <sc-for list="{{ pages }}" as="pg" hint-placeholder-count="3">
+                <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" size="sm" variant="{{ pg.variant }}" on-click="{{ pg.go }}" hint-size="34px,32px">{{ pg.n }}</x-import>
+              </sc-for>
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" size="sm" variant="outline" disabled="{{ noNextPage }}" on-click="{{ nextPage }}" hint-size="72px,32px">下一頁</x-import>
+            </nav>
+          </sc-if>
+        </sc-if>
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:80px 0;text-align:center">
+            <p style="margin:0;font-size:18px;font-weight:500;color:var(--text-muted)">找不到課程</p>
+            <p style="margin:0;font-size:14px;color:var(--text-subtle)">試著調整篩選條件或搜尋關鍵字</p>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;signedIn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;pageSize&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:20,&quot;min&quot;:1,&quot;max&quot;:50,&quot;tsType&quot;:&quot;number&quot;},&quot;showThumbnails&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;dark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  mp() { const o = {}; const q = this.props || {}; Object.keys(q).forEach((k) => { if (q[k] !== undefined) o[k] = q[k]; }); new URLSearchParams(window.location.search).forEach((v, k) => { o[k] = v === '1' ? true : v === '0' ? false : v; }); return o; }
+  qs() { const u = new URLSearchParams(window.location.search); const o = new URLSearchParams(); ['signedIn', 'isAdmin', 'dark', 'showThumbnails'].forEach((k) => { if (u.has(k)) o.set(k, u.get(k)); }); const s = o.toString(); return s ? '?' + s : ''; }
+  state = { q: '', tool: null, skill: null, level: null, page: 1 };
+  tools = [{ id: 't1', name: 'ChatGPT' }, { id: 't2', name: 'Midjourney' }, { id: 't3', name: 'Cursor' }, { id: 't4', name: 'Claude' }, { id: 't5', name: 'Stable Diffusion' }];
+  skills = [{ id: 's1', name: '文案寫作' }, { id: 's2', name: '圖像生成' }, { id: 's3', name: '程式開發' }, { id: 's4', name: '資料分析' }, { id: 's5', name: '簡報製作' }];
+  levels = [{ id: 'beginner', name: '入門' }, { id: 'intermediate', name: '中級' }, { id: 'advanced', name: '進階' }];
+  creators = { cr1: { name: 'AI Prince', color: 'var(--violet-500)' }, cr2: { name: 'Digital Maker', color: 'var(--blue-500)' }, cr3: { name: 'Dev Academy', color: 'var(--primary-500)' } };
+  courses = [
+    { id: 'c1', title: 'ChatGPT 文案寫作入門：從零開始學 AI 寫作', desc: '學習如何有效使用 ChatGPT 進行對話，掌握提示工程技巧，提升工作效率。', tool: 't1', skill: 's1', cr: 'cr1', level: 'beginner', seed: 'chatgpt-writing' },
+    { id: 'c2', title: 'Midjourney 繪圖技巧：創作你的 AI 藝術作品', desc: '從基本指令到進階參數，完整教你用 Midjourney 生成專業級圖像。', tool: 't2', skill: 's2', cr: 'cr2', level: 'intermediate', seed: 'midjourney-art' },
+    { id: 'c3', title: 'Cursor AI 開發：用 AI 加速寫程式', desc: '學習使用 AI 程式編輯器 Cursor 加快開發流程：用 AI 撰寫、除錯與重構程式碼。', tool: 't3', skill: 's3', cr: 'cr3', level: 'beginner', seed: 'cursor-coding' },
+    { id: 'c4', title: 'ChatGPT 進階：打造自動化工作流程', desc: '學習用 ChatGPT API 與自動化工具打造高效工作流程，涵蓋 GPT-4 API 串接與提示鏈。', tool: 't1', skill: 's1', cr: 'cr1', level: 'advanced', seed: 'chatgpt-automation' },
+    { id: 'c5', title: 'AI 資料分析：用 Claude 處理資料', desc: '學習用 Claude 分析 CSV 資料、產出報告與資料視覺化，適合行銷人員與分析師。', tool: 't4', skill: 's4', cr: 'cr3', level: 'intermediate', seed: 'data-analysis' },
+    { id: 'c6', title: 'Stable Diffusion 本機安裝指南', desc: '一步步帶你在自己的電腦安裝 Stable Diffusion，不用付費訂閱也能生成 AI 圖像。', tool: 't5', skill: 's2', cr: 'cr2', level: 'advanced', seed: 'stable-diffusion' },
+    { id: 'c7', title: 'AI 簡報：10 分鐘做出專業投影片', desc: '用 ChatGPT + Gamma 快速做出高品質簡報，從產生大綱到版面美化一次搞定。', tool: 't1', skill: 's5', cr: 'cr1', level: 'beginner', seed: 'ai-presentations' },
+    { id: 'c8', title: 'Cursor 進階：TDD 與 AI 結對程式設計', desc: '用 Cursor 實踐測試驅動開發，學會讓 AI 撰寫測試、實作與重構，提升程式碼品質。', tool: 't3', skill: 's3', cr: 'cr3', level: 'advanced', seed: 'tdd-programming' },
+  ];
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentWillUnmount() { clearInterval(this._t); }
+  renderVals() {
+    const D = window.AIForAllNeutralDS_acd6b1 || {};
+    const h = React.createElement;
+    const E = (n, p, ...c) => (D[n] ? h(D[n], p, ...c) : null);
+    const go = (f) => () => { window.location.href = f + this.qs(); };
+    const p = this.mp();
+    const signedIn = p.signedIn ?? true;
+    const s = this.state;
+    const name = (arr) => Object.fromEntries(arr.map((x) => [x.id, x.name]));
+    const T = name(this.tools), S = name(this.skills);
+    const LV = { beginner: ['入門', 'success'], intermediate: ['中級', 'highlight'], advanced: ['進階', 'danger'] };
+    const q = s.q.trim().toLowerCase();
+    const list = this.courses
+      .filter((c) => !q || (c.title + ' ' + c.desc).toLowerCase().includes(q))
+      .filter((c) => !s.tool || c.tool === s.tool)
+      .filter((c) => !s.skill || c.skill === s.skill)
+      .filter((c) => !s.level || c.level === s.level)
+      .map((c) => ({
+        id: c.id, title: c.title, description: c.desc,
+        image: p.showThumbnails ? 'https://picsum.photos/seed/' + c.seed + '/640/360' : undefined,
+        tags: [{ label: T[c.tool], tone: 'accent' }, { label: S[c.skill], tone: 'violet' }, { label: LV[c.level][0], tone: LV[c.level][1], strong: true }],
+        author: this.creators[c.cr],
+        open: go('CourseDetail.dc.html'),
+      }));
+    const ps = Math.max(1, Number(p.pageSize) || 20);
+    const nPages = Math.max(1, Math.ceil(list.length / ps));
+    const page = Math.min(s.page || 1, nPages);
+    const pageList = list.slice((page - 1) * ps, page * ps);
+    return {
+      themeClass: p.dark ? 'dark' : '',
+      brand: E('Wordmark', { accent: 'AI', text: 'for All', onClick: go('Landing.dc.html') }),
+      navLinks: [{ id: 'explore', label: '探索課程' }, { id: 'mine', label: '我的學習' }],
+      onNav: (id) => { window.location.href = (id === 'mine' ? 'MyLearning.dc.html' : 'Explore.dc.html') + this.qs(); },
+      navRight: signedIn
+        ? E('UserMenu', { name: '陳怡君', email: 'alice@example.com', items: [{ label: '我的學習', onClick: go('MyLearning.dc.html') }, { label: '個人資料', onClick: go('Profile.dc.html') }], onSignOut: go('Login.dc.html'), signOutLabel: '登出' })
+        : E('Button', { onClick: go('Login.dc.html'), style: { padding: '8px 16px' } }, '登入'),
+      tools: this.tools, skills: this.skills, levels: this.levels,
+      toolId: s.tool, skillId: s.skill, level: s.level,
+      setSearch: (v) => this.setState({ q: v || '', page: 1 }),
+      setTool: (v) => this.setState({ tool: v, page: 1 }),
+      setSkill: (v) => this.setState({ skill: v, page: 1 }),
+      setLevel: (v) => this.setState({ level: v, page: 1 }),
+      list: pageList, hasResults: list.length > 0, noResults: list.length === 0,
+      multiPage: nPages > 1,
+      pages: Array.from({ length: nPages }, (_, i) => ({ n: i + 1, variant: i + 1 === page ? 'primary' : 'outline', go: () => this.setState({ page: i + 1 }) })),
+      noPrevPage: page <= 1, noNextPage: page >= nPages,
+      prevPage: () => this.setState({ page: page - 1 }), nextPage: () => this.setState({ page: page + 1 }),
+      countText: nPages > 1 ? '共 ' + list.length + ' 堂課 · 第 ' + ((page - 1) * ps + 1) + '–' + Math.min(page * ps, list.length) + ' 堂' : '共 ' + list.length + ' 堂課',
+      q: s.q, count: list.length,
+      anyFilter: !!(s.q || s.tool || s.skill || s.level),
+      clearAll: () => this.setState({ q: '', tool: null, skill: null, level: null, page: 1 }),
+    };
+  }
+}
+</script>
+</body>
+</html>

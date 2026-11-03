@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/palette.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
+<script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
+<style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
+</helmet>
+<div lang="zh-Hant-TW" data-screen-label="Admin Courses" class="{{ themeClass }}" style="min-height:100vh;background:var(--surface-page);font-family:var(--font-sans)">
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.TopNav" brand="{{ brand }}" links="{{ navLinks }}" active-id="courses" on-navigate="{{ onNav }}" right="{{ navRight }}" hint-size="100%,56px"></x-import>
+  <main style="max-width:1280px;margin:0 auto;padding:32px 24px;box-sizing:border-box">
+    <div style="margin-bottom:32px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.PageHeader" title="課程管理" subtitle="新增、編輯與管理平台課程內容" actions="{{ headerActions }}" hint-size="100%,68px"></x-import>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:32px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" variant="compact" icon="book-open" label="課程總數" value="{{ nTotal }}" hint-size="100%,74px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" variant="compact" icon="circle-check-big" tone="success" label="已發布" value="{{ nPublished }}" hint-size="100%,74px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" variant="compact" icon="file-text" tone="highlight" label="草稿" value="{{ nDrafts }}" hint-size="100%,74px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" variant="compact" icon="circle-help" tone="violet" label="題目總數" value="{{ nQuestions }}" hint-size="100%,74px"></x-import>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:24px">
+      <div style="flex:1;min-width:0">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SearchInput" placeholder="搜尋課程…" on-change="{{ setSearch }}" hint-size="100%,42px"></x-import>
+      </div>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" variant="toolbar" placeholder="全部狀態" options="{{ statusOpts }}" value="{{ status }}" on-change="{{ setStatus }}" hint-size="130px,42px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" variant="toolbar" placeholder="全部難度" options="{{ levelOpts }}" value="{{ level }}" on-change="{{ setLevel }}" hint-size="120px,42px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" variant="toolbar" placeholder="全部工具" options="{{ toolOpts }}" value="{{ tool }}" on-change="{{ setTool }}" hint-size="140px,42px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" variant="toolbar" placeholder="全部技能" options="{{ skillOpts }}" value="{{ skill }}" on-change="{{ setSkill }}" hint-size="150px,42px"></x-import>
+    </div>
+    <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
+        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="6">
+          <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.MediaCard" dc-props="{{ c }}" hint-size="100%,330px"></x-import>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:80px 0;text-align:center">
+        <p style="margin:0;font-size:18px;font-weight:500;color:var(--text-muted)">找不到課程</p>
+        <p style="margin:0;font-size:14px;color:var(--text-subtle)">試著調整篩選條件或搜尋關鍵字</p>
+      </div>
+    </sc-if>
+  </main>
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.ToastStack" toasts="{{ toasts }}" on-dismiss="{{ dismissToast }}" hint-size="0px,0px"></x-import>
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.ConfirmDialog" open="{{ delOpen }}" title="封存課程" description="{{ delText }}" confirm-label="封存" cancel-label="取消" loading="{{ deleting }}" on-close="{{ closeDel }}" on-confirm="{{ confirmDel }}" hint-size="0px,0px"></x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showDeleteDialog&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;showThumbnails&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;dark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  mp() { const o = {}; const q = this.props || {}; Object.keys(q).forEach((k) => { if (q[k] !== undefined) o[k] = q[k]; }); new URLSearchParams(window.location.search).forEach((v, k) => { o[k] = v === '1' ? true : v === '0' ? false : v; }); return o; }
+  qs() { const u = new URLSearchParams(window.location.search); const o = new URLSearchParams(); ['signedIn', 'isAdmin', 'dark', 'showThumbnails'].forEach((k) => { if (u.has(k)) o.set(k, u.get(k)); }); const s = o.toString(); return s ? '?' + s : ''; }
+  tools = [{ value: 't1', label: 'ChatGPT' }, { value: 't2', label: 'Midjourney' }, { value: 't3', label: 'Cursor' }, { value: 't4', label: 'Claude' }, { value: 't5', label: 'Stable Diffusion' }];
+  skills = [{ value: 's1', label: '文案寫作' }, { value: 's2', label: '圖像生成' }, { value: 's3', label: '程式開發' }, { value: 's4', label: '資料分析' }, { value: 's5', label: '簡報製作' }];
+  seedCourses = [
+    { id: 'c1', title: 'ChatGPT 文案寫作入門：從零開始學 AI 寫作', desc: '學習如何有效使用 ChatGPT 進行對話，掌握提示工程技巧，提升工作效率。', tool: 't1', skill: 's1', level: 'beginner', seed: 'chatgpt-writing', qs: 5, status: 'published' },
+    { id: 'c2', title: 'Midjourney 繪圖技巧：創作你的 AI 藝術作品', desc: '從基本指令到進階參數，完整教你用 Midjourney 生成專業級圖像。', tool: 't2', skill: 's2', level: 'intermediate', seed: 'midjourney-art', qs: 3, status: 'published' },
+    { id: 'c3', title: 'Cursor AI 開發：用 AI 加速寫程式', desc: '學習使用 AI 程式編輯器 Cursor 加快開發流程：用 AI 撰寫、除錯與重構程式碼。', tool: 't3', skill: 's3', level: 'beginner', seed: 'cursor-coding', qs: 2, status: 'published' },
+    { id: 'c4', title: 'ChatGPT 進階：打造自動化工作流程', desc: '學習用 ChatGPT API 與自動化工具打造高效工作流程，涵蓋 GPT-4 API 串接與提示鏈。', tool: 't1', skill: 's1', level: 'advanced', seed: 'chatgpt-automation', qs: 4, status: 'published' },
+    { id: 'c5', title: 'AI 資料分析：用 Claude 處理資料', desc: '學習用 Claude 分析 CSV 資料、產出報告與資料視覺化，適合行銷人員與分析師。', tool: 't4', skill: 's4', level: 'intermediate', seed: 'data-analysis', qs: 4, status: 'published' },
+    { id: 'c6', title: 'Stable Diffusion 本機安裝指南', desc: '一步步帶你在自己的電腦安裝 Stable Diffusion，不用付費訂閱也能生成 AI 圖像。', tool: 't5', skill: 's2', level: 'advanced', seed: 'stable-diffusion', qs: 3, status: 'archived' },
+    { id: 'c7', title: 'AI 簡報：10 分鐘做出專業投影片', desc: '用 ChatGPT + Gamma 快速做出高品質簡報，從產生大綱到版面美化一次搞定。', tool: 't1', skill: 's5', level: 'beginner', seed: 'ai-presentations', qs: 3, status: 'published' },
+    { id: 'c8', title: 'Cursor 進階：TDD 與 AI 結對程式設計', desc: '用 Cursor 實踐測試驅動開發，學會讓 AI 撰寫測試、實作與重構，提升程式碼品質。', tool: 't3', skill: 's3', level: 'advanced', seed: 'tdd-programming', qs: 4, status: 'draft' },
+  ];
+  state = { toasts: [], courses: this.seedCourses, q: '', status: '', level: '', tool: '', skill: '', del: this.mp().showDeleteDialog ? 'c1' : null, deleting: false };
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentDidUpdate() { const v = !!this.mp().showDeleteDialog; if (v !== this._sd) { const first = this._sd === undefined; this._sd = v; if (!first) this.setState({ del: v ? 'c1' : null }); } }
+  componentWillUnmount() { clearInterval(this._t); clearTimeout(this._d); }
+  renderVals() {
+    const D = window.AIForAllNeutralDS_acd6b1 || {};
+    const h = React.createElement;
+    const E = (n, p, ...c) => (D[n] ? h(D[n], p, ...c) : null);
+    const go = (f) => () => { window.location.href = f + this.qs(); };
+    const p = this.mp();
+    const s = this.state;
+    const routes = { dashboard: 'AdminDashboard.dc.html', courses: 'AdminCourses.dc.html', users: 'AdminUsers.dc.html', categories: 'AdminCategories.dc.html' };
+    const T = Object.fromEntries(this.tools.map((x) => [x.value, x.label]));
+    const S = Object.fromEntries(this.skills.map((x) => [x.value, x.label]));
+    const LV = { beginner: ['入門', 'success'], intermediate: ['中級', 'highlight'], advanced: ['進階', 'danger'] };
+    const q = s.q.trim().toLowerCase();
+    const all = s.courses;
+    const toast = (message) => { const id = Date.now(); this.setState({ toasts: [...this.state.toasts, { id, type: 'success', message }] }); setTimeout(() => this.setState({ toasts: this.state.toasts.filter((x) => x.id !== id) }), 3000); };
+    const copyLink = (c) => { const url = 'https://aiforall.example/courses/' + c.id + '?preview=' + Math.random().toString(36).slice(2, 10); try { navigator.clipboard.writeText(url); } catch (e) {} toast('已複製預覽連結，課程發布前都有效'); };
+    const restore = (c) => { this.setState({ courses: this.state.courses.map((x) => (x.id === c.id ? { ...x, status: 'draft' } : x)) }); toast('已還原成草稿'); };
+    const toggle = (c) => this.setState({ courses: all.map((x) => (x.id === c.id ? { ...x, status: x.status === 'published' ? 'draft' : 'published' } : x)) });
+    const cards = all
+      .filter((c) => !q || c.title.toLowerCase().includes(q))
+      .filter((c) => (s.status ? c.status === s.status : c.status !== 'archived'))
+      .filter((c) => !s.level || c.level === s.level)
+      .filter((c) => !s.tool || c.tool === s.tool)
+      .filter((c) => !s.skill || c.skill === s.skill)
+      .map((c) => {
+        const pub = c.status === 'published', arch = c.status === 'archived';
+        return {
+          image: p.showThumbnails ? 'https://picsum.photos/seed/' + c.seed + '/640/360' : undefined,
+          title: c.title, description: c.desc, descriptionLines: 1,
+          tags: [{ label: T[c.tool], tone: 'accent' }, { label: S[c.skill], tone: 'violet' }, { label: LV[c.level][0], tone: LV[c.level][1], strong: true }],
+          style: arch ? { opacity: 0.7 } : undefined,
+          meta: { left: E('StatusDot', { tone: pub ? 'success' : arch ? 'neutral' : 'warning', label: pub ? '已發布' : arch ? '已封存' : '草稿' }), right: c.qs + ' 題' },
+          overlayActions: arch ? [] : [
+            { icon: pub ? 'eye-off' : 'eye', label: pub ? '取消發布' : '發布', onClick: () => toggle(c) },
+            { icon: 'pencil', label: '編輯', onClick: go('AdminCourseEditor.dc.html') },
+            { icon: 'folder-open', label: '封存', onClick: () => this.setState({ del: c.id }) },
+          ],
+          footer: arch ? E('Button', { variant: 'outline', size: 'sm', fullWidth: true, onClick: (e) => { e.stopPropagation(); restore(c); } }, '還原成草稿')
+            : !pub ? E('Button', { variant: 'outline', size: 'sm', fullWidth: true, onClick: (e) => { e.stopPropagation(); copyLink(c); } }, '複製預覽連結') : undefined,
+          interactive: !arch,
+          onClick: arch ? undefined : go('AdminCourseEditor.dc.html'),
+        };
+      });
+    const delCourse = all.find((c) => c.id === s.del);
+    return {
+      themeClass: p.dark ? 'dark' : '',
+      brand: E('Wordmark', { accent: 'AI', text: 'for All', onClick: go('Landing.dc.html') }),
+      navLinks: [{ id: 'dashboard', label: '儀表板' }, { id: 'courses', label: '課程' }, { id: 'users', label: '用戶' }, { id: 'categories', label: '分類' }],
+      onNav: (id) => { window.location.href = routes[id] + this.qs(); },
+      navRight: E('UserMenu', { name: '系統管理員', email: 'admin@example.com', items: [{ label: '我的學習', onClick: go('MyLearning.dc.html') }, { label: '個人資料', onClick: go('Profile.dc.html') }], onSignOut: go('Login.dc.html'), signOutLabel: '登出' }),
+      headerActions: E('Button', { leadingIcon: 'plus', onClick: () => { window.location.href = 'AdminCourseEditor.dc.html' + this.qs(); } }, '新增課程'),
+      nTotal: all.length,
+      nPublished: all.filter((c) => c.status === 'published').length,
+      nDrafts: all.filter((c) => c.status === 'draft').length,
+      nQuestions: all.reduce((n, c) => n + c.qs, 0),
+      statusOpts: [{ value: 'published', label: '已發布' }, { value: 'draft', label: '草稿' }, { value: 'archived', label: '已封存' }],
+      levelOpts: [{ value: 'beginner', label: '入門' }, { value: 'intermediate', label: '中級' }, { value: 'advanced', label: '進階' }],
+      toolOpts: this.tools, skillOpts: this.skills,
+      status: s.status, level: s.level, tool: s.tool, skill: s.skill,
+      setSearch: (v) => this.setState({ q: v || '' }),
+      setStatus: (v) => this.setState({ status: v }),
+      setLevel: (v) => this.setState({ level: v }),
+      setTool: (v) => this.setState({ tool: v }),
+      setSkill: (v) => this.setState({ skill: v }),
+      cards, hasResults: cards.length > 0, noResults: cards.length === 0,
+      toasts: s.toasts, dismissToast: (id) => this.setState({ toasts: this.state.toasts.filter((x) => x.id !== id) }),
+      delOpen: !!delCourse,
+      delText: delCourse ? '封存「' + delCourse.title + '」後，前台看不到這堂課；上過的學員仍保留紀錄，「我的學習」會顯示「已無法觀看」。之後可以在「已封存」篩選裡還原。' : '',
+      deleting: s.deleting,
+      closeDel: () => this.setState({ del: null }),
+      confirmDel: () => {
+        this.setState({ deleting: true });
+        this._d = setTimeout(() => this.setState({ courses: this.state.courses.map((c) => (c.id === this.state.del ? { ...c, status: 'archived' } : c)), del: null, deleting: false }), 500);
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

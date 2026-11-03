@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/palette.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
+<script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
+<style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
+</helmet>
+<div lang="zh-Hant-TW" data-screen-label="My Learning" class="{{ themeClass }}" style="min-height:100vh;background:var(--surface-page);font-family:var(--font-sans)">
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.TopNav" brand="{{ brand }}" links="{{ navLinks }}" active-id="mine" on-navigate="{{ onNav }}" right="{{ navRight }}" hint-size="100%,56px"></x-import>
+
+  <sc-if value="{{ signedOut }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height:calc(100vh - 56px);display:flex;align-items:center;justify-content:center">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.EmptyState" icon="book-open" title="登入以追蹤學習進度" description="登入後即可查看學習進度、已完成課程與徽章。" action-label="登入" action-variant="primary" on-action="{{ goLogin }}" hint-size="420px,220px"></x-import>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ signedIn }}" hint-placeholder-val="{{ true }}">
+    <main style="padding:32px 40px">
+      <div style="margin-bottom:24px">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.PageHeader" title="我的學習" subtitle="追蹤學習進度，收集完課徽章" hint-size="100%,72px"></x-import>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:32px">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" variant="tile" icon="book-open" label="進行中" value="{{ nInProgress }}" hint-size="100%,90px"></x-import>
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" variant="tile" icon="circle-check-big" tone="success" label="已完成" value="{{ nCompleted }}" hint-size="100%,90px"></x-import>
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" variant="tile" icon="award" tone="highlight" label="徽章" value="{{ nBadges }}" hint-size="100%,90px"></x-import>
+      </div>
+      <div style="margin-bottom:24px">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Tabs" tabs="{{ tabs }}" value="{{ tab }}" on-change="{{ setTab }}" hint-size="100%,33px"></x-import>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px">
+        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+          <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.MediaCard" dc-props="{{ c }}" hint-size="100%,380px"></x-import>
+        </sc-for>
+      </div>
+    </main>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;signedIn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;tab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;in-progress&quot;,&quot;completed&quot;,&quot;badges&quot;],&quot;default&quot;:&quot;in-progress&quot;,&quot;tsType&quot;:&quot;'in-progress' | 'completed' | 'badges'&quot;},&quot;showThumbnails&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;dark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  mp() { const o = {}; const q = this.props || {}; Object.keys(q).forEach((k) => { if (q[k] !== undefined) o[k] = q[k]; }); new URLSearchParams(window.location.search).forEach((v, k) => { o[k] = v === '1' ? true : v === '0' ? false : v; }); return o; }
+  qs() { const u = new URLSearchParams(window.location.search); const o = new URLSearchParams(); ['signedIn', 'isAdmin', 'dark', 'showThumbnails'].forEach((k) => { if (u.has(k)) o.set(k, u.get(k)); }); const s = o.toString(); return s ? '?' + s : ''; }
+  inProgress = [
+    { title: 'AI 簡報：10 分鐘做出專業投影片', tool: 'ChatGPT', skill: '簡報製作', level: 'beginner', progress: 67, q: '2/3', date: '10月31日', seed: 'ai-presentations' },
+    { title: 'Stable Diffusion 本機安裝指南', tool: 'Stable Diffusion', skill: '圖像生成', level: 'advanced', progress: 33, q: '1/3', date: '10月30日', seed: 'stable-diffusion', gone: 'unpublished' },
+  ];
+  completed = [
+    { title: 'AI 資料分析：用 Claude 處理資料', tool: 'Claude', skill: '資料分析', level: 'intermediate', score: 100, date: '10月24日', seed: 'data-analysis' },
+    { title: 'ChatGPT 進階：打造自動化工作流程', tool: 'ChatGPT', skill: '文案寫作', level: 'advanced', score: 75, date: '10月14日', seed: 'chatgpt-automation', latest: 40 },
+    { title: 'Cursor AI 開發：用 AI 加速寫程式', tool: 'Cursor', skill: '程式開發', level: 'beginner', score: 100, date: '10月3日', seed: 'cursor-coding' },
+    { title: 'Midjourney 繪圖技巧：創作你的 AI 藝術作品', tool: 'Midjourney', skill: '圖像生成', level: 'intermediate', score: 67, date: '9月28日', seed: 'midjourney-art', gone: 'archived' },
+    { title: 'ChatGPT 文案寫作入門：從零開始學 AI 寫作', tool: 'ChatGPT', skill: '文案寫作', level: 'beginner', score: 100, date: '9月23日', seed: 'chatgpt-writing' },
+  ];
+  state = { tab: this.mp().tab || 'in-progress' };
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentDidUpdate() { const v = this.mp().tab; if (v !== this._tab) { const first = this._tab === undefined; this._tab = v; if (!first && v) this.setState({ tab: v }); } }
+  componentWillUnmount() { clearInterval(this._t); }
+  renderVals() {
+    const D = window.AIForAllNeutralDS_acd6b1 || {};
+    const h = React.createElement;
+    const E = (n, p, ...c) => (D[n] ? h(D[n], p, ...c) : null);
+    const go = (f) => () => { window.location.href = f + this.qs(); };
+    const p = this.mp();
+    const signedIn = p.signedIn ?? true;
+    const tab = this.state.tab;
+    const LV = { beginner: ['入門', 'success'], intermediate: ['中級', 'highlight'], advanced: ['進階', 'danger'] };
+    const img = (c) => (p.showThumbnails ? 'https://picsum.photos/seed/' + c.seed + '/640/360' : undefined);
+    const tags = (c) => [{ label: c.tool, tone: 'accent' }, { label: c.skill, tone: 'violet' }, { label: LV[c.level][0], tone: LV[c.level][1], strong: true }];
+    const gone = (c) => ({
+      image: img(c), mediaHeight: 200, interactive: false, tagsFirst: false, title: c.title, tags: tags(c),
+      style: { opacity: 0.6 },
+      meta: { left: h('span', { style: { display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--text-muted)', fontWeight: 500 } }, E('Icon', { name: 'eye-off', size: 14 }), '已無法觀看'), right: c.gone === 'archived' ? '課程已封存' : '課程暫停開放' },
+    });
+    let cards = [];
+    if (tab === 'in-progress') cards = this.inProgress.map((c) => (c.gone ? gone(c) : {
+      image: img(c), mediaHeight: 200, interactive: false, tagsFirst: false, title: c.title, tags: tags(c),
+      progress: { value: c.progress },
+      meta: { left: h('span', { style: { color: 'var(--accent)', fontWeight: 500 } }, '進度 ' + c.progress + '% · 已答 ' + c.q + ' 題'), right: c.date },
+      footer: E('Button', { fullWidth: true, onClick: go('CourseDetail.dc.html') }, '繼續學習'),
+    }));
+    if (tab === 'completed') cards = this.completed.map((c) => (c.gone ? gone(c) : c.latest != null ? {
+      image: img(c), mediaHeight: 200, interactive: false, tagsFirst: false, title: c.title, tags: tags(c),
+      progress: { value: c.latest, tone: 'highlight' },
+      meta: { left: h('span', { style: { color: 'var(--highlight-text)', fontWeight: 600 } }, '最新一輪未通過 · ' + c.latest + '%'), right: '徽章保留' },
+      footer: E('Button', { variant: 'outline', fullWidth: true, onClick: go('CourseDetail.dc.html') }, '重做測驗'),
+    } : {
+      image: img(c), mediaHeight: 200, tagsFirst: false, title: c.title, tags: tags(c),
+      progress: { value: 100, tone: 'success' },
+      meta: { left: h('span', { style: { color: 'var(--success-strong)', fontWeight: 500 } }, '分數：' + c.score + '%'), right: c.date },
+      onClick: go('CourseDetail.dc.html'),
+    }));
+    if (tab === 'badges') cards = this.completed.map((c) => ({
+      image: img(c), mediaHeight: 200, interactive: false, title: c.title,
+      progress: { value: 100, tone: 'highlight' },
+      meta: { left: h('span', { style: { color: 'var(--text-subtle)' } }, c.date + ' 獲得') },
+    }));
+    return {
+      themeClass: p.dark ? 'dark' : '',
+      brand: E('Wordmark', { accent: 'AI', text: 'for All', onClick: go('Landing.dc.html') }),
+      navLinks: [{ id: 'explore', label: '探索課程' }, { id: 'mine', label: '我的學習' }],
+      onNav: (id) => { window.location.href = (id === 'mine' ? 'MyLearning.dc.html' : 'Explore.dc.html') + this.qs(); },
+      navRight: signedIn
+        ? E('UserMenu', { name: '陳怡君', email: 'alice@example.com', items: [{ label: '我的學習', onClick: go('MyLearning.dc.html') }, { label: '個人資料', onClick: go('Profile.dc.html') }], onSignOut: go('Login.dc.html'), signOutLabel: '登出' })
+        : E('Button', { onClick: go('Login.dc.html'), style: { padding: '8px 16px' } }, '登入'),
+      goLogin: go('Login.dc.html'),
+      signedIn, signedOut: !signedIn,
+      nInProgress: this.inProgress.length, nCompleted: this.completed.length, nBadges: this.completed.length,
+      tabs: [{ value: 'in-progress', label: '進行中', count: this.inProgress.length }, { value: 'completed', label: '已完成', count: this.completed.length }, { value: 'badges', label: '徽章', count: this.completed.length }],
+      tab, setTab: (v) => this.setState({ tab: v }),
+      cards,
+    };
+  }
+}
+</script>
+</body>
+</html>

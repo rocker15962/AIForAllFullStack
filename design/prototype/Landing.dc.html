@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/palette.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
+<script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
+<style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
+</helmet>
+<div lang="zh-Hant-TW" data-screen-label="Landing" style="display:flex;flex-direction:column;min-height:100vh;background:var(--surface-page);font-family:var(--font-sans)">
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.TopNav" variant="marketing" brand="{{ brand }}" right="{{ navRight }}" hint-size="100%,64px"></x-import>
+
+  <section style="display:flex;flex-direction:column;align-items:center;padding:80px 24px;text-align:center;background:var(--gradient-hero)">
+    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Tag" tone="accent-strong" size="lg" icon="sparkles" hint-size="240px,32px">人人都能免費學 AI</x-import>
+    <h1 style="margin:32px 0 0;max-width:900px;font-size:var(--fs-display);line-height:1.3;font-weight:700;color:var(--text-strong);text-wrap:balance">學會改變職涯的 AI 技能</h1>
+    <p style="margin:24px 0 0;max-width:700px;font-size:18px;line-height:1.625;color:var(--text-muted);text-wrap:pretty">精選 YouTube 頂尖創作者的教學影片，搭配實作測驗，確保你真的學會。免費、沒有門檻 — 專心學習就好。</p>
+    <div style="display:flex;align-items:center;gap:16px;margin-top:40px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" size="xl" trailing-icon="arrow-right" on-click="{{ goExplore }}" hint-size="200px,56px">探索課程</x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" size="xl" variant="outline-strong" weight="medium" on-click="{{ goHow }}" hint-size="170px,56px">如何運作</x-import>
+    </div>
+  </section>
+
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Section" title="學 AI 需要的，這裡都有" subtitle="我們提供結構化、重實作的學習體驗：精選影片課程、互動測驗，以及學習進度追蹤。" hint-size="100%,540px">
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;width:100%">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FeatureCard" icon="play" title="精選影片課程" description="向優秀的 YouTube 創作者學習，教學影片經專人挑選，依主題與難度分類。" hint-size="100%,230px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FeatureCard" icon="book-check" tone="highlight" title="互動測驗" description="每堂課後用單選題與簡答題，檢驗你的理解。" hint-size="100%,230px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FeatureCard" icon="chart-column" tone="neutral" title="進度追蹤" description="用完課徽章與個人儀表板，記錄你的學習歷程。" hint-size="100%,230px"></x-import>
+    </div>
+  </x-import>
+
+  <div id="how-it-works">
+    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Section" background="subtle" title="如何運作" subtitle="三個步驟就能開始" hint-size="100%,420px">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;width:100%">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StepItem" number="1" title="瀏覽課程" description="依工具、技能與難度，瀏覽我們的 AI 課程。" hint-size="100%,150px"></x-import>
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StepItem" number="2" title="觀看學習" description="直接在平台上觀看專人精選的 YouTube 教學影片。" hint-size="100%,150px"></x-import>
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StepItem" number="3" title="測驗與追蹤" description="完成測驗檢驗所學，並獲得完課徽章。" hint-size="100%,150px"></x-import>
+      </div>
+    </x-import>
+  </div>
+
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Section" background="cta" narrow="{{ true }}" title="準備好開始學習了嗎？" subtitle="加入我們的學習社群，今天就開始累積真正的 AI 技能 — 完全免費。" hint-size="100%,340px">
+    <div style="margin-top:-16px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" size="xl" trailing-icon="arrow-right" on-click="{{ goLogin }}" hint-size="230px,56px">免費開始學習</x-import>
+    </div>
+  </x-import>
+
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SiteFooter" brand="AI for All" tagline="© 2026 AI for All. 人人都能免費學 AI。" links="{{ footerLinks }}" hint-size="100%,110px"></x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  mp() { const o = {}; const q = this.props || {}; Object.keys(q).forEach((k) => { if (q[k] !== undefined) o[k] = q[k]; }); new URLSearchParams(window.location.search).forEach((v, k) => { o[k] = v === '1' ? true : v === '0' ? false : v; }); return o; }
+  qs() { const u = new URLSearchParams(window.location.search); const o = new URLSearchParams(); ['signedIn', 'isAdmin', 'dark', 'showThumbnails'].forEach((k) => { if (u.has(k)) o.set(k, u.get(k)); }); const s = o.toString(); return s ? '?' + s : ''; }
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentWillUnmount() { clearInterval(this._t); }
+  renderVals() {
+    const D = window.AIForAllNeutralDS_acd6b1 || {};
+    const h = React.createElement;
+    const E = (n, p, ...c) => (D[n] ? h(D[n], p, ...c) : null);
+    const go = (f) => () => { window.location.href = f + this.qs(); };
+    return {
+      brand: E('Wordmark', { accent: 'AI', text: 'for All', tone: 'strong', onClick: go('Landing.dc.html') }),
+      navRight: h('div', { style: { display: 'flex', alignItems: 'center', gap: 12 } },
+        h('a', { href: 'Login.dc.html', onClick: (e) => { e.preventDefault(); go('Login.dc.html')(); }, style: { fontSize: 14, fontWeight: 500, color: 'var(--text-body)', textDecoration: 'none' } }, '登入'),
+        E('Button', { weight: 'semibold', onClick: go('Login.dc.html') }, '立即開始')),
+      goExplore: go('Explore.dc.html'),
+      goLogin: go('Login.dc.html'),
+      goHow: () => { const el = document.getElementById('how-it-works'); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY, behavior: 'smooth' }); },
+      footerLinks: ['關於我們', '聯絡我們', '隱私權政策', '使用條款'],
+    };
+  }
+}
+</script>
+</body>
+</html>
