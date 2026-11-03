@@ -22,9 +22,9 @@ interface CourseCardProps {
 }
 
 const difficultyStyles: Record<string, { classes: string; label: string }> = {
-  beginner: { classes: 'bg-green-100 text-green-700', label: 'Beginner' },
-  intermediate: { classes: 'bg-amber-100 text-amber-700', label: 'Intermediate' },
-  advanced: { classes: 'bg-rose-100 text-rose-700', label: 'Advanced' },
+  beginner: { classes: 'bg-green-100 text-green-700', label: '入門' },
+  intermediate: { classes: 'bg-amber-100 text-amber-700', label: '中級' },
+  advanced: { classes: 'bg-rose-100 text-rose-700', label: '進階' },
 }
 
 export function CourseCard({
@@ -89,7 +89,7 @@ export function CourseCard({
             ) : (
               <div className="h-5 w-5 rounded-full bg-zinc-300 dark:bg-zinc-600" />
             )}
-            <span className="text-xs text-zinc-500">{creatorName || 'Unknown creator'}</span>
+            <span className="text-xs text-zinc-500">{creatorName || '未知創作者'}</span>
           </div>
         </div>
       </div>

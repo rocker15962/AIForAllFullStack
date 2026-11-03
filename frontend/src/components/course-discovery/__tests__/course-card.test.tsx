@@ -23,13 +23,13 @@ describe('CourseCard', () => {
 
   it('renders difficulty tag in body', () => {
     render(<CourseCard course={mockCourse} />)
-    expect(screen.getByText('Beginner')).toBeInTheDocument()
+    expect(screen.getByText('入門')).toBeInTheDocument()
   })
 
   it('renders tool and skill tags when provided', () => {
-    render(<CourseCard course={mockCourse} toolName="ChatGPT" skillName="Copywriting" />)
+    render(<CourseCard course={mockCourse} toolName="ChatGPT" skillName="文案寫作" />)
     expect(screen.getByText('ChatGPT')).toBeInTheDocument()
-    expect(screen.getByText('Copywriting')).toBeInTheDocument()
+    expect(screen.getByText('文案寫作')).toBeInTheDocument()
   })
 
   it('renders creator name', () => {

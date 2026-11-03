@@ -22,7 +22,7 @@ export function MobileMenu({ navLinks, isOpen, onClose }: MobileMenuProps) {
       <nav className="h-full bg-white dark:bg-zinc-900" onClick={(e) => e.stopPropagation()}>
         <div className="flex h-14 items-center justify-between border-b border-zinc-200 px-4 dark:border-zinc-700">
           <Logo />
-          <button onClick={onClose} aria-label="close">
+          <button onClick={onClose} aria-label="關閉選單">
             <X className="h-6 w-6 text-zinc-600 dark:text-zinc-400" />
           </button>
         </div>
@@ -45,7 +45,7 @@ export function MobileMenu({ navLinks, isOpen, onClose }: MobileMenuProps) {
               onClick={onClose}
               className="border-b border-zinc-100 py-3 text-base font-medium text-zinc-700 dark:border-zinc-800 dark:text-zinc-300"
             >
-              Profile
+              個人資料
             </Link>
           )}
         </div>
@@ -65,7 +65,7 @@ export function MobileMenu({ navLinks, isOpen, onClose }: MobileMenuProps) {
                 className="flex items-center gap-2 text-sm text-red-500"
               >
                 <LogOut className="h-4 w-4" />
-                Log Out
+                登出
               </button>
             </>
           ) : (
@@ -76,7 +76,7 @@ export function MobileMenu({ navLinks, isOpen, onClose }: MobileMenuProps) {
               }}
               className="w-full rounded-lg bg-cyan-500 py-3 text-sm font-medium text-white"
             >
-              Log In
+              登入
             </button>
           )}
         </div>

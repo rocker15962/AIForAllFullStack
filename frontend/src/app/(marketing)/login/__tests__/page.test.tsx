@@ -14,14 +14,14 @@ vi.mock('next/navigation', () => ({
 describe('LoginPage', () => {
   it('starts Google login', async () => {
     render(<LoginPage />)
-    await userEvent.click(screen.getByRole('button', { name: /Continue with Google/ }))
+    await userEvent.click(screen.getByRole('button', { name: /使用 Google 繼續/ }))
     expect(login).toHaveBeenCalledWith('/courses')
   })
 
   it('shows Facebook as disabled with "Coming soon" (BR-22)', () => {
     render(<LoginPage />)
-    const fb = screen.getByRole('button', { name: /Continue with Facebook/ })
+    const fb = screen.getByRole('button', { name: /使用 Facebook 繼續/ })
     expect(fb).toBeDisabled()
-    expect(screen.getByText('Coming soon')).toBeInTheDocument()
+    expect(screen.getByText('即將推出')).toBeInTheDocument()
   })
 })

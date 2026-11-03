@@ -152,10 +152,8 @@ export default function CoursesPage() {
     <div className="px-6 py-8 sm:px-10">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">Explore Courses</h1>
-        <p className="mt-2 text-[15px] text-zinc-500">
-          Find the right AI courses for you and start your learning journey
-        </p>
+        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">探索課程</h1>
+        <p className="mt-2 text-[15px] text-zinc-500">找到適合你的 AI 課程，開始你的學習旅程</p>
       </div>
 
       {/* Body: Sidebar + Main Content */}
@@ -189,7 +187,7 @@ export default function CoursesPage() {
               className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
             >
               <SlidersHorizontal className="h-4 w-4" />
-              Filter
+              篩選
               {activeFilterCount > 0 && (
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500 text-xs text-white">
                   {activeFilterCount}
@@ -231,7 +229,7 @@ export default function CoursesPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Filter</h3>
+              <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">篩選</h3>
               <button
                 onClick={() => {
                   setToolId(null)
@@ -240,7 +238,7 @@ export default function CoursesPage() {
                 }}
                 className="text-sm text-zinc-500"
               >
-                Clear
+                清除
               </button>
             </div>
             <FilterSidebar
@@ -257,7 +255,7 @@ export default function CoursesPage() {
               onClick={() => setMobileFilterOpen(false)}
               className="mt-6 w-full rounded-lg bg-cyan-500 py-3 text-sm font-medium text-white"
             >
-              Apply
+              套用
             </button>
           </div>
         </div>

@@ -17,8 +17,8 @@ describe('mock-data', () => {
   describe('mainNavLinks', () => {
     it('contains general navigation items', () => {
       expect(mainNavLinks).toHaveLength(2)
-      expect(mainNavLinks[0]).toEqual({ label: 'Explore', href: '/courses' })
-      expect(mainNavLinks[1]).toEqual({ label: 'My Learning', href: '/my-learning' })
+      expect(mainNavLinks[0]).toEqual({ label: '探索課程', href: '/courses' })
+      expect(mainNavLinks[1]).toEqual({ label: '我的學習', href: '/my-learning' })
     })
   })
 
@@ -31,6 +31,7 @@ describe('mock-data', () => {
         '/admin/users',
         '/admin/categories',
       ])
+      expect(adminNavLinks.map((link) => link.label)).toEqual(['儀表板', '課程', '用戶', '分類'])
     })
   })
 })

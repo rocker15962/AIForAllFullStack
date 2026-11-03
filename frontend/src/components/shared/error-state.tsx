@@ -7,8 +7,8 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({
-  title = 'Something went wrong',
-  description = "We couldn't load the data. Please check your connection and try again.",
+  title = '發生錯誤',
+  description = '無法載入資料，請檢查網路後再試一次。',
   onRetry,
 }: ErrorStateProps) {
   return (
@@ -22,7 +22,7 @@ export function ErrorState({
         onClick={onRetry}
         className="rounded-lg bg-cyan-500 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cyan-600"
       >
-        Try Again
+        再試一次
       </button>
     </div>
   )

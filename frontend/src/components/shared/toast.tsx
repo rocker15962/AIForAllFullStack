@@ -49,7 +49,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               {toast.message}
             </span>
             <button
+              type="button"
               onClick={() => dismiss(toast.id)}
+              aria-label="關閉通知"
               className="shrink-0 text-zinc-400 hover:text-zinc-600"
             >
               <X className="h-4 w-4" />

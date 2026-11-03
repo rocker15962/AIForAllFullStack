@@ -46,7 +46,7 @@ export function TopNav({ navLinks }: TopNavProps) {
       </div>
 
       <div className="ml-auto md:hidden">
-        <button onClick={() => setMobileMenuOpen(true)} aria-label="menu">
+        <button onClick={() => setMobileMenuOpen(true)} aria-label="開啟選單">
           <Menu className="h-6 w-6 text-zinc-600 dark:text-zinc-400" />
         </button>
       </div>
