@@ -23,14 +23,12 @@ describe('courseFormSchema (BR-28)', () => {
   })
 
   it('requires a creator', () => {
-    expect(firstError({ ...valid, creatorId: '' })).toBe('Creator is required')
+    expect(firstError({ ...valid, creatorId: '' })).toBe('請選擇創作者')
   })
 
   it('requires a video length in mm:ss', () => {
-    expect(firstError({ ...valid, durationText: '' })).toBe('Video length is required')
-    expect(firstError({ ...valid, durationText: '750' })).toBe('Use the format mm:ss, e.g. 12:30')
-    expect(firstError({ ...valid, durationText: '0:00' })).toBe(
-      'Video length must be longer than 0:00',
-    )
+    expect(firstError({ ...valid, durationText: '' })).toBe('請輸入影片長度')
+    expect(firstError({ ...valid, durationText: '750' })).toBe('請用 mm:ss 格式，例如：12:30')
+    expect(firstError({ ...valid, durationText: '0:00' })).toBe('影片長度必須大於 0:00')
   })
 })

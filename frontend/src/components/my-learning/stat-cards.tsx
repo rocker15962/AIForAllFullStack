@@ -11,21 +11,21 @@ interface StatCardsProps {
 const stats = [
   {
     key: 'inProgress',
-    label: 'In Progress',
+    label: '進行中',
     icon: BookOpen,
     color: 'text-cyan-500',
     bg: 'bg-cyan-50 dark:bg-cyan-900/30',
   },
   {
     key: 'completed',
-    label: 'Completed',
+    label: '已完成',
     icon: CheckCircle,
     color: 'text-green-500',
     bg: 'bg-green-50 dark:bg-green-900/30',
   },
   {
     key: 'badges',
-    label: 'Badges',
+    label: '徽章',
     icon: Award,
     color: 'text-amber-500',
     bg: 'bg-amber-50 dark:bg-amber-900/30',

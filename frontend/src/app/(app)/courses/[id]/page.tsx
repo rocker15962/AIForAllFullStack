@@ -55,8 +55,7 @@ function CourseLearning() {
         const res = await fetch(`${API_URL}/api/v1/courses/${courseId}${query}`, { headers })
         if (!res.ok) {
           // Drafts without access and archived courses also answer 404 (BR-05, BR-31).
-          if (!cancelled)
-            setError(res.status === 404 ? 'Course not found' : 'Failed to load course')
+          if (!cancelled) setError(res.status === 404 ? '找不到課程' : '課程載入失敗')
           return
         }
         const detail = (await res.json()) as CourseDetail
@@ -74,7 +73,7 @@ function CourseLearning() {
           setProgress(saved)
         }
       } catch {
-        if (!cancelled) setError('Failed to load course')
+        if (!cancelled) setError('課程載入失敗')
       } finally {
         if (!cancelled) setIsLoading(false)
       }
@@ -109,9 +108,9 @@ function CourseLearning() {
     return (
       <div className="flex min-h-[calc(100vh-56px)] items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-medium text-zinc-500">{error || 'Course not found'}</p>
+          <p className="text-lg font-medium text-zinc-500">{error || '找不到課程'}</p>
           <Link href="/courses" className="mt-4 inline-block text-sm text-cyan-500 hover:underline">
-            Back to course list
+            返回課程列表
           </Link>
         </div>
       </div>
@@ -126,7 +125,7 @@ function CourseLearning() {
         className="mb-6 inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to course list
+        返回課程列表
       </Link>
 
       {course.isPreview && (
@@ -136,7 +135,7 @@ function CourseLearning() {
         >
           <Eye className="h-[18px] w-[18px] shrink-0 text-amber-600" />
           <p className="text-sm text-amber-800 dark:text-amber-300">
-            Preview — this course isn&rsquo;t published yet. Answers are checked but not saved.
+            預覽模式：這堂課還沒發布，作答會判定但不會記錄。
           </p>
         </div>
       )}

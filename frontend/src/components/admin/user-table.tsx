@@ -50,9 +50,9 @@ const providerBadge: Record<AuthProvider, { label: string; classes: string }> = 
 }
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return new Date(dateStr).toLocaleDateString('zh-TW', {
     year: 'numeric',
-    month: 'short',
+    month: 'long',
     day: 'numeric',
   })
 }
@@ -60,9 +60,9 @@ function formatDate(dateStr: string): string {
 function formatRelativeDate(dateStr: string): string {
   const diffMs = new Date().getTime() - new Date(dateStr).getTime()
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-  if (diffDays === 0) return 'Today'
-  if (diffDays === 1) return 'Yesterday'
-  if (diffDays < 7) return `${diffDays} days ago`
+  if (diffDays === 0) return '今天'
+  if (diffDays === 1) return '昨天'
+  if (diffDays < 7) return `${diffDays} 天前`
   return formatDate(dateStr)
 }
 
@@ -77,10 +77,8 @@ export function UserTable({
   if (users.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <p className="text-lg font-medium text-zinc-500 dark:text-zinc-400">No users found</p>
-        <p className="mt-1 text-sm text-zinc-400 dark:text-zinc-500">
-          Try adjusting your search or filters
-        </p>
+        <p className="text-lg font-medium text-zinc-500 dark:text-zinc-400">找不到用戶</p>
+        <p className="mt-1 text-sm text-zinc-400 dark:text-zinc-500">試著調整搜尋或篩選條件</p>
       </div>
     )
   }
@@ -91,12 +89,12 @@ export function UserTable({
       <div
         className={`hidden gap-4 ${gridCols} border-b border-zinc-200 bg-zinc-50 px-5 py-3 text-xs font-semibold tracking-wide text-zinc-500 uppercase md:grid dark:border-zinc-700 dark:bg-zinc-800/80 dark:text-zinc-400`}
       >
-        <span>User</span>
-        <span>Email</span>
-        <span>Login Method</span>
-        <span>Completed</span>
-        <span>Last Active</span>
-        <span className="sr-only">Progress</span>
+        <span>用戶</span>
+        <span>電子郵件</span>
+        <span>登入方式</span>
+        <span>完課數</span>
+        <span>最後活動</span>
+        <span className="sr-only">學習進度</span>
       </div>
 
       {/* Table rows */}
@@ -129,7 +127,7 @@ export function UserTable({
                     {user.name}
                   </p>
                   <p className="text-xs text-zinc-400 dark:text-zinc-500">
-                    Joined {formatDate(user.createdAt)}
+                    {formatDate(user.createdAt)} 加入
                   </p>
                 </div>
               </div>
@@ -171,7 +169,7 @@ export function UserTable({
                         : 'h-7 rounded-lg border border-zinc-200 bg-white px-2.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700'
                     }
                   >
-                    {isExpanded ? 'Collapse' : 'Progress'}
+                    {isExpanded ? '收合' : '學習進度'}
                   </button>
                 )}
               </div>

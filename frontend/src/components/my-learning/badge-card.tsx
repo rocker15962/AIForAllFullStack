@@ -7,7 +7,7 @@ interface BadgeCardProps {
 }
 
 function formatShortDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return new Date(dateStr).toLocaleDateString('zh-TW', { month: 'long', day: 'numeric' })
 }
 
 export function BadgeCard({ badge }: BadgeCardProps) {
@@ -35,7 +35,7 @@ export function BadgeCard({ badge }: BadgeCardProps) {
         <h3 className="line-clamp-2 text-[15px] leading-snug font-semibold text-zinc-900 dark:text-zinc-100">
           {badge.courseTitle}
         </h3>
-        <span className="text-xs text-zinc-400">Earned {formatShortDate(badge.earnedAt)}</span>
+        <span className="text-xs text-zinc-400">{formatShortDate(badge.earnedAt)} 獲得</span>
       </div>
     </div>
   )

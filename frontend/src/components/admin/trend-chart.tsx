@@ -41,7 +41,7 @@ export function TrendChart({ data }: TrendChartProps) {
 
   return (
     <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
-      <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">User Trends</h2>
+      <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">用戶趨勢</h2>
 
       <div className="h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
@@ -65,7 +65,7 @@ export function TrendChart({ data }: TrendChartProps) {
             <Line
               type="monotone"
               dataKey="totalUsers"
-              name="Active Users"
+              name="活躍用戶"
               stroke="#06b6d4"
               strokeWidth={2}
               dot={false}
@@ -74,7 +74,7 @@ export function TrendChart({ data }: TrendChartProps) {
             <Line
               type="monotone"
               dataKey="newUsers"
-              name="New Signups"
+              name="新註冊"
               stroke="#f59e0b"
               strokeWidth={2}
               dot={false}
@@ -86,11 +86,11 @@ export function TrendChart({ data }: TrendChartProps) {
 
       <div className="mt-4 flex gap-6 border-t border-zinc-100 pt-4 dark:border-zinc-700">
         <div>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">New Users This Week</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">本週新用戶</p>
           <p className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{totalNewUsers}</p>
         </div>
         <div>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">Avg Active Users</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">平均活躍用戶</p>
           <p className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{avgActiveUsers}</p>
         </div>
       </div>

@@ -9,13 +9,13 @@ interface CompletedCardProps {
 }
 
 const difficultyStyles: Record<string, { classes: string; label: string }> = {
-  beginner: { classes: 'bg-green-100 text-green-700', label: 'Beginner' },
-  intermediate: { classes: 'bg-amber-100 text-amber-700', label: 'Intermediate' },
-  advanced: { classes: 'bg-rose-100 text-rose-700', label: 'Advanced' },
+  beginner: { classes: 'bg-green-100 text-green-700', label: '入門' },
+  intermediate: { classes: 'bg-amber-100 text-amber-700', label: '中級' },
+  advanced: { classes: 'bg-rose-100 text-rose-700', label: '進階' },
 }
 
 function formatShortDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return new Date(dateStr).toLocaleDateString('zh-TW', { month: 'long', day: 'numeric' })
 }
 
 export function CompletedCard({ course }: CompletedCardProps) {
@@ -71,11 +71,11 @@ export function CompletedCard({ course }: CompletedCardProps) {
         {/* Meta — Score + date */}
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-green-600 dark:text-green-400">
-            Score: {Math.round(course.score)}%
+            分數：{Math.round(course.score)}%
           </span>
           <span className="text-xs text-zinc-400">{formatShortDate(course.completedAt)}</span>
         </div>
-        {!available && <span className="text-xs text-zinc-500">No longer available</span>}
+        {!available && <span className="text-xs text-zinc-500">已無法開啟</span>}
       </div>
     </div>
   )

@@ -22,16 +22,16 @@ beforeAll(() => {
 describe('TrendChart', () => {
   it('renders the heading', () => {
     render(<TrendChart data={mockTrendData} />)
-    expect(screen.getByText('User Trends')).toBeInTheDocument()
+    expect(screen.getByText('用戶趨勢')).toBeInTheDocument()
   })
 
   it('renders summary stats', () => {
     render(<TrendChart data={mockTrendData} />)
-    expect(screen.getByText('New Users This Week')).toBeInTheDocument()
+    expect(screen.getByText('本週新用戶')).toBeInTheDocument()
     // total newUsers = 15 + 20 + 25 = 60
     expect(screen.getByText('60')).toBeInTheDocument()
 
-    expect(screen.getByText('Avg Active Users')).toBeInTheDocument()
+    expect(screen.getByText('平均活躍用戶')).toBeInTheDocument()
     // avg totalUsers = (280 + 290 + 300) / 3 = 290
     expect(screen.getByText('290')).toBeInTheDocument()
   })
@@ -49,7 +49,7 @@ describe('TrendChart', () => {
 
   it('handles empty data', () => {
     render(<TrendChart data={[]} />)
-    expect(screen.getByText('User Trends')).toBeInTheDocument()
+    expect(screen.getByText('用戶趨勢')).toBeInTheDocument()
     // Both "New Users This Week" and "Avg Active Users" show 0
     const zeros = screen.getAllByText('0')
     expect(zeros).toHaveLength(2)

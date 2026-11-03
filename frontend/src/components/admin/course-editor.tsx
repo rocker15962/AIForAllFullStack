@@ -16,6 +16,8 @@ import type { Difficulty, Question } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
+const SAVE_FAILED_MESSAGE = '課程儲存失敗，請檢查欄位後再試一次。'
+
 interface ToolOption {
   id: string
   name: string
@@ -65,9 +67,9 @@ interface CourseEditorProps {
 }
 
 const difficulties: { value: Difficulty; label: string }[] = [
-  { value: 'beginner', label: 'Beginner' },
-  { value: 'intermediate', label: 'Intermediate' },
-  { value: 'advanced', label: 'Advanced' },
+  { value: 'beginner', label: '入門' },
+  { value: 'intermediate', label: '中級' },
+  { value: 'advanced', label: '進階' },
 ]
 
 const emptyForm: CourseFormData = {
@@ -165,12 +167,12 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
     const result = courseFormSchema.safeParse(form)
     if (!result.success) {
       const firstError = result.error.issues[0]
-      setError(firstError?.message || 'Validation failed')
+      setError(firstError?.message || SAVE_FAILED_MESSAGE)
       return
     }
 
     if (!accessToken) {
-      setError('Not authenticated')
+      setError('登入已失效，請重新登入後再試一次。')
       return
     }
 
@@ -205,15 +207,14 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
       })
 
       if (!res.ok) {
-        const body = (await res.json().catch(() => null)) as { error?: string } | null
-        throw new Error(
-          body?.error || `Failed to ${isEdit ? 'update' : 'create'} course (${res.status})`,
-        )
+        throw new Error(`Failed to ${isEdit ? 'update' : 'create'} course (${res.status})`)
       }
 
       router.push('/admin/courses')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save course')
+    } catch {
+      // The backend error text is English and the form is validated above,
+      // so show the generic message instead of the raw API error.
+      setError(SAVE_FAILED_MESSAGE)
     } finally {
       setIsSaving(false)
     }
@@ -236,17 +237,17 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
         className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-cyan-600 hover:text-cyan-700 dark:text-cyan-400 dark:hover:text-cyan-300"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Course Management
+        返回課程管理
       </Link>
 
       {/* Header row */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">
-            {isEdit ? 'Edit Course' : 'Create New Course'}
+            {isEdit ? '編輯課程' : '新增課程'}
           </h1>
           <p className="mt-1 text-[15px] text-zinc-500 dark:text-zinc-400">
-            Fill in the course details and add quiz questions
+            填寫課程資訊並新增測驗題目
           </p>
         </div>
         <div className="flex shrink-0 gap-3">
@@ -258,7 +259,7 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
             className="flex items-center gap-2 rounded-lg border-zinc-200 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:border-zinc-600 dark:text-zinc-300"
           >
             {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-            Save Draft
+            儲存草稿
           </Button>
           <Button
             type="button"
@@ -267,7 +268,7 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
             className="flex items-center gap-2 rounded-lg bg-cyan-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-cyan-600 disabled:opacity-60"
           >
             {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-            Publish
+            發布
           </Button>
         </div>
       </div>
@@ -281,32 +282,28 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
 
       {/* Course Information Card */}
       <div className="mb-6 rounded-xl border border-zinc-200 bg-white p-8 dark:border-zinc-700 dark:bg-zinc-800">
-        <h2 className="mb-6 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-          Course Information
-        </h2>
+        <h2 className="mb-6 text-lg font-semibold text-zinc-900 dark:text-zinc-100">課程資訊</h2>
 
         <div className="flex flex-col gap-6">
           {/* Title — shadcn/ui Input */}
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Title</span>
+            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">標題</span>
             <Input
               type="text"
               value={form.title}
               onChange={(e) => handleChange('title', e.target.value)}
-              placeholder="e.g. ChatGPT Basics: Learn AI Conversations"
+              placeholder="例如：ChatGPT 入門：從零開始學 AI 對話"
               className="h-10 rounded-lg border-zinc-200 bg-zinc-50 px-3 text-sm text-zinc-900 focus-visible:border-cyan-400 focus-visible:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus-visible:border-cyan-500"
             />
           </label>
 
           {/* Description — shadcn/ui Textarea */}
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Description
-            </span>
+            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">描述</span>
             <Textarea
               value={form.description}
               onChange={(e) => handleChange('description', e.target.value)}
-              placeholder="Describe what students will learn..."
+              placeholder="說明學員會學到什麼…"
               rows={4}
               className="rounded-lg border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-zinc-900 focus-visible:border-cyan-400 focus-visible:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus-visible:border-cyan-500"
             />
@@ -315,7 +312,7 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
           {/* YouTube URL — shadcn/ui Input */}
           <label className="flex flex-col gap-1.5">
             <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              YouTube Video URL
+              YouTube 影片網址
             </span>
             <Input
               type="url"
@@ -332,7 +329,7 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
               <div className="relative aspect-video">
                 <iframe
                   src={`https://www.youtube.com/embed/${videoId}`}
-                  title="Video preview"
+                  title="影片預覽"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="absolute inset-0 h-full w-full"
@@ -341,7 +338,7 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
             ) : (
               <div className="flex aspect-video items-center justify-center">
                 <p className="text-sm text-zinc-400 dark:text-zinc-500">
-                  Enter a YouTube URL to preview the video
+                  輸入 YouTube 網址即可預覽影片
                 </p>
               </div>
             )}
@@ -350,41 +347,39 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
           {/* Tool / Skill / Difficulty row */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Tool</span>
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">工具</span>
               <select
                 value={form.toolId}
                 onChange={(e) => handleChange('toolId', e.target.value)}
                 className={selectClasses}
               >
-                <option value="">Select tool</option>
+                <option value="">選擇工具</option>
                 {toolOptions.map((t) => (
                   <option key={t.id} value={t.id}>
-                    {t.archived_at ? `${t.name} (archived)` : t.name}
+                    {t.archived_at ? `${t.name}（已封存）` : t.name}
                   </option>
                 ))}
               </select>
             </label>
 
             <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Skill</span>
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">技能</span>
               <select
                 value={form.skillId}
                 onChange={(e) => handleChange('skillId', e.target.value)}
                 className={selectClasses}
               >
-                <option value="">Select skill</option>
+                <option value="">選擇技能</option>
                 {skillOptions.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.archived_at ? `${s.name} (archived)` : s.name}
+                    {s.archived_at ? `${s.name}（已封存）` : s.name}
                   </option>
                 ))}
               </select>
             </label>
 
             <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Difficulty
-              </span>
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">難度</span>
               <select
                 value={form.difficulty}
                 onChange={(e) => handleChange('difficulty', e.target.value)}
@@ -402,13 +397,13 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
           {/* Creator / Video length row (BR-28) */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Creator</span>
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">創作者</span>
               <select
                 value={form.creatorId}
                 onChange={(e) => handleChange('creatorId', e.target.value)}
                 className={selectClasses}
               >
-                <option value="">Select creator</option>
+                <option value="">選擇創作者</option>
                 {creators.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
@@ -418,20 +413,18 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
             </label>
 
             <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Video length
-              </span>
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">影片長度</span>
               <Input
                 type="text"
                 inputMode="numeric"
                 value={form.durationText}
                 onChange={(e) => handleChange('durationText', e.target.value)}
-                placeholder="e.g. 12:30"
+                placeholder="例如：12:30"
                 aria-describedby="video-length-hint"
                 className="h-10 rounded-lg border-zinc-200 bg-zinc-50 px-3 text-sm text-zinc-900 focus-visible:border-cyan-400 focus-visible:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus-visible:border-cyan-500"
               />
               <span id="video-length-hint" className="text-xs text-zinc-500 dark:text-zinc-400">
-                Format mm:ss. A learner counts as started after watching 10% of the video.
+                格式 mm:ss；用來計算「播放 10% 才算開始」
               </span>
             </label>
           </div>

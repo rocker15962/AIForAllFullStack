@@ -11,9 +11,9 @@ interface TabBarProps {
 }
 
 const tabs = [
-  { key: 'in-progress', label: 'In Progress', countKey: 'inProgress' },
-  { key: 'completed', label: 'Completed', countKey: 'completed' },
-  { key: 'badges', label: 'Badges', countKey: 'badges' },
+  { key: 'in-progress', label: '進行中', countKey: 'inProgress' },
+  { key: 'completed', label: '已完成', countKey: 'completed' },
+  { key: 'badges', label: '徽章', countKey: 'badges' },
 ] as const
 
 export function TabBar({ activeTab, onTabChange, counts }: TabBarProps) {

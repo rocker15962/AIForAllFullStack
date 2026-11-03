@@ -141,11 +141,11 @@ export function QuizSection({
       })
       if (res.status === 503) {
         // BR-09: AI grading failed — nothing was saved, the learner tries again later.
-        setError("We couldn't check your answer right now. Please try again in a moment.")
+        setError('目前無法判定你的答案，請稍後再試。')
         return
       }
       if (!res.ok) {
-        setError('Your answer was not submitted. Please try again.')
+        setError('答案沒有送出，請再試一次。')
         return
       }
       const data = (await res.json()) as FeedbackData
@@ -162,7 +162,7 @@ export function QuizSection({
       setAnswers((prev) => ({ ...prev, [currentQuestion.id]: data.correct }))
       setPhase('feedback')
     } catch {
-      setError('Network error. Please check your connection and try again.')
+      setError('網路連線失敗，請檢查網路後再試一次。')
     } finally {
       setIsBusy(false)
     }
@@ -205,7 +205,7 @@ export function QuizSection({
       setResult(data)
       setPhase('completed')
     } catch {
-      setError("We couldn't load your results. Please try again.")
+      setError('無法載入結果，請再試一次。')
     } finally {
       setIsBusy(false)
     }
@@ -245,7 +245,7 @@ export function QuizSection({
         })
         if (!res.ok) throw new Error(`retake failed (${res.status})`)
       } catch {
-        setError("We couldn't start a new round. Please try again.")
+        setError('無法開始新的一輪，請再試一次。')
         setIsBusy(false)
         return
       }
@@ -263,7 +263,7 @@ export function QuizSection({
   if (questions.length === 0) {
     return (
       <div className="rounded-xl border border-zinc-200 p-8 text-center dark:border-zinc-700">
-        <p className="text-sm text-zinc-500">No quiz questions for this course</p>
+        <p className="text-sm text-zinc-500">這堂課沒有測驗題目</p>
       </div>
     )
   }
@@ -272,11 +272,9 @@ export function QuizSection({
   if (phase === 'completed' && isGuest) {
     return (
       <div className="py-8 text-center">
-        <h2 className="mb-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-          You finished the quiz
-        </h2>
+        <h2 className="mb-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">你完成測驗了</h2>
         <p className="mb-6 text-sm text-zinc-500">
-          Sign in to see your score and explanations, save your progress and earn the badge.
+          登入即可查看分數與解說、保存學習進度並獲得徽章。
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <button
@@ -284,13 +282,13 @@ export function QuizSection({
             onClick={() => login(`/courses/${courseId}`)}
             className="rounded-lg bg-cyan-500 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-cyan-600"
           >
-            Sign In
+            登入
           </button>
           <Link
             href="/courses"
             className="rounded-lg border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
           >
-            Explore More Courses
+            探索更多課程
           </Link>
         </div>
       </div>
@@ -326,7 +324,7 @@ export function QuizSection({
               disabled={isBusy}
               className="rounded-lg bg-cyan-500 px-5 py-2 text-sm font-semibold text-white hover:bg-cyan-600 disabled:opacity-60"
             >
-              Try Again
+              再試一次
             </button>
           </>
         ) : (
@@ -340,9 +338,9 @@ export function QuizSection({
     <div>
       {/* Quiz header — "Quiz" left, "Question X / Y" right, bottom border */}
       <div className="flex items-center justify-between border-b border-zinc-200 py-4 dark:border-zinc-700">
-        <span className="text-base font-semibold text-zinc-700 dark:text-zinc-300">Quiz</span>
+        <span className="text-base font-semibold text-zinc-700 dark:text-zinc-300">課後測驗</span>
         <span className="text-sm text-zinc-500">
-          Question {currentIndex + 1} / {questions.length}
+          第 {currentIndex + 1} 題 / 共 {questions.length} 題
         </span>
       </div>
 
@@ -395,10 +393,10 @@ export function QuizSection({
           <div>
             <div className="rounded-lg border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-800 dark:bg-cyan-900/20">
               <p className="mb-1 text-sm font-semibold text-cyan-800 dark:text-cyan-300">
-                Answer submitted
+                已送出答案
               </p>
               <p className="text-sm text-cyan-700 dark:text-cyan-400">
-                Sign in to see whether you got it right and read the explanation.
+                登入即可查看對錯與詳細解說。
               </p>
             </div>
             <div className="mt-4 flex flex-wrap gap-3">
@@ -407,14 +405,14 @@ export function QuizSection({
                 onClick={handleNext}
                 className="rounded-lg bg-cyan-500 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-cyan-600"
               >
-                {isLast ? 'Finish' : 'Next →'}
+                {isLast ? '完成' : '下一題 →'}
               </button>
               <button
                 type="button"
                 onClick={() => login(`/courses/${courseId}`)}
                 className="rounded-lg border border-cyan-500 px-5 py-2 text-sm font-semibold text-cyan-600 transition-colors hover:bg-cyan-50 dark:text-cyan-400 dark:hover:bg-cyan-900/20"
               >
-                Sign In
+                登入
               </button>
             </div>
           </div>

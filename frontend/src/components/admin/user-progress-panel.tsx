@@ -19,9 +19,9 @@ function isNotPassed(row: UserProgressRow): boolean {
 }
 
 function statusLabel(row: UserProgressRow): string {
-  if (row.status === 'completed') return `Completed · ${Math.round(row.score ?? 0)}%`
-  if (isNotPassed(row)) return `Not passed · ${Math.round(row.score ?? 0)}%`
-  return `In progress · ${progressPercent(row)}%`
+  if (row.status === 'completed') return `已完成 · ${Math.round(row.score ?? 0)}%`
+  if (isNotPassed(row)) return `未及格 · ${Math.round(row.score ?? 0)}%`
+  return `進行中 · ${progressPercent(row)}%`
 }
 
 function barColor(row: UserProgressRow): string {
@@ -37,15 +37,15 @@ export function UserProgressPanel({ userName, rows, isLoading, error }: UserProg
 
   return (
     <section
-      aria-label={`${userName}'s learning progress`}
+      aria-label={`${userName} 的學習進度`}
       className="border-b border-zinc-100 bg-zinc-50/60 px-5 py-5 dark:border-zinc-700/50 dark:bg-zinc-900/30"
     >
       <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-        {userName}&rsquo;s learning progress
+        {userName} 的學習進度
       </h3>
       {!isLoading && !error && (
         <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-          {completed} completed · {inProgress} in progress
+          已完成 {completed} 堂 · 進行中 {inProgress} 堂
         </p>
       )}
 
@@ -56,9 +56,7 @@ export function UserProgressPanel({ userName, rows, isLoading, error }: UserProg
       ) : error ? (
         <p className="py-6 text-center text-sm text-rose-600 dark:text-rose-400">{error}</p>
       ) : rows.length === 0 ? (
-        <p className="py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
-          No learning activity yet
-        </p>
+        <p className="py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">還沒有學習紀錄</p>
       ) : (
         <ul className="mt-3 flex flex-col">
           {rows.map((row) => {
@@ -72,7 +70,7 @@ export function UserProgressPanel({ userName, rows, isLoading, error }: UserProg
                   {row.courseTitle}
                   {row.courseStatus === 'archived' && (
                     <span className="ml-2 rounded bg-zinc-200 px-1.5 py-0.5 text-[11px] text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300">
-                      Archived
+                      已封存
                     </span>
                   )}
                 </span>
@@ -81,7 +79,7 @@ export function UserProgressPanel({ userName, rows, isLoading, error }: UserProg
                   aria-valuemin={0}
                   aria-valuemax={100}
                   aria-valuenow={pct}
-                  aria-label={`${row.courseTitle} progress`}
+                  aria-label={`「${row.courseTitle}」的學習進度`}
                   className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700"
                 >
                   <div

@@ -10,12 +10,12 @@ describe('QuestionEditor — short answer (BR-29)', () => {
     const onQuestionsChange = vi.fn()
     render(<QuestionEditor courseId="" questions={[]} onQuestionsChange={onQuestionsChange} />)
 
-    await user.click(screen.getByRole('button', { name: /Add Question/ }))
-    await user.click(screen.getByRole('button', { name: 'Short Answer' }))
-    await user.type(screen.getByPlaceholderText('Enter your question...'), 'What is RAG?')
-    await user.click(screen.getByRole('button', { name: 'Save Question' }))
+    await user.click(screen.getByRole('button', { name: /新增題目/ }))
+    await user.click(screen.getByRole('button', { name: '簡答題' }))
+    await user.type(screen.getByPlaceholderText('輸入題目…'), 'What is RAG?')
+    await user.click(screen.getByRole('button', { name: '儲存題目' }))
 
-    expect(screen.getByText('Sample answer is required')).toBeInTheDocument()
+    expect(screen.getByText('請輸入範例答案')).toBeInTheDocument()
     expect(onQuestionsChange).not.toHaveBeenCalled()
   })
 
@@ -24,11 +24,11 @@ describe('QuestionEditor — short answer (BR-29)', () => {
     const onQuestionsChange = vi.fn()
     render(<QuestionEditor courseId="" questions={[]} onQuestionsChange={onQuestionsChange} />)
 
-    await user.click(screen.getByRole('button', { name: /Add Question/ }))
-    await user.click(screen.getByRole('button', { name: 'Short Answer' }))
-    await user.type(screen.getByPlaceholderText('Enter your question...'), 'What is RAG?')
-    await user.type(screen.getByLabelText('Sample answer'), 'Retrieval-augmented generation')
-    await user.click(screen.getByRole('button', { name: 'Save Question' }))
+    await user.click(screen.getByRole('button', { name: /新增題目/ }))
+    await user.click(screen.getByRole('button', { name: '簡答題' }))
+    await user.type(screen.getByPlaceholderText('輸入題目…'), 'What is RAG?')
+    await user.type(screen.getByLabelText('範例答案'), 'Retrieval-augmented generation')
+    await user.click(screen.getByRole('button', { name: '儲存題目' }))
 
     const saved = onQuestionsChange.mock.calls[0][0] as Question[]
     expect(saved).toHaveLength(1)
@@ -41,7 +41,7 @@ describe('QuestionEditor — short answer (BR-29)', () => {
   it('does not show the sample answer field for multiple choice', async () => {
     const user = userEvent.setup()
     render(<QuestionEditor courseId="" questions={[]} onQuestionsChange={vi.fn()} />)
-    await user.click(screen.getByRole('button', { name: /Add Question/ }))
-    expect(screen.queryByLabelText('Sample answer')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /新增題目/ }))
+    expect(screen.queryByLabelText('範例答案')).not.toBeInTheDocument()
   })
 })

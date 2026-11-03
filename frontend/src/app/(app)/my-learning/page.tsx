@@ -112,16 +112,14 @@ export default function MyLearningPage() {
             <BookOpen className="h-8 w-8 text-zinc-400" />
           </div>
           <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-            Sign in to track your progress
+            登入以追蹤學習進度
           </h2>
-          <p className="mt-2 text-sm text-zinc-500">
-            Log in to see your learning progress, completed courses, and badges.
-          </p>
+          <p className="mt-2 text-sm text-zinc-500">登入後即可查看學習進度、已完成課程與徽章。</p>
           <button
             onClick={() => login('/my-learning')}
             className="mt-6 rounded-lg bg-cyan-500 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cyan-600"
           >
-            Log In
+            登入
           </button>
         </div>
       </div>
@@ -132,10 +130,8 @@ export default function MyLearningPage() {
     <div className="px-6 py-8 sm:px-10">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">My Learning</h1>
-        <p className="mt-2 text-[15px] text-zinc-500">
-          Track your progress and collect completion badges
-        </p>
+        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">我的學習</h1>
+        <p className="mt-2 text-[15px] text-zinc-500">追蹤學習進度，收集完課徽章</p>
       </div>
 
       {/* Stat cards */}
@@ -175,10 +171,10 @@ export default function MyLearningPage() {
             <>
               {inProgressCourses.length === 0 ? (
                 <EmptyState
-                  title="No courses in progress"
-                  description="Start exploring courses to begin your learning journey."
+                  title="還沒有進行中的課程"
+                  description="探索課程，開始你的學習旅程。"
                   actionHref="/courses"
-                  actionLabel="Browse Courses"
+                  actionLabel="探索課程"
                 />
               ) : (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -195,10 +191,10 @@ export default function MyLearningPage() {
             <>
               {completedCourses.length === 0 ? (
                 <EmptyState
-                  title="No completed courses yet"
-                  description="Complete a course quiz to see your results here."
+                  title="還沒有已完成的課程"
+                  description="完成課後測驗後，成績會顯示在這裡。"
                   actionHref="/courses"
-                  actionLabel="Browse Courses"
+                  actionLabel="探索課程"
                 />
               ) : (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -215,10 +211,10 @@ export default function MyLearningPage() {
             <>
               {badges.length === 0 ? (
                 <EmptyState
-                  title="No badges earned yet"
-                  description="Complete courses to earn badges and show off your achievements."
+                  title="還沒有獲得徽章"
+                  description="完成課程即可獲得徽章，記錄你的學習成果。"
                   actionHref="/courses"
-                  actionLabel="Browse Courses"
+                  actionLabel="探索課程"
                 />
               ) : (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

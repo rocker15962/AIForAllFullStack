@@ -36,23 +36,20 @@ const completed: CompletedCourse = {
 describe('My Learning cards for archived courses (BR-31)', () => {
   it('in-progress card links to the course while it is published', () => {
     render(<ProgressCard course={inProgress} />)
-    expect(screen.getByRole('link', { name: 'Continue Learning' })).toHaveAttribute(
-      'href',
-      '/courses/c1',
-    )
+    expect(screen.getByRole('link', { name: '繼續學習' })).toHaveAttribute('href', '/courses/c1')
   })
 
   it('in-progress card can no longer be opened once archived', () => {
     render(<ProgressCard course={{ ...inProgress, courseStatus: 'archived' }} />)
     expect(screen.queryByRole('link')).not.toBeInTheDocument()
-    expect(screen.getByText('No longer available')).toBeInTheDocument()
+    expect(screen.getByText('已無法開啟')).toBeInTheDocument()
     expect(screen.getByText('Prompting 101')).toBeInTheDocument()
   })
 
   it('completed card keeps the score but is not a link once archived', () => {
     render(<CompletedCard course={{ ...completed, courseStatus: 'archived' }} />)
     expect(screen.queryByRole('link')).not.toBeInTheDocument()
-    expect(screen.getByText('Score: 80%')).toBeInTheDocument()
-    expect(screen.getByText('No longer available')).toBeInTheDocument()
+    expect(screen.getByText('分數：80%')).toBeInTheDocument()
+    expect(screen.getByText('已無法開啟')).toBeInTheDocument()
   })
 })

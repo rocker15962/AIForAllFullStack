@@ -7,13 +7,11 @@ describe('validateAvatarFile (BR-25)', () => {
   })
   it('rejects larger files', () => {
     expect(validateAvatarFile({ type: 'image/jpeg', size: MAX_AVATAR_BYTES + 1 })).toBe(
-      'Image must be 5MB or smaller',
+      '圖片需在 5MB 以內',
     )
   })
   it('rejects non-images', () => {
-    expect(validateAvatarFile({ type: 'application/pdf', size: 10 })).toBe(
-      'Please choose an image file',
-    )
+    expect(validateAvatarFile({ type: 'application/pdf', size: 10 })).toBe('請選擇圖片檔')
   })
 })
 

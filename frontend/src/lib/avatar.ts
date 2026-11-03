@@ -6,8 +6,8 @@ export const AVATAR_SIZE = 512
 
 /** Returns an error message, or null when the file can be used. */
 export function validateAvatarFile(file: Pick<File, 'type' | 'size'>): string | null {
-  if (!file.type.startsWith('image/')) return 'Please choose an image file'
-  if (file.size > MAX_AVATAR_BYTES) return 'Image must be 5MB or smaller'
+  if (!file.type.startsWith('image/')) return '請選擇圖片檔'
+  if (file.size > MAX_AVATAR_BYTES) return '圖片需在 5MB 以內'
   return null
 }
 

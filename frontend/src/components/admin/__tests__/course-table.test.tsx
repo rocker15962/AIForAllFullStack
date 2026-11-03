@@ -64,36 +64,36 @@ describe('CourseTable', () => {
   it('renders difficulty badges', () => {
     render(<CourseTable {...defaultProps} />)
 
-    expect(screen.getByText('Beginner')).toBeInTheDocument()
-    expect(screen.getByText('Advanced')).toBeInTheDocument()
+    expect(screen.getByText('入門')).toBeInTheDocument()
+    expect(screen.getByText('進階')).toBeInTheDocument()
   })
 
   it('renders status indicators', () => {
     render(<CourseTable {...defaultProps} />)
 
-    expect(screen.getByText('Published')).toBeInTheDocument()
-    expect(screen.getByText('Draft')).toBeInTheDocument()
+    expect(screen.getByText('已發布')).toBeInTheDocument()
+    expect(screen.getByText('草稿')).toBeInTheDocument()
   })
 
   it('renders question counts', () => {
     render(<CourseTable {...defaultProps} />)
 
-    expect(screen.getByText('5 questions')).toBeInTheDocument()
-    expect(screen.getByText('0 questions')).toBeInTheDocument()
+    expect(screen.getByText('5 題')).toBeInTheDocument()
+    expect(screen.getByText('0 題')).toBeInTheDocument()
   })
 
-  it('shows singular "question" for count of 1', () => {
+  it('renders a count of 1 with the same measure word', () => {
     const singleQ: CourseCardItem[] = [{ ...mockCourses[0], questionCount: 1 }]
     render(<CourseTable {...defaultProps} courses={singleQ} />)
 
-    expect(screen.getByText('1 question')).toBeInTheDocument()
+    expect(screen.getByText('1 題')).toBeInTheDocument()
   })
 
   it('shows empty state when no courses', () => {
     render(<CourseTable {...defaultProps} courses={[]} />)
 
-    expect(screen.getByText('No courses found')).toBeInTheDocument()
-    expect(screen.getByText('Try adjusting your filters or search terms')).toBeInTheDocument()
+    expect(screen.getByText('找不到課程')).toBeInTheDocument()
+    expect(screen.getByText('試著調整篩選條件或搜尋關鍵字')).toBeInTheDocument()
   })
 
   it('calls onEdit when clicking card body', async () => {
@@ -112,10 +112,10 @@ describe('CourseTable', () => {
     const archived: CourseCardItem[] = [{ ...mockCourses[0], status: 'archived' }]
     render(<CourseTable {...defaultProps} courses={archived} onRestore={onRestore} />)
 
-    expect(screen.getByText('Archived')).toBeInTheDocument()
-    expect(screen.queryByTitle('Publish')).not.toBeInTheDocument()
-    expect(screen.queryByTitle('Archive')).not.toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: 'Restore Intro to ChatGPT' }))
+    expect(screen.getByText('已封存')).toBeInTheDocument()
+    expect(screen.queryByTitle('發布')).not.toBeInTheDocument()
+    expect(screen.queryByTitle('封存')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '還原「Intro to ChatGPT」' }))
     expect(onRestore).toHaveBeenCalledWith(archived[0])
   })
 
@@ -125,11 +125,9 @@ describe('CourseTable', () => {
     render(<CourseTable {...defaultProps} onCopyPreviewLink={onCopyPreviewLink} />)
 
     expect(
-      screen.queryByRole('button', { name: 'Copy preview link for Intro to ChatGPT' }),
+      screen.queryByRole('button', { name: '複製「Intro to ChatGPT」的預覽連結' }),
     ).not.toBeInTheDocument()
-    await user.click(
-      screen.getByRole('button', { name: 'Copy preview link for Advanced Prompting' }),
-    )
+    await user.click(screen.getByRole('button', { name: '複製「Advanced Prompting」的預覽連結' }))
     expect(onCopyPreviewLink).toHaveBeenCalledWith(mockCourses[1])
   })
 })

@@ -57,14 +57,12 @@ describe('QuizSection — guests (BR-11)', () => {
     render(<QuizSection courseId="c1" questions={questions} />)
 
     await user.click(screen.getByText('Bravo'))
-    await user.click(screen.getByRole('button', { name: 'Submit Answer' }))
+    await user.click(screen.getByRole('button', { name: '送出答案' }))
 
-    expect(screen.getByText('Answer submitted')).toBeInTheDocument()
-    expect(
-      screen.getByText('Sign in to see whether you got it right and read the explanation.'),
-    ).toBeInTheDocument()
-    expect(screen.queryByText(/Correct!/)).not.toBeInTheDocument()
-    expect(screen.queryByText(/Incorrect/)).not.toBeInTheDocument()
+    expect(screen.getByText('已送出答案')).toBeInTheDocument()
+    expect(screen.getByText('登入即可查看對錯與詳細解說。')).toBeInTheDocument()
+    expect(screen.queryByText(/答對了/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/答錯了/)).not.toBeInTheDocument()
     expect(fetchMock).not.toHaveBeenCalled()
   })
 })
@@ -83,7 +81,7 @@ describe('QuizSection — signed in', () => {
       badgeEarned: false,
     }
     render(<QuizSection courseId="c1" questions={questions} initialProgress={progress} />)
-    expect(screen.getByText('Question 3 / 3')).toBeInTheDocument()
+    expect(screen.getByText('第 3 題 / 共 3 題')).toBeInTheDocument()
     expect(screen.getByText('Explain third')).toBeInTheDocument()
   })
 
@@ -101,14 +99,10 @@ describe('QuizSection — signed in', () => {
     }
     render(<QuizSection courseId="c1" questions={questions} initialProgress={progress} />)
 
-    await user.type(screen.getByPlaceholderText('Type your answer...'), 'my answer')
-    await user.click(screen.getByRole('button', { name: 'Submit Answer' }))
+    await user.type(screen.getByPlaceholderText('輸入你的答案…'), 'my answer')
+    await user.click(screen.getByRole('button', { name: '送出答案' }))
 
-    expect(
-      await screen.findByText(
-        "We couldn't check your answer right now. Please try again in a moment.",
-      ),
-    ).toBeInTheDocument()
+    expect(await screen.findByText('目前無法判定你的答案，請稍後再試。')).toBeInTheDocument()
     // Still on the same question, answer kept for another try
     expect(screen.getByText('Explain third')).toBeInTheDocument()
     expect(screen.getByDisplayValue('my answer')).toBeInTheDocument()
@@ -122,9 +116,9 @@ describe('QuizSection — signed in', () => {
     render(<QuizSection courseId="c1" questions={questions} />)
 
     await user.click(screen.getByText('Alpha'))
-    await user.click(screen.getByRole('button', { name: 'Submit Answer' }))
+    await user.click(screen.getByRole('button', { name: '送出答案' }))
 
-    expect(await screen.findByText('Correct answer: C. Charlie')).toBeInTheDocument()
+    expect(await screen.findByText('正確答案：C. Charlie')).toBeInTheDocument()
     expect(screen.getByText('Because C.')).toBeInTheDocument()
   })
 
@@ -147,11 +141,11 @@ describe('QuizSection — signed in', () => {
     })
     render(<QuizSection courseId="c1" questions={questions} initialProgress={progress} />)
 
-    expect(screen.getByRole('heading', { name: 'Keep going!' })).toBeInTheDocument()
-    expect(screen.queryByText('Congratulations!')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '繼續加油！' })).toBeInTheDocument()
+    expect(screen.queryByText('恭喜完成！')).not.toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Retake Quiz' }))
-    await waitFor(() => expect(screen.getByText('Question 1 / 3')).toBeInTheDocument())
+    await user.click(screen.getByRole('button', { name: '重做測驗' }))
+    await waitFor(() => expect(screen.getByText('第 1 題 / 共 3 題')).toBeInTheDocument())
     expect(fetchMock).toHaveBeenCalledWith(
       'http://localhost:8080/api/v1/courses/c1/retake',
       expect.objectContaining({ method: 'POST' }),
@@ -185,14 +179,14 @@ describe('QuizSection — signed in', () => {
     })
     render(<QuizSection courseId="c1" questions={questions} initialProgress={progress} />)
 
-    expect(screen.getByText('Question 2 / 3')).toBeInTheDocument()
+    expect(screen.getByText('第 2 題 / 共 3 題')).toBeInTheDocument()
     await user.click(screen.getByText('Bravo'))
-    await user.click(screen.getByRole('button', { name: 'Submit Answer' }))
-    await user.click(await screen.findByRole('button', { name: 'View Results' }))
+    await user.click(screen.getByRole('button', { name: '送出答案' }))
+    await user.click(await screen.findByRole('button', { name: '查看結果' }))
 
-    expect(await screen.findByText('Congratulations!')).toBeInTheDocument()
-    expect(screen.getByText('Perfect!')).toBeInTheDocument()
-    expect(screen.getByText('You earned the badge for this course.')).toBeInTheDocument()
+    expect(await screen.findByText('恭喜完成！')).toBeInTheDocument()
+    expect(screen.getByText('滿分！')).toBeInTheDocument()
+    expect(screen.getByText('你獲得了這堂課的徽章。')).toBeInTheDocument()
   })
 
   it('grades previews without saving (BR-05)', async () => {
@@ -202,7 +196,7 @@ describe('QuizSection — signed in', () => {
     )
     render(<QuizSection courseId="c1" questions={questions} isPreview previewToken="tok en" />)
     await user.click(screen.getByText('Bravo'))
-    await user.click(screen.getByRole('button', { name: 'Submit Answer' }))
+    await user.click(screen.getByRole('button', { name: '送出答案' }))
 
     expect(fetchMock.mock.calls[0][0]).toBe(
       'http://localhost:8080/api/v1/courses/c1/submit?preview=tok%20en',

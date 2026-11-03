@@ -10,28 +10,28 @@ interface DashboardStatsProps {
 const statCards = [
   {
     key: 'totalUsers' as const,
-    label: 'Total Users',
+    label: '總用戶數',
     icon: Users,
     iconBg: 'bg-cyan-100 dark:bg-cyan-900/40',
     iconColor: 'text-cyan-600 dark:text-cyan-400',
   },
   {
     key: 'totalCourses' as const,
-    label: 'Courses',
+    label: '課程數',
     icon: BookOpen,
     iconBg: 'bg-amber-100 dark:bg-amber-900/40',
     iconColor: 'text-amber-600 dark:text-amber-400',
   },
   {
     key: 'totalCompletions' as const,
-    label: 'Completions',
+    label: '完課次數',
     icon: CheckCircle,
     iconBg: 'bg-green-100 dark:bg-green-900/40',
     iconColor: 'text-green-600 dark:text-green-400',
   },
   {
     key: 'activeUsers' as const,
-    label: 'Active Users',
+    label: '活躍用戶',
     icon: Activity,
     iconBg: 'bg-violet-100 dark:bg-violet-900/40',
     iconColor: 'text-violet-600 dark:text-violet-400',

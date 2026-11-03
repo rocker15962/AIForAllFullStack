@@ -9,13 +9,13 @@ interface ProgressCardProps {
 }
 
 const difficultyStyles: Record<string, { classes: string; label: string }> = {
-  beginner: { classes: 'bg-green-100 text-green-700', label: 'Beginner' },
-  intermediate: { classes: 'bg-amber-100 text-amber-700', label: 'Intermediate' },
-  advanced: { classes: 'bg-rose-100 text-rose-700', label: 'Advanced' },
+  beginner: { classes: 'bg-green-100 text-green-700', label: '入門' },
+  intermediate: { classes: 'bg-amber-100 text-amber-700', label: '中級' },
+  advanced: { classes: 'bg-rose-100 text-rose-700', label: '進階' },
 }
 
 function formatShortDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return new Date(dateStr).toLocaleDateString('zh-TW', { month: 'long', day: 'numeric' })
 }
 
 export function ProgressCard({ course }: ProgressCardProps) {
@@ -71,7 +71,7 @@ export function ProgressCard({ course }: ProgressCardProps) {
         {/* Meta — "X% Done · Q X/Y" + date */}
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-cyan-500">
-            {course.progress}% Done · Q {course.currentQuestion}/{course.totalQuestions}
+            進度 {course.progress}% · 已答 {course.currentQuestion}/{course.totalQuestions} 題
           </span>
           <span className="text-xs text-zinc-400">{formatShortDate(course.lastAccessedAt)}</span>
         </div>
@@ -82,11 +82,11 @@ export function ProgressCard({ course }: ProgressCardProps) {
             href={`/courses/${course.courseId}`}
             className="block rounded-lg bg-cyan-500 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-cyan-600"
           >
-            Continue Learning
+            繼續學習
           </Link>
         ) : (
           <p className="rounded-lg bg-zinc-100 py-2.5 text-center text-sm font-medium text-zinc-500 dark:bg-zinc-700/60 dark:text-zinc-400">
-            No longer available
+            已無法開啟
           </p>
         )}
       </div>

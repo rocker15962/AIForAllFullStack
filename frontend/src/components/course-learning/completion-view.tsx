@@ -18,9 +18,9 @@ interface CompletionViewProps {
 }
 
 function getScoreStyle(score: number, passed: boolean): { color: string; message: string } {
-  if (!passed) return { color: 'text-zinc-400', message: 'Keep going!' }
-  if (score >= 100) return { color: 'text-amber-500', message: 'Perfect!' }
-  return { color: 'text-cyan-500', message: 'Well done!' }
+  if (!passed) return { color: 'text-zinc-400', message: '繼續加油！' }
+  if (score >= 100) return { color: 'text-amber-500', message: '滿分！' }
+  return { color: 'text-cyan-500', message: '做得好！' }
 }
 
 export function CompletionView({
@@ -42,30 +42,25 @@ export function CompletionView({
           <div className="mb-2 text-6xl" aria-hidden="true">
             🏆
           </div>
-          <h2 className="mb-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-            Congratulations!
-          </h2>
+          <h2 className="mb-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">恭喜完成！</h2>
           <p className="mb-5 text-sm text-zinc-500">{message}</p>
         </>
       ) : (
         <>
           <h2 className="mb-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">{message}</h2>
           <p className="mb-5 text-sm text-zinc-500">
-            Score {PASSING_SCORE}% or more to complete this course. You can retake the quiz any
-            time.
+            答對 {PASSING_SCORE}% 以上才算完課，隨時都可以重做。
           </p>
         </>
       )}
 
       <div className={`mb-2 text-5xl font-extrabold ${color}`}>{Math.round(score)}%</div>
       <p className="mb-2 text-sm text-zinc-500">
-        {correctAnswers} / {totalQuestions} correct
+        答對 {correctAnswers} / {totalQuestions} 題
       </p>
       {badgeEarned && (
         <p className="mb-6 text-sm font-medium text-amber-600 dark:text-amber-400">
-          {passed
-            ? 'You earned the badge for this course.'
-            : 'You keep the badge you earned earlier.'}
+          {passed ? '你獲得了這堂課的徽章。' : '之前獲得的徽章會保留。'}
         </p>
       )}
       {!badgeEarned && <div className="mb-6" />}
@@ -78,7 +73,7 @@ export function CompletionView({
             disabled={isRetaking}
             className="rounded-lg bg-cyan-500 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-cyan-600 disabled:opacity-60"
           >
-            Retake Quiz
+            重做測驗
           </button>
         )}
         <Link
@@ -89,13 +84,13 @@ export function CompletionView({
               : 'rounded-lg border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'
           }
         >
-          Explore More Courses
+          探索更多課程
         </Link>
         <Link
           href="/courses"
           className="rounded-lg border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
         >
-          Back to Courses
+          返回課程列表
         </Link>
       </div>
       {passed && onRetake && (
@@ -105,7 +100,7 @@ export function CompletionView({
           disabled={isRetaking}
           className="mt-4 text-sm font-medium text-cyan-600 hover:underline disabled:opacity-60 dark:text-cyan-400"
         >
-          Retake quiz
+          重做測驗
         </button>
       )}
 

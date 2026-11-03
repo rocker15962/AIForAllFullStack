@@ -11,7 +11,7 @@ const mockCourses = [
 describe('PopularCourses', () => {
   it('renders heading', () => {
     render(<PopularCourses courses={mockCourses} />)
-    expect(screen.getByText('Popular Courses')).toBeInTheDocument()
+    expect(screen.getByText('熱門課程')).toBeInTheDocument()
   })
 
   it('renders each course with rank, title, and completions', () => {
@@ -32,6 +32,6 @@ describe('PopularCourses', () => {
 
   it('renders empty state when no courses', () => {
     render(<PopularCourses courses={[]} />)
-    expect(screen.getByText('No course data available yet.')).toBeInTheDocument()
+    expect(screen.getByText('還沒有課程資料。')).toBeInTheDocument()
   })
 })

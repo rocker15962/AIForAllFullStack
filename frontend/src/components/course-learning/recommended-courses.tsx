@@ -51,7 +51,7 @@ export function RecommendedCourses({ courseId, accessToken }: RecommendedCourses
         id="recommended-heading"
         className="mb-4 text-base font-semibold text-zinc-900 dark:text-zinc-100"
       >
-        Recommended next
+        推薦下一堂
       </h3>
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {courses.map((c) => (

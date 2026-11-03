@@ -27,14 +27,14 @@ const rows: UserProgressRow[] = [
 describe('UserProgressPanel', () => {
   it('shows title and completed / in-progress counts', () => {
     render(<UserProgressPanel userName="Amy" rows={rows} isLoading={false} error={null} />)
-    expect(screen.getByText('Amy’s learning progress')).toBeInTheDocument()
-    expect(screen.getByText('1 completed · 1 in progress')).toBeInTheDocument()
+    expect(screen.getByText('Amy 的學習進度')).toBeInTheDocument()
+    expect(screen.getByText('已完成 1 堂 · 進行中 1 堂')).toBeInTheDocument()
   })
 
   it('labels in-progress rows by answered percentage and completed rows by score', () => {
     render(<UserProgressPanel userName="Amy" rows={rows} isLoading={false} error={null} />)
-    expect(screen.getByText('In progress · 50%')).toBeInTheDocument()
-    expect(screen.getByText('Completed · 80%')).toBeInTheDocument()
+    expect(screen.getByText('進行中 · 50%')).toBeInTheDocument()
+    expect(screen.getByText('已完成 · 80%')).toBeInTheDocument()
     const bars = screen.getAllByRole('progressbar')
     expect(bars[0]).toHaveAttribute('aria-valuenow', '50')
     expect(bars[1]).toHaveAttribute('aria-valuenow', '100')
@@ -42,7 +42,7 @@ describe('UserProgressPanel', () => {
 
   it('shows empty state when there is no activity', () => {
     render(<UserProgressPanel userName="Amy" rows={[]} isLoading={false} error={null} />)
-    expect(screen.getByText('No learning activity yet')).toBeInTheDocument()
+    expect(screen.getByText('還沒有學習紀錄')).toBeInTheDocument()
   })
 
   it('marks a finished round below 60% as not passed (BR-12)', () => {
@@ -54,6 +54,6 @@ describe('UserProgressPanel', () => {
         error={null}
       />,
     )
-    expect(screen.getByText('Not passed · 25%')).toBeInTheDocument()
+    expect(screen.getByText('未及格 · 25%')).toBeInTheDocument()
   })
 })

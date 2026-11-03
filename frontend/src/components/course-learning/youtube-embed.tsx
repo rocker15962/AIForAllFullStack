@@ -113,7 +113,7 @@ export function YouTubeEmbed({
         key={videoId}
         ref={iframeRef}
         src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1`}
-        title="YouTube video player"
+        title="YouTube 影片播放器"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
         className="h-full w-full"

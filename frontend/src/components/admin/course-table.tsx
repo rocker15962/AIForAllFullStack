@@ -35,18 +35,18 @@ interface CourseTableProps {
 }
 
 const statusStyles: Record<CourseStatus, { dot: string; label: string }> = {
-  published: { dot: 'bg-green-500', label: 'Published' },
-  draft: { dot: 'bg-amber-400', label: 'Draft' },
-  archived: { dot: 'bg-zinc-400', label: 'Archived' },
+  published: { dot: 'bg-green-500', label: '已發布' },
+  draft: { dot: 'bg-amber-400', label: '草稿' },
+  archived: { dot: 'bg-zinc-400', label: '已封存' },
 }
 
 const actionButtonClasses =
   'rounded-lg bg-white/90 p-1.5 text-zinc-600 shadow-sm hover:bg-white dark:bg-zinc-800/90 dark:text-zinc-300 dark:hover:bg-zinc-800'
 
 const difficultyStyles: Record<string, { classes: string; label: string }> = {
-  beginner: { classes: 'bg-green-100 text-green-700', label: 'Beginner' },
-  intermediate: { classes: 'bg-amber-100 text-amber-700', label: 'Intermediate' },
-  advanced: { classes: 'bg-rose-100 text-rose-700', label: 'Advanced' },
+  beginner: { classes: 'bg-green-100 text-green-700', label: '入門' },
+  intermediate: { classes: 'bg-amber-100 text-amber-700', label: '中級' },
+  advanced: { classes: 'bg-rose-100 text-rose-700', label: '進階' },
 }
 
 export type { CourseCardItem }
@@ -64,9 +64,9 @@ export function CourseTable({
   if (courses.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <p className="text-lg font-medium text-zinc-500 dark:text-zinc-400">No courses found</p>
+        <p className="text-lg font-medium text-zinc-500 dark:text-zinc-400">找不到課程</p>
         <p className="mt-1 text-sm text-zinc-400 dark:text-zinc-500">
-          Try adjusting your filters or search terms
+          試著調整篩選條件或搜尋關鍵字
         </p>
       </div>
     )
@@ -109,8 +109,8 @@ export function CourseTable({
                         e.stopPropagation()
                         onRestore(course)
                       }}
-                      title="Restore"
-                      aria-label={`Restore ${course.title}`}
+                      title="還原"
+                      aria-label={`還原「${course.title}」`}
                       className={actionButtonClasses}
                     >
                       <RotateCcw className="h-4 w-4" />
@@ -124,8 +124,8 @@ export function CourseTable({
                           e.stopPropagation()
                           onCopyPreviewLink(course)
                         }}
-                        title="Copy preview link"
-                        aria-label={`Copy preview link for ${course.title}`}
+                        title="複製預覽連結"
+                        aria-label={`複製「${course.title}」的預覽連結`}
                         className={actionButtonClasses}
                       >
                         <Link2 className="h-4 w-4" />
@@ -136,7 +136,7 @@ export function CourseTable({
                         e.stopPropagation()
                         onTogglePublish(course)
                       }}
-                      title={isPublished ? 'Unpublish' : 'Publish'}
+                      title={isPublished ? '取消發布' : '發布'}
                       className={actionButtonClasses}
                     >
                       {isPublished ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -146,7 +146,7 @@ export function CourseTable({
                         e.stopPropagation()
                         onEdit(course)
                       }}
-                      title="Edit"
+                      title="編輯"
                       className={actionButtonClasses}
                     >
                       <Pencil className="h-4 w-4" />
@@ -156,8 +156,8 @@ export function CourseTable({
                         e.stopPropagation()
                         onDelete(course)
                       }}
-                      title="Archive"
-                      aria-label={`Archive ${course.title}`}
+                      title="封存"
+                      aria-label={`封存「${course.title}」`}
                       className="rounded-lg bg-white/90 p-1.5 text-rose-500 shadow-sm hover:bg-white dark:bg-zinc-800/90 dark:text-rose-400 dark:hover:bg-zinc-800"
                     >
                       <Archive className="h-4 w-4" />
@@ -206,9 +206,7 @@ export function CourseTable({
                   <span className={`h-2 w-2 rounded-full ${status.dot}`} />
                   <span className="text-xs text-zinc-500">{status.label}</span>
                 </div>
-                <span className="text-xs text-zinc-400">
-                  {course.questionCount} {course.questionCount === 1 ? 'question' : 'questions'}
-                </span>
+                <span className="text-xs text-zinc-400">{course.questionCount} 題</span>
               </div>
             </button>
           </div>

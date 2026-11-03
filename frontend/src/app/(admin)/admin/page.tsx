@@ -30,24 +30,24 @@ interface DashboardData {
 const adminLinks = [
   {
     href: '/admin/courses',
-    label: 'Manage Courses',
-    description: 'Add, edit, or remove courses',
+    label: '管理課程',
+    description: '新增、編輯或移除課程',
     icon: BookOpen,
     iconBg: 'bg-cyan-100 dark:bg-cyan-900/40',
     iconColor: 'text-cyan-600 dark:text-cyan-400',
   },
   {
     href: '/admin/users',
-    label: 'Manage Users',
-    description: 'View and manage user accounts',
+    label: '管理用戶',
+    description: '查看並管理用戶帳號',
     icon: UsersIcon,
     iconBg: 'bg-amber-100 dark:bg-amber-900/40',
     iconColor: 'text-amber-600 dark:text-amber-400',
   },
   {
     href: '/admin/categories',
-    label: 'Manage Categories',
-    description: 'Organize tools and skills',
+    label: '管理分類',
+    description: '整理工具與技能分類',
     icon: FolderOpen,
     iconBg: 'bg-violet-100 dark:bg-violet-900/40',
     iconColor: 'text-violet-600 dark:text-violet-400',
@@ -77,8 +77,9 @@ export default function AdminDashboardPage() {
         }
         const json = (await res.json()) as DashboardData
         setData(json)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unexpected error occurred')
+      } catch {
+        // The API error text is English; show a generic message instead.
+        setError('無法載入儀表板資料，請再試一次。')
       } finally {
         setIsLoading(false)
       }
@@ -103,11 +104,9 @@ export default function AdminDashboardPage() {
         <div className="text-center">
           <ShieldAlert className="mx-auto h-12 w-12 text-zinc-400" />
           <h1 className="mt-4 text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            Admin access required
+            需要管理員權限
           </h1>
-          <p className="mt-2 text-sm text-zinc-500">
-            You must be an administrator to view this page.
-          </p>
+          <p className="mt-2 text-sm text-zinc-500">你必須是管理員才能查看此頁面。</p>
         </div>
       </div>
     )
@@ -127,9 +126,7 @@ export default function AdminDashboardPage() {
     return (
       <div className="flex min-h-[calc(100vh-56px)] items-center justify-center">
         <div className="text-center">
-          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-            Failed to load dashboard
-          </h1>
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">儀表板載入失敗</h1>
           <p className="mt-2 text-sm text-zinc-500">{error}</p>
         </div>
       </div>
@@ -145,10 +142,8 @@ export default function AdminDashboardPage() {
     <div className="mx-auto max-w-7xl px-6 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">Dashboard</h1>
-        <p className="mt-1 text-[15px] text-zinc-500 dark:text-zinc-400">
-          Platform analytics overview
-        </p>
+        <h1 className="text-[28px] font-bold text-zinc-900 dark:text-zinc-100">儀表板</h1>
+        <p className="mt-1 text-[15px] text-zinc-500 dark:text-zinc-400">平台數據總覽</p>
       </div>
 
       {/* Stats Cards */}
