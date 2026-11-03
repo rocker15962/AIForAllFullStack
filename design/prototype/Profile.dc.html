@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/palette.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
+<script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
+<style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
+</helmet>
+<div lang="zh-Hant-TW" data-screen-label="Profile" class="{{ themeClass }}" style="min-height:100vh;background:var(--surface-page);font-family:var(--font-sans)">
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.TopNav" brand="{{ brand }}" links="{{ navLinks }}" on-navigate="{{ onNav }}" right="{{ navRight }}" hint-size="100%,56px"></x-import>
+
+  <sc-if value="{{ signedOut }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height:calc(100vh - 56px);display:flex;align-items:center;justify-content:center">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.EmptyState" icon="user" title="登入以查看個人資料" description="登入後即可管理帳號設定。" action-label="登入" action-variant="primary" on-action="{{ goLogin }}" hint-size="420px,220px"></x-import>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ signedIn }}" hint-placeholder-val="{{ true }}">
+    <main style="max-width:840px;margin:0 auto;padding:32px 24px;box-sizing:border-box">
+      <div style="margin-bottom:16px">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.BackLink" on-click="{{ goBack }}" hint-size="60px,20px">返回</x-import>
+      </div>
+      <div style="margin-bottom:24px">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.PageHeader" title="個人資料" subtitle="管理你的帳號資訊" hint-size="100%,68px"></x-import>
+      </div>
+      <div style="overflow:hidden;border-radius:var(--radius-2xl);border:1px solid var(--border-default);background:var(--surface-card)">
+        <div style="height:120px;background:var(--gradient-cover)"></div>
+        <div style="position:relative;height:50px">
+          <div style="position:absolute;top:-40px;left:32px">
+            <sc-if value="{{ noPhoto }}" hint-placeholder-val="{{ true }}">
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Avatar" size="{{ 80 }}" fallback="icon" ring="{{ true }}" hint-size="80px,80px"></x-import>
+            </sc-if>
+            <sc-if value="{{ hasPhoto }}" hint-placeholder-val="{{ false }}">
+              <div style="position:relative;width:80px;height:80px;border-radius:9999px;overflow:hidden;border:4px solid var(--surface-card);box-sizing:border-box;background:var(--surface-sunken)">
+                <img src="{{ photo }}" alt="大頭貼" style="position:absolute;left:-4px;top:-4px;width:80px;height:80px;object-fit:cover;transform:{{ avatarTransform }};transform-origin:center">
+              </div>
+            </sc-if>
+          </div>
+          <button type="button" title="更換大頭貼" onClick="{{ pickPhoto }}" style="position:absolute;top:16px;left:88px;width:28px;height:28px;padding:0;border-radius:9999px;border:0;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:var(--accent-hover)">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Icon" name="camera" size="{{ 14 }}" hint-size="14px,14px"></x-import>
+          </button>
+          <input type="file" accept="image/*" data-avatar-input="1" onChange="{{ onFile }}" style="display:none">
+        </div>
+        <form onSubmit="{{ save }}" style="display:flex;flex-direction:column;gap:20px;padding:8px 32px 32px">
+          <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="名字" hint-size="100%,70px">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Input" variant="outline" size="lg" value="{{ name }}" on-change="{{ onName }}" hint-size="100%,44px"></x-import>
+          </x-import>
+          <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="電子郵件" hint="透過 Google 登入，無法修改" hint-size="100%,90px">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Input" variant="outline" size="lg" value="alice@example.com" disabled="{{ true }}" read-only="{{ true }}" hint-size="100%,44px"></x-import>
+          </x-import>
+          <sc-if value="{{ hasMsg }}" hint-placeholder-val="{{ false }}">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Alert" variant="inline" tone="{{ msgTone }}" hint-size="100%,36px">{{ msgText }}</x-import>
+          </sc-if>
+          <div style="display:flex;gap:12px">
+            <div style="flex:1;display:flex">
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" type="submit" full-width="{{ true }}" disabled="{{ cantSave }}" loading="{{ saving }}" style="flex:1" hint-size="100%,40px">{{ saveLabel }}</x-import>
+            </div>
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" variant="outline" on-click="{{ goBack }}" hint-size="96px,40px">取消</x-import>
+          </div>
+        </form>
+      </div>
+      <p style="margin:16px 0 0;font-size:13px;color:var(--text-subtle)">帳號建立於 2026年9月17日</p>
+    </main>
+  </sc-if>
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Dialog" open="{{ cropOpen }}" title="調整大頭貼" on-close="{{ closeCrop }}" footer="{{ cropFooter }}" hint-size="0px,0px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:20px">
+      <div onPointerDown="{{ dragStart }}" onPointerMove="{{ dragMove }}" onPointerUp="{{ dragEnd }}" onPointerCancel="{{ dragEnd }}" style="position:relative;width:320px;height:320px;overflow:hidden;border-radius:var(--radius-lg);background:var(--neutral-900);cursor:{{ cursor }};touch-action:none;user-select:none">
+        <img src="{{ cropSrc }}" alt="" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:{{ cropTransform }};transform-origin:center;pointer-events:none">
+        <div style="position:absolute;inset:16px;border-radius:9999px;box-shadow:0 0 0 9999px rgba(0,0,0,.55);border:2px solid #fff;pointer-events:none"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;width:320px;color:var(--text-muted)">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Icon" name="image" size="{{ 14 }}" hint-size="14px,14px"></x-import>
+        <input type="range" min="1" max="3" step="0.01" value="{{ zoom }}" onChange="{{ onZoom }}" aria-label="縮放" style="flex:1;accent-color:var(--accent)">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Icon" name="image" size="{{ 20 }}" hint-size="20px,20px"></x-import>
+      </div>
+      <p style="margin:0;font-size:13px;line-height:20px;color:var(--text-muted);text-align:center">拖曳圖片調整位置，用滑桿縮放；圓圈裡的範圍就是大頭貼。</p>
+    </div>
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;signedIn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;message&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;success&quot;,&quot;error&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;'none' | 'success' | 'error'&quot;},&quot;showCrop&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;dark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  mp() { const o = {}; const q = this.props || {}; Object.keys(q).forEach((k) => { if (q[k] !== undefined) o[k] = q[k]; }); new URLSearchParams(window.location.search).forEach((v, k) => { o[k] = v === '1' ? true : v === '0' ? false : v; }); return o; }
+  qs() { const u = new URLSearchParams(window.location.search); const o = new URLSearchParams(); ['signedIn', 'isAdmin', 'dark', 'showThumbnails'].forEach((k) => { if (u.has(k)) o.set(k, u.get(k)); }); const s = o.toString(); return s ? '?' + s : ''; }
+  msgFor(m) {
+    if (m === 'success') return { tone: 'success', text: '已更新個人資料' };
+    if (m === 'error') return { tone: 'danger', text: '個人資料更新失敗' };
+    return null;
+  }
+  sample = 'https://picsum.photos/seed/aifa-portrait/800/800';
+  state = { cropOpen: !!this.mp().showCrop, draft: { src: 'https://picsum.photos/seed/aifa-portrait/800/800', x: 0, y: 0, z: 1 }, photo: null, crop: { x: 0, y: 0, z: 1 }, name: '陳怡君', saving: false, msg: this.msgFor(this.mp().message) };
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentDidUpdate() { const v = this.mp().message; if (v !== this._m) { const first = this._m === undefined; this._m = v; if (!first) this.setState({ msg: this.msgFor(v) }); } const c = !!this.mp().showCrop; if (c !== this._c) { const f = this._c === undefined; this._c = c; if (!f) this.setState({ cropOpen: c, draft: { src: this.sample, x: 0, y: 0, z: 1 } }); } }
+  componentWillUnmount() { clearInterval(this._t); clearTimeout(this._s); }
+  renderVals() {
+    const D = window.AIForAllNeutralDS_acd6b1 || {};
+    const h = React.createElement;
+    const E = (n, p, ...c) => (D[n] ? h(D[n], p, ...c) : null);
+    const go = (f) => () => { window.location.href = f + this.qs(); };
+    const p = this.mp();
+    const signedIn = p.signedIn ?? true;
+    const s = this.state;
+    return {
+      themeClass: p.dark ? 'dark' : '',
+      brand: E('Wordmark', { accent: 'AI', text: 'for All', onClick: go('Landing.dc.html') }),
+      navLinks: [{ id: 'explore', label: '探索課程' }, { id: 'mine', label: '我的學習' }],
+      onNav: (id) => { window.location.href = (id === 'mine' ? 'MyLearning.dc.html' : 'Explore.dc.html') + this.qs(); },
+      navRight: signedIn
+        ? E('UserMenu', { name: s.name || '陳怡君', email: 'alice@example.com', items: [{ label: '我的學習', onClick: go('MyLearning.dc.html') }, { label: '個人資料', onClick: go('Profile.dc.html') }], onSignOut: go('Login.dc.html'), signOutLabel: '登出' })
+        : E('Button', { onClick: go('Login.dc.html'), style: { padding: '8px 16px' } }, '登入'),
+      goLogin: go('Login.dc.html'),
+      goBack: go('MyLearning.dc.html'),
+      signedIn, signedOut: !signedIn,
+      name: s.name,
+      onName: (e) => this.setState({ name: e.target.value }),
+      save: (e) => {
+        e.preventDefault();
+        if (!s.name.trim()) { this.setState({ msg: { tone: 'danger', text: '請輸入名字' } }); return; }
+        this.setState({ saving: true, msg: null });
+        this._s = setTimeout(() => this.setState({ saving: false, msg: { tone: 'success', text: '已更新個人資料' } }), 700);
+      },
+      saving: s.saving,
+      saveLabel: s.saving ? '儲存中…' : '儲存變更',
+      cantSave: s.saving || !s.name.trim(),
+      hasPhoto: !!s.photo, noPhoto: !s.photo, photo: s.photo || '',
+      avatarTransform: 'translate(' + s.crop.x * 0.25 + 'px,' + s.crop.y * 0.25 + 'px) scale(' + s.crop.z + ')',
+      pickPhoto: () => { const el = document.querySelector('[data-avatar-input]'); if (el) { el.value = ''; el.click(); } },
+      onFile: (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; if (f.size > 5 * 1024 * 1024) { this.setState({ msg: { tone: 'danger', text: '檔案超過 5MB，請換一張圖片' } }); return; } this.setState({ cropOpen: true, msg: null, draft: { src: URL.createObjectURL(f), x: 0, y: 0, z: 1 } }); },
+      cropOpen: s.cropOpen, cropSrc: s.draft.src,
+      cropTransform: 'translate(' + s.draft.x + 'px,' + s.draft.y + 'px) scale(' + s.draft.z + ')',
+      zoom: s.draft.z, cursor: this._drag ? 'grabbing' : 'grab',
+      onZoom: (e) => { const z = Number(e.target.value); const m = (320 * z - 288) / 2; const cl = (v) => Math.max(-m, Math.min(m, v)); const d = this.state.draft; this.setState({ draft: { ...d, z, x: cl(d.x), y: cl(d.y) } }); },
+      dragStart: (e) => { const d = this.state.draft; this._drag = { sx: e.clientX, sy: e.clientY, x0: d.x, y0: d.y }; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {} this.forceUpdate(); },
+      dragMove: (e) => { const g = this._drag; if (!g) return; const d = this.state.draft; const m = (320 * d.z - 288) / 2; const cl = (v) => Math.max(-m, Math.min(m, v)); this.setState({ draft: { ...d, x: cl(g.x0 + e.clientX - g.sx), y: cl(g.y0 + e.clientY - g.sy) } }); },
+      dragEnd: () => { if (this._drag) { this._drag = null; this.forceUpdate(); } },
+      closeCrop: () => this.setState({ cropOpen: false }),
+      cropFooter: h(React.Fragment, null,
+        E('Button', { variant: 'outline', style: { padding: '10px 20px' }, onClick: () => this.setState({ cropOpen: false }) }, '取消'),
+        E('Button', { style: { padding: '10px 20px' }, onClick: () => { const d = this.state.draft; this.setState({ photo: d.src, crop: { x: d.x, y: d.y, z: d.z }, cropOpen: false, msg: { tone: 'success', text: '已更新大頭貼' } }); } }, '套用')),
+      hasMsg: !!s.msg,
+      msgTone: s.msg ? s.msg.tone : 'success',
+      msgText: s.msg ? s.msg.text : '',
+    };
+  }
+}
+</script>
+</body>
+</html>

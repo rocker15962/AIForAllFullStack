@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/palette.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
+<script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
+<style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
+</helmet>
+<div lang="zh-Hant-TW" data-screen-label="Course Detail" class="{{ themeClass }}" style="min-height:100vh;background:var(--surface-page);font-family:var(--font-sans)">
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.TopNav" brand="{{ brand }}" links="{{ navLinks }}" active-id="explore" on-navigate="{{ onNav }}" right="{{ navRight }}" hint-size="100%,56px"></x-import>
+  <main style="max-width:1040px;margin:0 auto;padding:24px;box-sizing:border-box">
+    <sc-if value="{{ draft }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom:16px">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.InlineBanner" icon="eye" hint-size="100%,48px">草稿預覽：這堂課還沒發布，只有拿到預覽連結的人看得到。課程發布前，連結都有效。</x-import>
+      </div>
+    </sc-if>
+    <div style="margin-bottom:24px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.BackLink" on-click="{{ goExplore }}" hint-size="170px,20px">返回課程列表</x-import>
+    </div>
+    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.VideoFrame" title="ChatGPT 文案寫作入門" hint-size="100%,557px"></x-import>
+    <h1 style="margin:0;padding:24px 0 16px;font-size:var(--fs-title);line-height:1.4;font-weight:700;color:var(--text-strong)">ChatGPT 文案寫作入門：從零開始學 AI 寫作</h1>
+
+    <sc-if value="{{ guest }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom:16px">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.InlineBanner" action-label="註冊" on-action="{{ goLogin }}" hint-size="100%,48px">註冊即可保存學習進度、獲得徽章</x-import>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ inQuiz }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border-default)">
+        <span style="font-size:16px;font-weight:600;color:var(--text-body)">課後測驗</span>
+        <span style="font-size:14px;color:var(--text-muted)">第 {{ qNum }} 題 / 共 {{ qTotal }} 題</span>
+      </div>
+      <div style="padding:12px 0">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SegmentedProgress" current="{{ answered }}" total="{{ qTotal }}" hint-size="100%,6px"></x-import>
+      </div>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Card" padding="lg" hint-size="100%,380px">
+        <sc-if value="{{ answeringMC }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:24px">
+            <h3 style="margin:0;font-size:16px;line-height:24px;font-weight:600;color:var(--text-strong)">{{ qText }}</h3>
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.ChoiceGroup" options="{{ qOptions }}" value="{{ answer }}" on-change="{{ setAnswer }}" hint-size="100%,228px"></x-import>
+            <div style="display:flex;justify-content:flex-end">
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" weight="semibold" disabled="{{ cantSubmit }}" on-click="{{ submit }}" hint-size="140px,40px">送出答案</x-import>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ answeringSA }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <h3 style="margin:0;font-size:18px;line-height:28px;font-weight:600;color:var(--text-strong)">{{ qText }}</h3>
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Textarea" value="{{ text }}" on-change="{{ onText }}" placeholder="輸入你的答案…" hint-size="100%,88px"></x-import>
+            <div style="display:flex;padding-top:4px">
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" weight="semibold" disabled="{{ cantSubmit }}" on-click="{{ submit }}" hint-size="140px,40px">送出答案</x-import>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ inFeedbackUser }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:16px">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Alert" tone="{{ fbTone }}" title="{{ fbTitle }}" detail="{{ fbDetail }}" style="width:100%" hint-size="100%,96px">{{ fbText }}</x-import>
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" weight="semibold" on-click="{{ next }}" hint-size="100px,40px">{{ nextLabel }}</x-import>
+          </div>
+        </sc-if>
+        <sc-if value="{{ inFeedbackGuest }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.InlineBanner" variant="note" icon="info" title="答案已送出" hint-size="100%,88px">登入後就能看到每題的對錯和解說，學習進度也會保存下來。</x-import>
+            <div style="display:flex;flex-wrap:wrap;gap:12px">
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" weight="semibold" on-click="{{ goLogin }}" hint-size="130px,40px">登入查看對錯</x-import>
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" variant="outline" on-click="{{ next }}" hint-size="100px,40px">{{ nextLabel }}</x-import>
+            </div>
+          </div>
+        </sc-if>
+      </x-import>
+    </sc-if>
+
+    <sc-if value="{{ completed }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.ResultSummary" icon="{{ resultIcon }}" title="{{ resultTitle }}" message="{{ resultMsg }}" value="{{ score }}" value-color="{{ scoreColor }}" detail="{{ resultDetail }}" actions="{{ resultActions }}" hint-size="100%,380px"></x-import>
+    </sc-if>
+    <sc-if value="{{ showRecs }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:16px;padding:24px 0 48px;border-top:1px solid var(--border-default)">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+          <h2 style="margin:0;font-size:18px;line-height:28px;font-weight:600;color:var(--text-strong)">接下來可以學</h2>
+          <span style="font-size:13px;color:var(--text-muted)">同工具或同技能，不含你已完成的課</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+          <sc-for list="{{ recs }}" as="c" hint-placeholder-count="2">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.MediaCard" dc-props="{{ c }}" hint-size="100%,240px"></x-import>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;signedIn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;quizStart&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;answering&quot;,&quot;feedback&quot;,&quot;completed&quot;,&quot;failed&quot;],&quot;default&quot;:&quot;answering&quot;,&quot;tsType&quot;:&quot;'answering' | 'feedback' | 'completed' | 'failed'&quot;},&quot;draft&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;showThumbnails&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;dark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  mp() { const o = {}; const q = this.props || {}; Object.keys(q).forEach((k) => { if (q[k] !== undefined) o[k] = q[k]; }); new URLSearchParams(window.location.search).forEach((v, k) => { o[k] = v === '1' ? true : v === '0' ? false : v; }); return o; }
+  qs() { const u = new URLSearchParams(window.location.search); const o = new URLSearchParams(); ['signedIn', 'isAdmin', 'dark', 'showThumbnails'].forEach((k) => { if (u.has(k)) o.set(k, u.get(k)); }); const s = o.toString(); return s ? '?' + s : ''; }
+  questions = [
+    { type: 'mc', text: '使用 ChatGPT 時，哪一種提示策略最有效？', options: [{ id: 'a', label: '提供清楚的背景與具體指示' }, { id: 'b', label: '只輸入一個關鍵字' }, { id: 'c', label: '字數越多越好' }, { id: 'd', label: '不需要任何背景資訊' }], answer: 'a', explanation: '提供清楚的背景與具體指示，能幫助 ChatGPT 理解你的需求，產出更有用的回應。' },
+    { type: 'mc', text: 'ChatGPT 給出錯誤回應時，你該怎麼做？', options: [{ id: 'a', label: '放棄使用' }, { id: 'b', label: '補充更多背景，或換個方式下指示' }, { id: 'c', label: '接受錯誤的答案' }, { id: 'd', label: '改問完全不同的問題' }], answer: 'b', explanation: 'ChatGPT 回答錯誤時，補充更多資訊或換個方式提問，通常就能得到更好的結果。' },
+    { type: 'sa', text: '請簡單說明什麼是提示工程。', keywords: ['prompt', 'design', 'optimize', 'instruction', 'craft', '提示', '設計', '優化', '指令'], explanation: '提示工程是設計並優化給 AI 的指令（提示），讓它產出更準確、更有用的結果。' },
+    { type: 'mc', text: 'ChatGPT 最適合哪一種任務？', options: [{ id: 'a', label: '查詢即時天氣' }, { id: 'b', label: '文章摘要與改寫' }, { id: 'c', label: '精確的數學計算' }, { id: 'd', label: '預測未來事件' }], answer: 'b', explanation: 'ChatGPT 擅長摘要、改寫、翻譯等文字處理工作；處理即時資訊與精確計算則有其限制。' },
+    { type: 'mc', text: '使用 ChatGPT 時，應該注意哪一項限制？', options: [{ id: 'a', label: '它可能產生聽起來合理、但其實錯誤的資訊' }, { id: 'b', label: '它能取得所有最新資訊' }, { id: 'c', label: '它的答案永遠 100% 正確' }, { id: 'd', label: '不需任何提示就能產出完美答案' }], answer: 'a', explanation: 'ChatGPT 有時會「幻覺」— 產生聽起來合理、但與事實不符的內容。請保持批判思考，重要資訊務必查證。' },
+  ];
+  recCourses = [
+    { title: 'AI 簡報：10 分鐘做出專業投影片', tool: 'ChatGPT', level: ['入門', 'success'], seed: 'ai-presentations' },
+  ];
+  initial(start) {
+    if (start === 'feedback') return { idx: 0, answer: 'a', text: '', phase: 'feedback', results: [true] };
+    if (start === 'completed') return { idx: 4, answer: '', text: '', phase: 'completed', results: [true, true, true, false, true] };
+    if (start === 'failed') return { idx: 4, answer: '', text: '', phase: 'completed', results: [true, false, false, true, false], retake: true };
+    return { idx: 0, answer: '', text: '', phase: 'answering', results: [] };
+  }
+  state = this.initial(this.mp().quizStart);
+  componentDidMount() {
+    const q0 = this.mp().quizStart; if (q0) this.setState(this.initial(q0));
+    this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60);
+  }
+  componentDidUpdate() { const v = this.mp().quizStart; if (v !== this._qs) { const first = this._qs === undefined; this._qs = v; if (!first) this.setState(this.initial(v)); } }
+  componentWillUnmount() { clearInterval(this._t); }
+  renderVals() {
+    const D = window.AIForAllNeutralDS_acd6b1 || {};
+    const h = React.createElement;
+    const E = (n, p, ...c) => (D[n] ? h(D[n], p, ...c) : null);
+    const go = (f) => () => { window.location.href = f + this.qs(); };
+    const p = this.mp();
+    const signedIn = p.signedIn ?? false;
+    const s = this.state;
+    const Q = this.questions;
+    const q = Q[s.idx];
+    const isLast = s.idx === Q.length - 1;
+    const ok = s.results[s.results.length - 1];
+    const correct = s.results.filter(Boolean).length;
+    const score = Math.round((correct / Q.length) * 100);
+    const right = q.options ? q.options.find((o) => o.id === q.answer) : null;
+    const passed = score >= 60;
+    const retake = () => this.setState({ idx: 0, answer: '', text: '', phase: 'answering', results: [], retake: true });
+    const recs = this.recCourses.map((c) => ({ image: p.showThumbnails ? 'https://picsum.photos/seed/' + c.seed + '/640/360' : undefined, mediaHeight: 120, title: c.title, tags: [{ label: c.tool, tone: 'accent' }, { label: c.level[0], tone: c.level[1], strong: true }], onClick: go('CourseDetail.dc.html') }));
+    const submit = () => {
+      const pass = q.type === 'mc' ? s.answer === q.answer : q.keywords.some((k) => s.text.toLowerCase().includes(k));
+      this.setState({ results: [...s.results, pass], phase: 'feedback' });
+    };
+    const next = () => {
+      if (isLast) this.setState({ phase: 'completed' });
+      else this.setState({ idx: s.idx + 1, answer: '', text: '', phase: 'answering' });
+    };
+    return {
+      themeClass: p.dark ? 'dark' : '',
+      brand: E('Wordmark', { accent: 'AI', text: 'for All', onClick: go('Landing.dc.html') }),
+      navLinks: [{ id: 'explore', label: '探索課程' }, { id: 'mine', label: '我的學習' }],
+      onNav: (id) => { window.location.href = (id === 'mine' ? 'MyLearning.dc.html' : 'Explore.dc.html') + this.qs(); },
+      navRight: signedIn
+        ? E('UserMenu', { name: '陳怡君', email: 'alice@example.com', items: [{ label: '我的學習', onClick: go('MyLearning.dc.html') }, { label: '個人資料', onClick: go('Profile.dc.html') }], onSignOut: go('Login.dc.html'), signOutLabel: '登出' })
+        : E('Button', { onClick: go('Login.dc.html'), style: { padding: '8px 16px' } }, '登入'),
+      goExplore: go('Explore.dc.html'),
+      goLogin: go('Login.dc.html'),
+      guest: !signedIn,
+      inQuiz: s.phase !== 'completed',
+      completed: s.phase === 'completed',
+      qNum: s.idx + 1, qTotal: Q.length, answered: s.results.length,
+      qText: q.text, qOptions: q.options || [],
+      answeringMC: s.phase === 'answering' && q.type === 'mc',
+      answeringSA: s.phase === 'answering' && q.type === 'sa',
+      inFeedback: s.phase === 'feedback', inFeedbackUser: s.phase === 'feedback' && signedIn, inFeedbackGuest: s.phase === 'feedback' && !signedIn,
+      answer: s.answer || null, text: s.text,
+      setAnswer: (v) => this.setState({ answer: v }),
+      onText: (e) => this.setState({ text: e.target.value }),
+      cantSubmit: q.type === 'mc' ? !s.answer : !s.text.trim(),
+      submit, next,
+      fbTone: ok ? 'success' : 'danger',
+      fbTitle: ok ? '✓ 答對了！' : '✗ 答錯了',
+      fbDetail: !ok && signedIn && right ? '正確答案：' + right.label : null,
+      fbText: signedIn ? q.explanation : '登入即可查看詳細解說',
+      nextLabel: isLast ? '查看結果' : '下一題 →',
+      score: signedIn ? score : null,
+      scoreColor: score >= 100 ? 'var(--highlight)' : passed ? 'var(--accent)' : 'var(--text-subtle)',
+      resultIcon: !signedIn ? E('Icon', { name: 'book-check', size: 56, color: 'var(--accent)', strokeWidth: 1.75 }) : passed ? undefined : null,
+      resultTitle: !signedIn ? Q.length + ' 題都做完了' : passed ? '恭喜完成！' : '繼續加油！',
+      resultMsg: !signedIn ? '登入後就能看到分數、每題的對錯和解說，也能拿到這堂課的徽章。' : score >= 100 ? '滿分！' : passed ? '做得好！' : '答對 60% 以上才算完課、拿到徽章。',
+      resultDetail: signedIn ? '答對 ' + correct + ' / ' + Q.length + ' 題' : null,
+      resultActions: h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 } },
+        h('div', { style: { display: 'flex', justifyContent: 'center', gap: 12 } },
+          !signedIn ? E('Button', { weight: 'semibold', onClick: go('Login.dc.html'), style: { padding: '10px 24px' } }, '登入查看結果')
+            : passed ? E('Button', { weight: 'semibold', onClick: go('Explore.dc.html'), style: { padding: '10px 24px' } }, '探索更多課程')
+            : E('Button', { weight: 'semibold', onClick: retake, style: { padding: '10px 24px' } }, '重做測驗'),
+          E('Button', { variant: 'outline', onClick: go('Explore.dc.html'), style: { padding: '10px 24px', color: 'var(--text-secondary)' } }, '返回課程列表')),
+        signedIn && !passed && s.retake ? h('p', { style: { display: 'flex', alignItems: 'center', gap: 6, margin: 0, fontSize: 13, lineHeight: '20px', color: 'var(--text-muted)' } }, E('Icon', { name: 'award', size: 16, color: 'var(--highlight)' }), '你仍保留之前拿到的徽章（9月23日取得）') : null),
+      showRecs: s.phase === 'completed' && signedIn,
+      recs,
+      draft: !!p.draft,
+    };
+  }
+}
+</script>
+</body>
+</html>

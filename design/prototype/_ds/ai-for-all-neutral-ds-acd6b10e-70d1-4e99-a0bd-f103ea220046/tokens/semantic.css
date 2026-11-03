@@ -1,0 +1,120 @@
+/* Semantic aliases — components reference ONLY these (plus palette for tag tones).
+   Re-skin a product by remapping --accent-* / --secondary-* to another palette. */
+:root{
+  /* surfaces */
+  --surface-page:var(--white);
+  --surface-card:var(--white);
+  --surface-raised:var(--white);
+  --surface-subtle:var(--neutral-50);
+  --surface-muted:var(--neutral-100);
+  --surface-sunken:var(--neutral-200);
+  --surface-media:var(--neutral-200);
+  --surface-media-dark:var(--neutral-900);
+  --surface-inverse:var(--neutral-900);
+  --surface-overlay:rgb(0 0 0 / 0.4);
+  --surface-overlay-light:rgb(0 0 0 / 0.3);
+  --surface-glass:rgb(255 255 255 / 0.9);
+
+  /* text */
+  --text-strong:var(--neutral-900);
+  --text-heading:var(--neutral-800);
+  --text-body:var(--neutral-700);
+  --text-secondary:var(--neutral-600);
+  --text-muted:var(--neutral-500);
+  --text-subtle:var(--neutral-400);
+  --text-disabled:var(--neutral-300);
+  --text-inverse:var(--white);
+  --text-inverse-muted:var(--neutral-400);
+  --text-on-accent:var(--white);
+
+  /* borders */
+  --border-default:var(--neutral-200);
+  --border-subtle:var(--neutral-100);
+  --border-strong:var(--neutral-300);
+
+  /* accent (primary brand hue) */
+  --accent:var(--primary-500);
+  --accent-hover:var(--primary-600);
+  --accent-logo:var(--primary-400);
+  --accent-focus:var(--primary-400);
+  --accent-soft:var(--primary-50);
+  --accent-soft-strong:var(--primary-100);
+  --accent-muted:var(--primary-300);
+  --accent-text:var(--primary-700);
+  --accent-link:var(--primary-600);
+
+  /* secondary (highlight / achievement hue) */
+  --highlight:var(--secondary-500);
+  --highlight-bar:var(--secondary-400);
+  --highlight-soft:var(--secondary-50);
+  --highlight-soft-strong:var(--secondary-100);
+  --highlight-text:var(--secondary-700);
+
+  /* status */
+  --success:var(--green-500);
+  --success-strong:var(--green-600);
+  --success-soft:var(--green-50);
+  --success-soft-strong:var(--green-100);
+  --success-border:var(--green-300);
+  --success-text:var(--green-700);
+  --success-text-strong:var(--green-800);
+  --danger:var(--red-500);
+  --danger-hover:var(--red-600);
+  --danger-soft:var(--red-50);
+  --danger-border:var(--red-300);
+  --danger-text:var(--red-700);
+  --danger-text-strong:var(--red-800);
+  --danger-alt:var(--rose-500);
+  --danger-alt-soft:var(--rose-50);
+  --danger-alt-text:var(--rose-600);
+  --warning:var(--secondary-400);
+  --toast-success:#10b981;
+  --toast-error:#ef4444;
+
+  /* charts */
+  --chart-grid:#e4e4e7;
+  --chart-axis:#71717a;
+  --chart-1:#06b6d4;
+  --chart-2:#f59e0b;
+  --chart-3:var(--violet-500);
+  --chart-4:var(--green-500);
+
+  /* focus */
+  --focus-ring:0 0 0 3px oklch(0.789 0.154 211.53 / 0.35);
+}
+
+/* Dark theme — mirrors the source's `dark:` variants. Apply class="dark" on <html> or any wrapper. */
+.dark{
+  --surface-page:var(--neutral-900);
+  --surface-card:var(--neutral-800);
+  --surface-raised:var(--neutral-800);
+  --surface-subtle:oklch(0.274 0.006 286.033 / 0.5);
+  --surface-muted:var(--neutral-800);
+  --surface-sunken:var(--neutral-700);
+  --surface-media:var(--neutral-700);
+  --surface-glass:oklch(0.274 0.006 286.033 / 0.9);
+  --text-strong:var(--neutral-100);
+  --text-heading:var(--neutral-200);
+  --text-body:var(--neutral-300);
+  --text-secondary:var(--neutral-400);
+  --text-muted:var(--neutral-400);
+  --text-subtle:var(--neutral-500);
+  --border-default:var(--neutral-700);
+  --border-subtle:var(--neutral-700);
+  --border-strong:var(--neutral-600);
+  --accent-soft:oklch(0.398 0.07 227.392 / 0.2);
+  --accent-soft-strong:oklch(0.398 0.07 227.392 / 0.4);
+  --accent-text:var(--primary-300);
+  --accent-link:var(--primary-400);
+  --highlight-soft:oklch(0.414 0.112 45.904 / 0.2);
+  --highlight-soft-strong:oklch(0.414 0.112 45.904 / 0.4);
+  --highlight-text:var(--secondary-300);
+  --success-soft:oklch(0.393 0.095 152.535 / 0.2);
+  --success-soft-strong:oklch(0.393 0.095 152.535 / 0.4);
+  --success-text:var(--green-400);
+  --success-text-strong:var(--green-300);
+  --danger-soft:oklch(0.396 0.141 25.723 / 0.2);
+  --danger-text:var(--red-400);
+  --danger-text-strong:var(--red-300);
+  --chart-grid:var(--neutral-700);
+}

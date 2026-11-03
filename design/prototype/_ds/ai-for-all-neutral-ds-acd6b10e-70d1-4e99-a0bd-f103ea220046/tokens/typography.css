@@ -1,0 +1,56 @@
+/* Type — one family (DM Sans) for everything, JetBrains Mono for code.
+   Sizes are the exact pixel values used in the source (many are arbitrary Tailwind values). */
+:root{
+  --font-sans:'DM Sans',ui-sans-serif,system-ui,sans-serif;
+  --font-heading:var(--font-sans);
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+
+  --fw-regular:400; /* @kind font */
+  --fw-medium:500; /* @kind font */
+  --fw-semibold:600; /* @kind font */
+  --fw-bold:700; /* @kind font */
+  --fw-extrabold:800; /* @kind font */
+
+  --fs-display:56px;     /* hero h1 (36px on mobile) */
+  --fs-display-sm:36px;
+  --fs-section:36px;     /* marketing section h2 */
+  --fs-score:48px;       /* result number */
+  --fs-page-title:28px;  /* every app/admin page h1 */
+  --fs-stat:24px;        /* stat value */
+  --fs-title:22px;       /* detail page title */
+  --fs-xl:20px;          /* feature title, dialog title, wordmark */
+  --fs-lg:18px;          /* panel title, empty-state title */
+  --fs-base:16px;
+  --fs-card-title:15px;  /* card title, page subtitle */
+  --fs-sm:14px;          /* body, buttons, nav links */
+  --fs-13:13px;          /* secondary body, toast, select filters */
+  --fs-xs:12px;          /* meta, captions */
+  --fs-2xs:11px;         /* tags */
+
+  --lh-none:1; /* @kind font */
+  --lh-tight:1.15; /* @kind font */
+  --lh-snug:1.375; /* @kind font */
+  --lh-normal:1.5; /* @kind font */
+  --lh-relaxed:1.625; /* @kind font */
+  --lh-xs:16px; /* @kind font */
+  --lh-sm:20px; /* @kind font */
+  --lh-base:24px; /* @kind font */
+  --lh-lg:28px; /* @kind font */
+  --lh-xl:28px; /* @kind font */
+  --lh-2xl:32px; /* @kind font */
+
+  --tracking-wide:0.025em; /* @kind font */ /* uppercase table headers */
+
+  /* composite roles */
+  --type-display:var(--fw-bold) var(--fs-display)/var(--lh-tight) var(--font-heading);
+  --type-section:var(--fw-bold) var(--fs-section)/var(--lh-normal) var(--font-heading);
+  --type-page-title:var(--fw-bold) var(--fs-page-title)/var(--lh-normal) var(--font-heading);
+  --type-title:var(--fw-bold) var(--fs-title)/var(--lh-normal) var(--font-heading);
+  --type-panel-title:var(--fw-semibold) var(--fs-lg)/var(--lh-lg) var(--font-heading);
+  --type-card-title:var(--fw-semibold) var(--fs-card-title)/var(--lh-snug) var(--font-heading);
+  --type-body:var(--fw-regular) var(--fs-sm)/var(--lh-sm) var(--font-sans);
+  --type-body-lg:var(--fw-regular) var(--fs-base)/var(--lh-relaxed) var(--font-sans);
+  --type-meta:var(--fw-regular) var(--fs-xs)/var(--lh-xs) var(--font-sans);
+  --type-tag:var(--fw-medium) var(--fs-2xs)/var(--lh-normal) var(--font-sans);
+  --type-code:var(--fw-regular) var(--fs-13)/var(--lh-normal) var(--font-mono);
+}

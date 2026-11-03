@@ -1,0 +1,108 @@
+/* Base palettes. Values = Tailwind v4 palette as rendered in the source product (bg-cyan-500 etc.).
+   primary = cyan, secondary = amber, neutral = zinc (named neutrally so the palette can be re-skinned). */
+:root{
+  /* primary — cyan */
+  --primary-50:oklch(0.984 0.019 200.873);
+  --primary-100:oklch(0.956 0.045 203.388);
+  --primary-200:oklch(0.917 0.08 205.041);
+  --primary-300:oklch(0.865 0.127 207.078);
+  --primary-400:oklch(0.789 0.154 211.53);
+  --primary-500:oklch(0.715 0.143 215.221);
+  --primary-600:oklch(0.609 0.126 221.723);
+  --primary-700:oklch(0.52 0.105 223.128);
+  --primary-800:oklch(0.45 0.085 224.283);
+  --primary-900:oklch(0.398 0.07 227.392);
+  --primary-950:oklch(0.302 0.056 229.695);
+  /* secondary — amber */
+  --secondary-50:oklch(0.987 0.022 95.277);
+  --secondary-100:oklch(0.962 0.059 95.617);
+  --secondary-200:oklch(0.924 0.12 95.746);
+  --secondary-300:oklch(0.879 0.169 91.605);
+  --secondary-400:oklch(0.828 0.189 84.429);
+  --secondary-500:oklch(0.769 0.188 70.08);
+  --secondary-600:oklch(0.666 0.179 58.318);
+  --secondary-700:oklch(0.555 0.163 48.998);
+  --secondary-800:oklch(0.473 0.137 46.201);
+  --secondary-900:oklch(0.414 0.112 45.904);
+  --secondary-950:oklch(0.279 0.077 45.635);
+  /* neutral — zinc */
+  --neutral-50:oklch(0.985 0 0);
+  --neutral-100:oklch(0.967 0.001 286.375);
+  --neutral-200:oklch(0.92 0.004 286.32);
+  --neutral-300:oklch(0.871 0.006 286.286);
+  --neutral-400:oklch(0.705 0.015 286.067);
+  --neutral-500:oklch(0.552 0.016 285.938);
+  --neutral-600:oklch(0.442 0.017 285.786);
+  --neutral-700:oklch(0.37 0.013 285.805);
+  --neutral-800:oklch(0.274 0.006 286.033);
+  --neutral-900:oklch(0.21 0.006 285.885);
+  --neutral-950:oklch(0.141 0.005 285.823);
+  /* green — green */
+  --green-50:oklch(0.982 0.018 155.826);
+  --green-100:oklch(0.962 0.044 156.743);
+  --green-200:oklch(0.925 0.084 155.995);
+  --green-300:oklch(0.871 0.15 154.449);
+  --green-400:oklch(0.792 0.209 151.711);
+  --green-500:oklch(0.723 0.219 149.579);
+  --green-600:oklch(0.627 0.194 149.214);
+  --green-700:oklch(0.527 0.154 150.069);
+  --green-800:oklch(0.448 0.119 151.328);
+  --green-900:oklch(0.393 0.095 152.535);
+  /* red — red */
+  --red-50:oklch(0.971 0.013 17.38);
+  --red-100:oklch(0.936 0.032 17.717);
+  --red-200:oklch(0.885 0.062 18.334);
+  --red-300:oklch(0.808 0.114 19.571);
+  --red-400:oklch(0.704 0.191 22.216);
+  --red-500:oklch(0.637 0.237 25.331);
+  --red-600:oklch(0.577 0.245 27.325);
+  --red-700:oklch(0.505 0.213 27.518);
+  --red-800:oklch(0.444 0.177 26.899);
+  --red-900:oklch(0.396 0.141 25.723);
+  /* rose — rose */
+  --rose-50:oklch(0.969 0.015 12.422);
+  --rose-100:oklch(0.941 0.03 12.58);
+  --rose-200:oklch(0.892 0.058 10.001);
+  --rose-300:oklch(0.81 0.117 11.638);
+  --rose-400:oklch(0.712 0.194 13.428);
+  --rose-500:oklch(0.645 0.246 16.439);
+  --rose-600:oklch(0.586 0.253 17.585);
+  --rose-700:oklch(0.514 0.222 16.935);
+  --rose-800:oklch(0.455 0.188 13.697);
+  --rose-900:oklch(0.41 0.159 10.272);
+  /* violet — violet */
+  --violet-50:oklch(0.969 0.016 293.756);
+  --violet-100:oklch(0.943 0.029 294.588);
+  --violet-200:oklch(0.894 0.057 293.283);
+  --violet-300:oklch(0.811 0.111 293.571);
+  --violet-400:oklch(0.702 0.183 293.541);
+  --violet-500:oklch(0.606 0.25 292.717);
+  --violet-600:oklch(0.541 0.281 293.009);
+  --violet-700:oklch(0.491 0.27 292.581);
+  --violet-800:oklch(0.432 0.232 292.759);
+  --violet-900:oklch(0.38 0.189 293.745);
+  /* blue — blue */
+  --blue-50:oklch(0.97 0.014 254.604);
+  --blue-100:oklch(0.932 0.032 255.585);
+  --blue-200:oklch(0.882 0.059 254.128);
+  --blue-300:oklch(0.809 0.105 251.813);
+  --blue-400:oklch(0.707 0.165 254.624);
+  --blue-500:oklch(0.623 0.214 259.815);
+  --blue-600:oklch(0.546 0.245 262.881);
+  --blue-700:oklch(0.488 0.243 264.376);
+  --blue-800:oklch(0.424 0.199 265.638);
+  --blue-900:oklch(0.379 0.146 265.522);
+  /* indigo — indigo */
+  --indigo-50:oklch(0.962 0.018 272.314);
+  --indigo-100:oklch(0.93 0.034 272.788);
+  --indigo-200:oklch(0.87 0.065 274.039);
+  --indigo-300:oklch(0.785 0.115 274.713);
+  --indigo-400:oklch(0.673 0.182 276.935);
+  --indigo-500:oklch(0.585 0.233 277.117);
+  --indigo-600:oklch(0.511 0.262 276.966);
+  --indigo-700:oklch(0.457 0.24 277.023);
+  --indigo-800:oklch(0.398 0.195 277.366);
+  --indigo-900:oklch(0.359 0.144 278.697);
+  --white:#ffffff;
+  --black:#000000;
+}

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/palette.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
+<script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
+<style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
+</helmet>
+<div lang="zh-Hant-TW" data-screen-label="系統管理員s" class="{{ themeClass }}" style="min-height:100vh;background:var(--surface-page);font-family:var(--font-sans)">
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.TopNav" brand="{{ brand }}" links="{{ navLinks }}" active-id="users" on-navigate="{{ onNav }}" right="{{ navRight }}" hint-size="100%,56px"></x-import>
+  <main style="max-width:1280px;margin:0 auto;padding:32px 24px;box-sizing:border-box">
+    <div style="margin-bottom:32px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.PageHeader" title="用戶管理" subtitle="查看用戶資料與學習進度" hint-size="100%,68px"></x-import>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:32px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" variant="compact" icon="users" label="總用戶數" value="{{ nTotal }}" hint-size="100%,74px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" variant="compact" icon="users" tone="info" label="Google 登入" value="{{ nGoogle }}" hint-size="100%,74px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" variant="compact" icon="activity" tone="success" label="今日活躍" value="{{ nToday }}" hint-size="100%,74px"></x-import>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:24px">
+      <div style="flex:1;min-width:0">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SearchInput" placeholder="搜尋用戶…" on-change="{{ setSearch }}" hint-size="100%,42px"></x-import>
+      </div>
+    </div>
+    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.DataTable" columns="{{ columns }}" rows="{{ rows }}" empty-title="找不到用戶" empty-text="試著調整搜尋或篩選條件" hint-size="100%,380px"></x-import>
+    <sc-if value="{{ hasOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:16px">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Card" title="{{ openTitle }}" meta="{{ openMeta }}" action="{{ closeAction }}" padding="lg" hint-size="100%,300px">
+          <sc-if value="{{ noProgress }}" hint-placeholder-val="{{ false }}">
+            <p style="margin:0;padding:24px 0;text-align:center;font-size:14px;color:var(--text-muted)">還沒有學習紀錄</p>
+          </sc-if>
+          <sc-if value="{{ hasProgress }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ openRows }}" as="p" hint-placeholder-count="3">
+                <div style="display:grid;grid-template-columns:minmax(0,1fr) 180px 160px;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border-subtle)">
+                  <span style="font-size:14px;line-height:20px;color:var(--text-strong)">{{ p.title }}</span>
+                  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.ProgressBar" value="{{ p.value }}" tone="{{ p.tone }}" hint-size="180px,6px"></x-import>
+                  <span style="font-size:13px;text-align:right;white-space:nowrap;color:var(--text-muted)">{{ p.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </x-import>
+      </div>
+    </sc-if>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;dark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  mp() { const o = {}; const q = this.props || {}; Object.keys(q).forEach((k) => { if (q[k] !== undefined) o[k] = q[k]; }); new URLSearchParams(window.location.search).forEach((v, k) => { o[k] = v === '1' ? true : v === '0' ? false : v; }); return o; }
+  qs() { const u = new URLSearchParams(window.location.search); const o = new URLSearchParams(); ['signedIn', 'isAdmin', 'dark', 'showThumbnails'].forEach((k) => { if (u.has(k)) o.set(k, u.get(k)); }); const s = o.toString(); return s ? '?' + s : ''; }
+  users = [
+    { id: 'u1', name: '陳怡君', email: 'alice@example.com', provider: 'Google', joined: '2026年9月17日', done: 5, last: '昨天', today: false },
+    { id: 'u2', name: '王柏翰', email: 'bob@example.com', provider: 'Google', joined: '2026年10月12日', done: 1, last: '3 天前', today: false },
+    { id: 'u3', name: '林佳穎', email: 'carol@example.com', provider: 'Google', joined: '2026年9月2日', done: 6, last: '2 天前', today: false },
+    { id: 'u4', name: '劉家豪', email: 'dave@example.com', provider: 'Google', joined: '2026年10月25日', done: 0, last: '今天', today: true },
+    { id: 'u5', name: '系統管理員', email: 'admin@example.com', provider: 'Google', joined: '2026年8月3日', done: 3, last: '今天', today: true },
+  ];
+  state = { q: '', provider: '全部', open: null };
+  titles = ['ChatGPT 文案寫作入門：從零開始學 AI 寫作', 'Midjourney 繪圖技巧：創作你的 AI 藝術作品', 'Cursor AI 開發：用 AI 加速寫程式', 'ChatGPT 進階：打造自動化工作流程', 'AI 資料分析：用 Claude 處理資料', 'Stable Diffusion 本機安裝指南', 'AI 簡報：10 分鐘做出專業投影片', 'Cursor 進階：TDD 與 AI 結對程式設計'];
+  progress = {
+    u1: [[6, 'prog', 67], [5, 'prog', 33], [4, 'done', 100], [3, 'fail', 40], [2, 'done', 100], [1, 'done', 67], [0, 'done', 100]],
+    u2: [[2, 'prog', 50], [0, 'done', 80]],
+    u3: [[7, 'done', 100], [4, 'done', 80], [3, 'done', 100], [2, 'done', 75], [1, 'done', 100], [0, 'done', 100]],
+    u4: [[0, 'prog', 20]],
+    u5: [[4, 'done', 60], [2, 'done', 100], [0, 'done', 100]],
+  };
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentWillUnmount() { clearInterval(this._t); }
+  renderVals() {
+    const D = window.AIForAllNeutralDS_acd6b1 || {};
+    const h = React.createElement;
+    const E = (n, p, ...c) => (D[n] ? h(D[n], p, ...c) : null);
+    const go = (f) => () => { window.location.href = f + this.qs(); };
+    const p = this.mp();
+    const s = this.state;
+    const routes = { dashboard: 'AdminDashboard.dc.html', courses: 'AdminCourses.dc.html', users: 'AdminUsers.dc.html', categories: 'AdminCategories.dc.html' };
+    const q = s.q.trim().toLowerCase();
+    const openUser = this.users.find((x) => x.id === s.open);
+    const openRows = openUser ? (this.progress[openUser.id] || []).map(([i, st, v]) => ({ title: this.titles[i], done: st !== 'prog', value: st === 'done' ? 100 : v, tone: st === 'done' ? 'success' : st === 'fail' ? 'highlight' : undefined, label: st === 'done' ? '已完成 · ' + v + '%' : st === 'fail' ? '最新一輪未通過 · ' + v + '%' : '進行中 · ' + v + '%' })) : [];
+    const rows = this.users
+      .filter((u) => !q || (u.name + ' ' + u.email).toLowerCase().includes(q))
+      .filter((u) => s.provider === '全部' || u.provider === s.provider);
+    return {
+      themeClass: p.dark ? 'dark' : '',
+      brand: E('Wordmark', { accent: 'AI', text: 'for All', onClick: go('Landing.dc.html') }),
+      navLinks: [{ id: 'dashboard', label: '儀表板' }, { id: 'courses', label: '課程' }, { id: 'users', label: '用戶' }, { id: 'categories', label: '分類' }],
+      onNav: (id) => { window.location.href = routes[id] + this.qs(); },
+      navRight: E('UserMenu', { name: '系統管理員', email: 'admin@example.com', items: [{ label: '我的學習', onClick: go('MyLearning.dc.html') }, { label: '個人資料', onClick: go('Profile.dc.html') }], onSignOut: go('Login.dc.html'), signOutLabel: '登出' }),
+      nTotal: this.users.length,
+      nGoogle: this.users.filter((u) => u.provider === 'Google').length,
+      nFacebook: this.users.filter((u) => u.provider === 'Facebook').length,
+      nToday: this.users.filter((u) => u.today).length,
+      chips: ['全部', 'Google', 'Facebook'],
+      provider: s.provider,
+      setProvider: (v) => this.setState({ provider: v }),
+      setSearch: (v) => this.setState({ q: v || '' }),
+      rows,
+      hasOpen: !!openUser, noProgress: openRows.length === 0, hasProgress: openRows.length > 0,
+      openTitle: openUser ? openUser.name + ' 的學習進度' : '',
+      openMeta: openUser ? '已完成 ' + openRows.filter((x) => x.done).length + ' 堂 · 進行中 ' + openRows.filter((x) => !x.done).length + ' 堂' : '',
+      openRows,
+      closeAction: E('Button', { size: 'sm', variant: 'outline', onClick: () => this.setState({ open: null }) }, '收合'),
+      columns: [
+        { key: 'name', header: '用戶', width: '2fr', render: (r) => h('div', { style: { display: 'flex', alignItems: 'center', gap: 12 } },
+          E('Avatar', { name: r.name, size: 36 }),
+          h('div', null,
+            h('p', { style: { margin: 0, fontSize: 14, fontWeight: 500, color: 'var(--text-strong)' } }, r.name),
+            h('p', { style: { margin: 0, fontSize: 12, color: 'var(--text-subtle)' } }, r.joined + ' 加入'))) },
+        { key: 'email', header: '電子郵件', width: '1.5fr', render: (r) => h('span', { style: { color: 'var(--text-secondary)' } }, r.email) },
+        { key: 'provider', header: '登入方式', width: '1fr', render: (r) => E('Tag', { size: 'md', tone: r.provider === 'Google' ? 'info' : 'indigo' }, r.provider) },
+        { key: 'done', header: '完課數', width: '0.8fr', render: (r) => h('span', { style: { fontWeight: 500, color: 'var(--text-strong)' } }, r.done) },
+        { key: 'last', header: '最後活動', width: '1fr', render: (r) => h('span', { style: { color: 'var(--text-muted)' } }, r.last) },
+        { key: 'x', header: '', width: '110px', render: (r) => E('Button', { size: 'sm', variant: s.open === r.id ? 'primary' : 'outline', onClick: () => this.setState({ open: s.open === r.id ? null : r.id }) }, s.open === r.id ? '收合' : '學習進度') },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/palette.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
+<link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
+<script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
+<style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
+</helmet>
+<div lang="zh-Hant-TW" data-screen-label="Admin Course Editor" class="{{ themeClass }}" style="min-height:100vh;background:var(--surface-page);font-family:var(--font-sans)">
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.TopNav" brand="{{ brand }}" links="{{ navLinks }}" active-id="courses" on-navigate="{{ onNav }}" right="{{ navRight }}" hint-size="100%,56px"></x-import>
+  <main style="max-width:1024px;margin:0 auto;padding:32px 200px;box-sizing:border-box">
+    <div style="margin-bottom:24px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.BackLink" tone="accent" on-click="{{ goBack }}" hint-size="240px,20px">返回課程管理</x-import>
+    </div>
+    <div style="margin-bottom:32px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.PageHeader" title="{{ pageTitle }}" subtitle="填寫課程資訊並新增測驗題目" actions="{{ headerActions }}" hint-size="100%,96px"></x-import>
+    </div>
+
+    <div style="margin-bottom:24px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Card" title="課程資訊" padding="lg" hint-size="100%,760px">
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="標題" hint-size="100%,66px">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Input" value="{{ f.title }}" on-change="{{ setTitle }}" placeholder="例如：ChatGPT 入門：從零開始學 AI 對話" hint-size="100%,40px"></x-import>
+          </x-import>
+          <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="描述" hint-size="100%,130px">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Textarea" variant="filled" rows="{{ 4 }}" value="{{ f.desc }}" on-change="{{ setDesc }}" placeholder="說明學員會學到什麼…" hint-size="100%,104px"></x-import>
+          </x-import>
+          <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="YouTube 影片網址" hint-size="100%,66px">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Input" type="url" value="{{ f.url }}" on-change="{{ setUrl }}" placeholder="https://youtube.com/watch?v=..." hint-size="100%,40px"></x-import>
+          </x-import>
+          <sc-if value="{{ hasUrl }}" hint-placeholder-val="{{ true }}">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.VideoFrame" title="影片預覽" hint-size="100%,351px"></x-import>
+          </sc-if>
+          <sc-if value="{{ noUrl }}" hint-placeholder-val="{{ false }}">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.VideoFrame" tone="light" placeholder="輸入 YouTube 網址即可預覽影片" hint-size="100%,351px"></x-import>
+          </sc-if>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="工具" hint-size="100%,66px">
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" placeholder="選擇工具" options="{{ toolOpts }}" value="{{ f.tool }}" on-change="{{ setTool }}" hint-size="100%,42px"></x-import>
+            </x-import>
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="技能" hint-size="100%,66px">
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" placeholder="選擇技能" options="{{ skillOpts }}" value="{{ f.skill }}" on-change="{{ setSkill }}" hint-size="100%,42px"></x-import>
+            </x-import>
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="難度" hint-size="100%,66px">
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" options="{{ levelOpts }}" value="{{ f.level }}" on-change="{{ setLevel }}" hint-size="100%,42px"></x-import>
+            </x-import>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="創作者" hint-size="100%,66px">
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" placeholder="選擇創作者" options="{{ creatorOpts }}" value="{{ f.creator }}" on-change="{{ setCreator }}" hint-size="100%,42px"></x-import>
+            </x-import>
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="影片長度" hint="格式 mm:ss；用來計算「播放 10% 才算開始」" hint-size="100%,90px">
+              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Input" value="{{ f.duration }}" on-change="{{ setDuration }}" placeholder="例如：12:30" hint-size="100%,40px"></x-import>
+            </x-import>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Card" title="測驗題目" meta="{{ qMeta }}" action="{{ addAction }}" padding="lg" hint-size="100%,600px">
+      <sc-if value="{{ noQuestions }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:48px 0;border-radius:var(--radius-lg);border:1px dashed var(--border-default);text-align:center">
+          <p style="margin:0;font-size:14px;font-weight:500;color:var(--text-muted)">尚未新增題目</p>
+          <p style="margin:0;font-size:12px;color:var(--text-subtle)">點「新增題目」開始</p>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hasQuestions }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ qs }}" as="q" hint-placeholder-count="3">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Card" tone="subtle" hint-size="100%,190px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Tag" size="md" tone="{{ q.tagTone }}" hint-size="110px,20px">{{ q.typeLabel }}</x-import>
+                  <span style="font-size:14px;font-weight:500;color:var(--text-body)">第 {{ q.n }} 題</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <button type="button" title="編輯" onClick="{{ q.edit }}" style="display:flex;padding:6px;border:0;border-radius:6px;background:none;cursor:pointer;color:var(--text-subtle)" style-hover="color:var(--accent)">
+                    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Icon" name="pencil" hint-size="16px,16px"></x-import>
+                  </button>
+                  <button type="button" title="刪除" onClick="{{ q.remove }}" style="display:flex;padding:6px;border:0;border-radius:6px;background:none;cursor:pointer;color:var(--text-subtle)" style-hover="color:var(--danger-alt)">
+                    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Icon" name="trash-2" hint-size="16px,16px"></x-import>
+                  </button>
+                </div>
+              </div>
+              <p style="margin:0 0 8px;font-size:14px;line-height:20px;color:var(--text-heading)">{{ q.text }}</p>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <sc-for list="{{ q.opts }}" as="o" hint-placeholder-count="4">
+                  <sc-if value="{{ o.correct }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding:6px 12px;border-radius:var(--radius-md);font-size:12px;line-height:16px;font-weight:500;background:var(--accent-soft);color:var(--accent-text)">{{ o.text }}</div>
+                  </sc-if>
+                  <sc-if value="{{ o.wrong }}" hint-placeholder-val="{{ true }}">
+                    <div style="padding:6px 12px;border-radius:var(--radius-md);font-size:12px;line-height:16px;color:var(--text-muted)">{{ o.text }}</div>
+                  </sc-if>
+                </sc-for>
+              </div>
+            </x-import>
+          </sc-for>
+        </div>
+      </sc-if>
+    </x-import>
+  </main>
+
+  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Dialog" open="{{ dlgOpen }}" title="{{ dlgTitle }}" on-close="{{ closeDlg }}" footer="{{ dlgFooter }}" hint-size="0px,0px">
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="題型" size="sm" hint-size="100%,70px">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SegmentedControl" options="{{ typeOpts }}" value="{{ d.type }}" on-change="{{ setDType }}" hint-size="100%,44px"></x-import>
+      </x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="題目" size="sm" hint-size="100%,110px">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Textarea" variant="strong" value="{{ d.text }}" on-change="{{ setDText }}" placeholder="輸入題目…" hint-size="100%,86px"></x-import>
+      </x-import>
+      <sc-if value="{{ dIsMC }}" hint-placeholder-val="{{ true }}">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="選項（點選圓鈕標記正確答案）" size="sm" hint-size="100%,230px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ dOpts }}" as="o" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:10px">
+                <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Radio" checked="{{ o.checked }}" weight="{{ 1.5 }}" on-click="{{ o.mark }}" hint-size="18px,18px"></x-import>
+                <div style="flex:1;min-width:0">
+                  <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Input" variant="outline" selected="{{ o.checked }}" value="{{ o.value }}" on-change="{{ o.change }}" placeholder="{{ o.placeholder }}" input-style="{{ optInputStyle }}" hint-size="100%,42px"></x-import>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </x-import>
+      </sc-if>
+      <sc-if value="{{ dIsSA }}" hint-placeholder-val="{{ false }}">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="範例答案" size="sm" hint="AI 會依範例答案判定學員的回答" hint-size="100%,110px">
+          <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Textarea" variant="strong" rows="{{ 2 }}" value="{{ d.sample }}" on-change="{{ setDSample }}" placeholder="寫下一個標準答案…" hint-size="100%,66px"></x-import>
+        </x-import>
+      </sc-if>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.FormField" label="解說（選填）" size="sm" hint-size="100%,90px">
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Textarea" variant="strong" rows="{{ 2 }}" value="{{ d.expl }}" on-change="{{ setDExpl }}" placeholder="說明為什麼這是正確答案…" hint-size="100%,66px"></x-import>
+      </x-import>
+      <sc-if value="{{ dHasErr }}" hint-placeholder-val="{{ false }}">
+        <p style="margin:0;font-size:14px;color:var(--danger-alt)">{{ d.err }}</p>
+      </sc-if>
+    </div>
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;mode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;edit&quot;,&quot;new&quot;],&quot;default&quot;:&quot;edit&quot;,&quot;tsType&quot;:&quot;'edit' | 'new'&quot;},&quot;showQuestionDialog&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;dark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  mp() { const o = {}; const q = this.props || {}; Object.keys(q).forEach((k) => { if (q[k] !== undefined) o[k] = q[k]; }); new URLSearchParams(window.location.search).forEach((v, k) => { o[k] = v === '1' ? true : v === '0' ? false : v; }); return o; }
+  qs() { const u = new URLSearchParams(window.location.search); const o = new URLSearchParams(); ['signedIn', 'isAdmin', 'dark', 'showThumbnails'].forEach((k) => { if (u.has(k)) o.set(k, u.get(k)); }); const s = o.toString(); return s ? '?' + s : ''; }
+  course = {
+    title: 'ChatGPT 文案寫作入門：從零開始學 AI 寫作',
+    desc: '學習如何有效使用 ChatGPT 進行對話，掌握提示工程技巧，提升工作效率。',
+    url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', tool: 't1', skill: 's1', level: 'beginner', creator: 'cr1', duration: '',
+  };
+  seedQs = [
+    { type: 'mc', text: '使用 ChatGPT 時，哪一種提示策略最有效？', opts: ['提供清楚的背景與具體指示', '只輸入一個關鍵字', '字數越多越好', '不需要任何背景資訊'], correct: 0, expl: '提供清楚的背景與具體指示，能幫助 ChatGPT 理解你的需求，產出更有用的回應。' },
+    { type: 'mc', text: 'ChatGPT 給出錯誤回應時，你該怎麼做？', opts: ['放棄使用', '補充更多背景，或換個方式下指示', '接受錯誤的答案', '改問完全不同的問題'], correct: 1, expl: 'ChatGPT 回答錯誤時，補充更多資訊或換個方式提問，通常就能得到更好的結果。' },
+    { type: 'sa', text: '請簡單說明什麼是提示工程。', opts: ['', '', '', ''], correct: -1, sample: '提示工程是設計並優化給 AI 的指令（提示），讓它產出更準確、更有用的結果。', expl: '提示工程是設計並優化給 AI 的指令（提示），讓它產出更準確、更有用的結果。' },
+    { type: 'mc', text: 'ChatGPT 最適合哪一種任務？', opts: ['查詢即時天氣', '文章摘要與改寫', '精確的數學計算', '預測未來事件'], correct: 1, expl: 'ChatGPT 擅長摘要、改寫、翻譯等文字處理工作；處理即時資訊與精確計算則有其限制。' },
+    { type: 'mc', text: '使用 ChatGPT 時，應該注意哪一項限制？', opts: ['它可能產生聽起來合理、但其實錯誤的資訊', '它能取得所有最新資訊', '它的答案永遠 100% 正確', '不需任何提示就能產出完美答案'], correct: 0, expl: 'ChatGPT 有時會「幻覺」— 產生聽起來合理、但與事實不符的內容。請保持批判思考，重要資訊務必查證。' },
+  ];
+  emptyDlg = { open: false, editing: null, type: 'mc', text: '', opts: ['', '', '', ''], correct: -1, expl: '', sample: '', err: null };
+  initial(props) {
+    const isNew = props && props.mode === 'new';
+    const qs = isNew ? [] : this.seedQs.map((q) => ({ ...q, opts: [...q.opts] }));
+    const f = isNew ? { title: '', desc: '', url: '', tool: '', skill: '', level: 'beginner', creator: '', duration: '' } : { ...this.course };
+    let d = { ...this.emptyDlg };
+    if (props && props.showQuestionDialog) d = isNew ? { ...this.emptyDlg, open: true } : { ...this.emptyDlg, open: true, editing: 0, type: qs[0].type, text: qs[0].text, opts: [...qs[0].opts], correct: qs[0].correct, expl: qs[0].expl };
+    return { f, qs, d, saving: null };
+  }
+  state = this.initial(this.mp());
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentDidUpdate() { const p = this.mp(); const v = (p.mode || 'edit') + '|' + !!p.showQuestionDialog; if (v !== this._ed) { const first = this._ed === undefined; this._ed = v; if (!first) this.setState(this.initial(p)); } }
+  componentWillUnmount() { clearInterval(this._t); clearTimeout(this._s); }
+  setF(k, v) { this.setState((s) => ({ f: { ...s.f, [k]: v } })); }
+  setD(patch) { this.setState((s) => ({ d: { ...s.d, ...patch } })); }
+  openEdit(i) { const q = this.state.qs[i]; this.setState({ d: { ...this.emptyDlg, open: true, editing: i, type: q.type, text: q.text, opts: [...q.opts], correct: q.correct, expl: q.expl, sample: q.sample || '' } }); }
+  saveQ() {
+    const d = this.state.d;
+    if (!d.text.trim()) return this.setD({ err: '請輸入題目' });
+    if (d.type === 'mc' && d.opts.some((o) => !o.trim())) return this.setD({ err: '所有選項都必須填寫' });
+    if (d.type === 'mc' && d.correct < 0) return this.setD({ err: '請選擇正確答案' });
+    if (d.type === 'sa' && !d.sample.trim()) return this.setD({ err: '請輸入範例答案' });
+    const q = { type: d.type, text: d.text, opts: [...d.opts], correct: d.type === 'mc' ? d.correct : -1, expl: d.expl, sample: d.type === 'sa' ? d.sample : '' };
+    this.setState((s) => {
+      const qs = [...s.qs];
+      if (d.editing !== null) qs[d.editing] = q; else qs.push(q);
+      return { qs, d: { ...this.emptyDlg } };
+    });
+  }
+  renderVals() {
+    const D = window.AIForAllNeutralDS_acd6b1 || {};
+    const h = React.createElement;
+    const E = (n, p, ...c) => (D[n] ? h(D[n], p, ...c) : null);
+    const go = (f) => () => { window.location.href = f + this.qs(); };
+    const p = this.mp();
+    const s = this.state;
+    const isNew = p.mode === 'new';
+    const routes = { dashboard: 'AdminDashboard.dc.html', courses: 'AdminCourses.dc.html', users: 'AdminUsers.dc.html', categories: 'AdminCategories.dc.html' };
+    const save = (kind) => { this.setState({ saving: kind }); this._s = setTimeout(() => { window.location.href = routes.courses + this.qs(); }, 700); };
+    const L = 'ABCD';
+    return {
+      themeClass: p.dark ? 'dark' : '',
+      brand: E('Wordmark', { accent: 'AI', text: 'for All', onClick: go('Landing.dc.html') }),
+      navLinks: [{ id: 'dashboard', label: '儀表板' }, { id: 'courses', label: '課程' }, { id: 'users', label: '用戶' }, { id: 'categories', label: '分類' }],
+      onNav: (id) => { window.location.href = routes[id] + this.qs(); },
+      navRight: E('UserMenu', { name: '系統管理員', email: 'admin@example.com', items: [{ label: '我的學習', onClick: go('MyLearning.dc.html') }, { label: '個人資料', onClick: go('Profile.dc.html') }], onSignOut: go('Login.dc.html'), signOutLabel: '登出' }),
+      goBack: go(routes.courses),
+      pageTitle: isNew ? '新增課程' : '編輯課程',
+      headerActions: h('div', { style: { display: 'flex', gap: 12 } },
+        E('Button', { variant: 'outline', loading: s.saving === 'draft', disabled: !!s.saving, onClick: () => save('draft') }, '儲存草稿'),
+        E('Button', { loading: s.saving === 'publish', disabled: !!s.saving, onClick: () => save('publish') }, '發布')),
+      f: s.f,
+      setTitle: (e) => this.setF('title', e.target.value),
+      setDesc: (e) => this.setF('desc', e.target.value),
+      setUrl: (e) => this.setF('url', e.target.value),
+      setTool: (v) => this.setF('tool', v),
+      setSkill: (v) => this.setF('skill', v),
+      setLevel: (v) => this.setF('level', v),
+      setCreator: (v) => this.setF('creator', v),
+      setDuration: (e) => this.setF('duration', e.target.value),
+      creatorOpts: [{ value: 'cr1', label: 'AI Prince' }, { value: 'cr2', label: 'Digital Maker' }, { value: 'cr3', label: 'Dev Academy' }],
+      hasUrl: !!s.f.url.trim(), noUrl: !s.f.url.trim(),
+      toolOpts: [{ value: 't1', label: 'ChatGPT' }, { value: 't2', label: 'Midjourney' }, { value: 't3', label: 'Cursor' }, { value: 't4', label: 'Claude' }, { value: 't5', label: 'Stable Diffusion' }],
+      skillOpts: [{ value: 's1', label: '文案寫作' }, { value: 's2', label: '圖像生成' }, { value: 's3', label: '程式開發' }, { value: 's4', label: '資料分析' }, { value: 's5', label: '簡報製作' }],
+      levelOpts: [{ value: 'beginner', label: '入門' }, { value: 'intermediate', label: '中級' }, { value: 'advanced', label: '進階' }],
+      qMeta: '已新增 ' + s.qs.length + ' 題',
+      addAction: E('Button', { variant: 'outline', leadingIcon: 'plus', style: { padding: '8px 12px' }, onClick: () => this.setState({ d: { ...this.emptyDlg, open: true } }) }, '新增題目'),
+      noQuestions: s.qs.length === 0, hasQuestions: s.qs.length > 0,
+      qs: s.qs.map((q, i) => ({
+        n: i + 1, text: q.text,
+        typeLabel: q.type === 'mc' ? '單選題' : '簡答題',
+        tagTone: q.type === 'mc' ? 'accent-strong' : 'highlight',
+        opts: q.type === 'mc' ? q.opts.map((o, k) => ({ text: L[k] + '. ' + o + (k === q.correct ? ' ✓' : ''), correct: k === q.correct, wrong: k !== q.correct })) : [],
+        edit: () => this.openEdit(i),
+        remove: () => this.setState((st) => ({ qs: st.qs.filter((_, k) => k !== i) })),
+      })),
+      dlgOpen: s.d.open,
+      dlgTitle: s.d.editing !== null ? '編輯題目' : '新增題目',
+      closeDlg: () => this.setState({ d: { ...this.emptyDlg } }),
+      dlgFooter: h(React.Fragment, null,
+        E('Button', { variant: 'outline', style: { padding: '10px 20px' }, onClick: () => this.setState({ d: { ...this.emptyDlg } }) }, '取消'),
+        E('Button', { style: { padding: '10px 20px' }, onClick: () => this.saveQ() }, '儲存題目')),
+      d: s.d,
+      typeOpts: [{ value: 'mc', label: '單選題' }, { value: 'sa', label: '簡答題' }],
+      setDType: (v) => this.setD({ type: v }),
+      setDText: (e) => this.setD({ text: e.target.value }),
+      setDExpl: (e) => this.setD({ expl: e.target.value }),
+      dIsMC: s.d.type === 'mc', dIsSA: s.d.type === 'sa',
+      setDSample: (e) => this.setD({ sample: e.target.value }),
+      dHasErr: !!s.d.err,
+      optInputStyle: { height: 42 },
+      dOpts: s.d.opts.map((o, i) => ({
+        value: o, checked: s.d.correct === i, placeholder: '選項 ' + L[i],
+        mark: () => this.setD({ correct: i }),
+        change: (e) => { const v = e.target.value; this.setState((st) => { const opts = [...st.d.opts]; opts[i] = v; return { d: { ...st.d, opts } }; }); },
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>
