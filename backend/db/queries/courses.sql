@@ -27,9 +27,15 @@ WHERE c.status = 'published'
 SELECT * FROM courses WHERE id = $1;
 
 -- name: GetRecommendedCourses :many
-SELECT * FROM courses
-WHERE status = 'published'
-  AND id != $1
-  AND (tool_id = $2 OR skill_id = $3)
-ORDER BY created_at DESC
+-- BR-15: same tool or skill, published, excluding this course and (when signed in)
+-- courses the learner has already completed.
+SELECT c.* FROM courses c
+WHERE c.status = 'published'
+  AND c.id != sqlc.arg('course_id')
+  AND (c.tool_id = sqlc.arg('tool_id') OR c.skill_id = sqlc.arg('skill_id'))
+  AND (sqlc.narg('user_id')::uuid IS NULL OR c.id NOT IN (
+        SELECT p.course_id FROM progress p
+        WHERE p.user_id = sqlc.narg('user_id')
+          AND (p.status = 'completed' OR p.badge_earned_at IS NOT NULL)))
+ORDER BY c.created_at DESC
 LIMIT 4;

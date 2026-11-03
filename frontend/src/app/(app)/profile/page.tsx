@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { profileFormSchema } from '@/lib/schemas'
+import { cropToSquare, validateAvatarFile } from '@/lib/avatar'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
@@ -29,16 +30,28 @@ export default function ProfilePage() {
 
   async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
+    e.target.value = '' // allow choosing the same file again
     if (!file || !accessToken || !user) return
 
-    // Show local preview immediately
-    const reader = new FileReader()
-    reader.onloadend = () => setAvatarPreview(reader.result as string)
-    reader.readAsDataURL(file)
+    // BR-25: images up to 5MB, cropped to a centered square before upload.
+    const invalid = validateAvatarFile(file)
+    if (invalid) {
+      setMessage({ type: 'error', text: invalid })
+      return
+    }
 
-    // Upload to backend
+    let square: Blob
+    try {
+      square = await cropToSquare(file)
+    } catch {
+      setMessage({ type: 'error', text: 'Could not read this image. Please try another one.' })
+      return
+    }
+    const previousPreview = avatarPreview
+    setAvatarPreview(URL.createObjectURL(square))
+
     const formData = new FormData()
-    formData.append('avatar', file)
+    formData.append('avatar', square, 'avatar.jpg')
 
     try {
       const res = await fetch(`${API_URL}/api/v1/my/avatar`, {
@@ -48,15 +61,18 @@ export default function ProfilePage() {
       })
       if (res.ok) {
         const data = (await res.json()) as { avatarUrl: string }
-        const fullUrl = `${API_URL}${data.avatarUrl}`
+        // Bust the cache: the avatar keeps the same file name on every upload.
+        const fullUrl = `${API_URL}${data.avatarUrl}?v=${Date.now()}`
         setAvatarPreview(fullUrl)
         setAuth(accessToken, { ...user, avatarUrl: fullUrl })
         setMessage({ type: 'success', text: 'Avatar updated' })
       } else {
         const body = await res.json().catch(() => ({ error: 'Upload failed' }))
+        setAvatarPreview(previousPreview)
         setMessage({ type: 'error', text: (body as { error?: string }).error || 'Upload failed' })
       }
     } catch {
+      setAvatarPreview(previousPreview)
       setMessage({ type: 'error', text: 'Failed to upload avatar' })
     }
   }
@@ -205,6 +221,7 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
+            aria-label="Change avatar (image up to 5MB, cropped to a square)"
             className="absolute top-4 left-[88px] flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-cyan-500 transition-colors hover:bg-cyan-600"
           >
             <Camera className="h-3.5 w-3.5 text-white" />

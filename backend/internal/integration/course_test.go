@@ -92,25 +92,46 @@ func TestGetCourseByID(t *testing.T) {
 	}
 }
 
-func TestDeleteCourse(t *testing.T) {
+func TestArchiveCourse(t *testing.T) {
 	ctx := context.Background()
 	toolID, skillID, creatorID := createCoursePrereqs(t, ctx)
 	creatorUUID, _ := uuid.Parse(creatorID)
 
 	course, _ := testQueries.AdminCreateCourse(ctx, repository.AdminCreateCourseParams{
-		Title: "To Delete", Description: "Del", YoutubeUrl: "https://youtube.com", YoutubeID: "del",
+		Title: "To Archive", Description: "Del", YoutubeUrl: "https://youtube.com", YoutubeID: "del",
 		ThumbnailUrl: "https://img.youtube.com", ToolID: toolID, SkillID: skillID,
 		CreatorID: creatorUUID, Difficulty: repository.DifficultyLevelAdvanced, Duration: 100,
-		Status: repository.CourseStatusDraft,
+		Status: repository.CourseStatusPublished,
 	})
 
-	err := testQueries.AdminDeleteCourse(ctx, course.ID)
+	archived, err := testQueries.AdminArchiveCourse(ctx, course.ID)
 	if err != nil {
-		t.Fatalf("DeleteCourse failed: %v", err)
+		t.Fatalf("ArchiveCourse failed: %v", err)
+	}
+	if archived.Status != repository.CourseStatusArchived {
+		t.Errorf("status = %s, want archived", archived.Status)
 	}
 
-	_, err = testQueries.GetCourseByID(ctx, course.ID)
-	if err == nil {
-		t.Error("expected error after delete, got nil")
+	// BR-31: hidden from the default admin list, listed with status=archived.
+	rows, _ := testQueries.AdminListCourses(ctx, repository.AdminListCoursesParams{})
+	for _, r := range rows {
+		if r.ID == course.ID {
+			t.Error("archived course should not be in the default admin list")
+		}
+	}
+	rows, _ = testQueries.AdminListCourses(ctx, repository.AdminListCoursesParams{
+		StatusFilter: pgtype.Text{String: "archived", Valid: true},
+	})
+	found := false
+	for _, r := range rows {
+		found = found || r.ID == course.ID
+	}
+	if !found {
+		t.Error("archived course should be listed with status=archived")
+	}
+
+	restored, err := testQueries.AdminRestoreCourse(ctx, course.ID)
+	if err != nil || restored.Status != repository.CourseStatusDraft {
+		t.Fatalf("restore: status=%s err=%v", restored.Status, err)
 	}
 }

@@ -52,17 +52,26 @@ func TestUpdateTool(t *testing.T) {
 	}
 }
 
-func TestDeleteTool(t *testing.T) {
+func TestArchiveTool(t *testing.T) {
 	ctx := context.Background()
 	tool, _ := testQueries.AdminCreateTool(ctx, repository.AdminCreateToolParams{
-		Name: "ToDelete-" + uuid.New().String()[:6], Icon: "x", Order: 1,
+		Name: "ToArchive-" + uuid.New().String()[:6], Icon: "x", Order: 1,
 	})
-	err := testQueries.AdminDeleteTool(ctx, tool.ID)
-	if err != nil {
-		t.Fatalf("DeleteTool failed: %v", err)
+	if err := testQueries.AdminArchiveTool(ctx, tool.ID); err != nil {
+		t.Fatalf("ArchiveTool failed: %v", err)
 	}
-	_, err = testQueries.GetToolByID(ctx, tool.ID)
-	if err == nil {
-		t.Error("expected error after delete")
+	// BR-33: the tool still exists (courses keep it) but is no longer active.
+	got, err := testQueries.GetToolByID(ctx, tool.ID)
+	if err != nil {
+		t.Fatalf("archived tool should still be readable: %v", err)
+	}
+	if !got.ArchivedAt.Valid {
+		t.Error("expected archived_at to be set")
+	}
+	active, _ := testQueries.AdminListActiveTools(ctx)
+	for _, a := range active {
+		if a.ID == tool.ID {
+			t.Error("archived tool must not be listed as active")
+		}
 	}
 }

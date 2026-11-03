@@ -71,7 +71,8 @@ A learning unit with a YouTube video link and difficulty level.
 | `creatorId` | string | Reference to Creator |
 | `difficulty` | `'beginner' \| 'intermediate' \| 'advanced'` | Difficulty level |
 | `duration` | number | Video duration in seconds |
-| `status` | `'draft' \| 'published'` | Publication status |
+| `status` | `'draft' \| 'published' \| 'archived'` | Publication status. Deleting a course archives it (BR-31) |
+| `previewToken` | string? | Shareable preview link for a draft; cleared on publish (BR-05) |
 | `createdAt` | timestamp | Creation time |
 | `updatedAt` | timestamp | Last update |
 
@@ -86,7 +87,8 @@ Quiz question for a course — either multiple choice or short answer.
 | `question` | string | Question text |
 | `options` | `array<{id: string, text: string}>` | Options (for multiple choice) |
 | `correctAnswer` | string | Correct answer (option ID or text) |
-| `acceptableKeywords` | array | Keywords for short answer validation |
+| `sampleAnswer` | string | Model answer for short answer; AI grades against it (BR-09, BR-29) |
+| `acceptableKeywords` | array | Legacy keywords — no longer used for grading |
 | `explanation` | string | Explanation shown after answering |
 | `order` | number | Display order within course |
 
@@ -119,11 +121,12 @@ User's course completion record including status and score.
 | `userId` | string | Reference to User |
 | `courseId` | string | Reference to Course |
 | `status` | `'in_progress' \| 'completed'` | Progress status |
-| `currentQuestion` | number | Current question index (if in progress) |
+| `currentQuestion` | number | Number of questions answered in the current round |
 | `score` | number | Final score (if completed) |
 | `answers` | `array<{questionId: string, answer: string, isCorrect: boolean}>` | User's answers |
 | `startedAt` | timestamp | Start time |
 | `completedAt` | timestamp | Completion time |
+| `badgeEarnedAt` | timestamp? | First time the course was passed; never cleared (BR-12, BR-16) |
 | `lastAccessedAt` | timestamp | Last access |
 
 #### Creator
@@ -160,13 +163,16 @@ User ─────────< Progress >───────── Course
 ### Implementation Notes
 
 1. **Authentication**: Users authenticate via Google or Facebook OAuth. Store provider info for profile display.
-2. **Progress Tracking**: Create a Progress record with `status: 'in_progress'` when a user starts a course. Update `currentQuestion` as they progress. Set `status: 'completed'` and calculate `score` when all questions are answered.
-3. **Badges**: Implicitly created when a Progress record is completed. Query completed Progress records to display badges.
+2. **Progress Tracking**: Create a Progress record with `status: 'in_progress'` once the video has played 10% of its length (BR-17; answering a question also creates it). Each question is answered once per round, and "Continue learning" resumes at the first unanswered question (BR-19). When every question is answered the round is scored: 60% or more sets `status: 'completed'` (BR-12); below 60% the course stays in progress and can be retaken. A retake starts a new round that replaces the previous answers and score (BR-16).
+3. **Badges**: Earned the first time a course is passed (`badgeEarnedAt`) and never taken back, even if a later round scores below 60%. Completions recorded before the 60% rule keep their badges.
 4. **Course Filtering**: Use `toolId`, `skillId`, and `difficulty` for filtering in Course Discovery.
 5. **Admin Access**: Use the `isAdmin` flag on User to gate admin functionality.
-6. **Score Calculation**: Score = (correct answers / total questions). Multiple choice: exact match. Short answer: at least one `acceptableKeyword` found in the answer (case-insensitive).
+6. **Score Calculation**: Score = (correct answers / total questions). Multiple choice: exact match. Short answer: graded by AI (Claude) against the question's `sampleAnswer`, in any language (BR-09). If grading fails or times out, the learner sees "please try again later" and the answer is not recorded. Guests are not graded and are asked to sign in (BR-11).
 7. **Recommended Courses**: Based on matching `toolId` or `skillId` with the completed course, excluding courses the user has already completed. No separate data model needed — computed at query time.
-8. **Course Duration**: Entered manually by admin during course creation. Future enhancement: auto-extract from YouTube API.
+8. **Course Duration**: Entered manually by admin as mm:ss and stored in seconds; required (BR-28). Future enhancement: auto-extract from YouTube API.
+9. **Visibility**: Drafts open only for admins or with a preview link, which stays valid until the course is published (BR-05). Archived courses are hidden from learners, but their progress and badges are kept; "My Learning" still lists them without a link (BR-31). Archived tools/skills disappear from filters, and courses keep them (BR-33).
+
+> Business rules BR-xx refer to the rule set agreed on 2026-11-03 (design project `規格文件/rules-data.js` and `decisions-data.js`).
 
 ---
 
@@ -355,9 +361,9 @@ User ─────────< Progress >───────── Course
 - [x] Combined filters (tool + skill + difficulty)
 - [x] Filter sidebar (collapsible on mobile as drawer)
 - [x] Active filter count badge on mobile
-- [x] Results count display
+- [x] Results count display (desktop and mobile, above the grid — BR-04, fixed 2026-11)
 - [x] Empty state when no courses match
-- [x] Clear all filters action
+- [x] Clear all filters action (clears search box too; shown when any filter is set — BR-04, fixed 2026-11)
 - [x] Click course card to navigate to learning page
 
 **Course Learning**:
@@ -365,11 +371,15 @@ User ─────────< Progress >───────── Course
 - [x] Step-by-step quiz (one question at a time)
 - [x] Quiz progress bar ("Question X of Y")
 - [x] Multiple choice question UI (select → submit → feedback)
-- [x] Short answer question UI (type → submit → keyword validation)
+- [x] Short answer question UI (type → submit → AI grading against the sample answer; "try again later" on grading failure — BR-09)
 - [x] Answer feedback (correct: green + explanation, incorrect: red + correct answer + explanation)
-- [x] Completion view (score summary, trophy icon, congratulations message)
+- [x] Completion view (score summary, trophy icon, congratulations message); 60% or more completes the course, below 60% shows "Keep going!" with a retake (BR-12, BR-16)
+- [x] Guests answer without a verdict and are asked to sign in (BR-11)
+- [x] Resume at the first unanswered question (BR-19)
+- [x] Count as started once 10% of the video has played (BR-17)
+- [x] Preview of a draft via admin access or preview link; answers graded, not saved (BR-05)
 - [x] Score-based feedback (100%: gold, 60%+: cyan, <60%: gray)
-- [x] Recommended next courses
+- [x] Recommended next courses (up to 4, same tool or skill, excluding completed — BR-15)
 - [x] Back to course list navigation
 
 #### User Flows
@@ -399,7 +409,10 @@ User ─────────< Progress >───────── Course
 | `GET` | `/api/v1/tools` | List all tools |
 | `GET` | `/api/v1/skills` | List all skills |
 | `POST` | `/api/v1/courses/:id/submit` | Submit quiz answer |
-| `POST` | `/api/v1/courses/:id/complete` | Mark course as completed |
+| `GET` | `/api/v1/courses/:id/progress` | Signed-in learner's current round (resume) |
+| `POST` | `/api/v1/courses/:id/start` | Record start after 10% of the video |
+| `POST` | `/api/v1/courses/:id/complete` | Score the round (completes at 60%+) |
+| `POST` | `/api/v1/courses/:id/retake` | Start a new round |
 | `GET` | `/api/v1/courses/:id/recommended` | Get recommended courses |
 
 #### Success Criteria
@@ -422,7 +435,9 @@ User ─────────< Progress >───────── Course
 
 **Learning**:
 - MC question: select → submit → shows green/red feedback with explanation
-- SA question: type → submit → keyword matching validates answer
+- SA question: type → submit → AI grades against the sample answer; grading failure shows "try again later" and nothing is saved
+- Guest: submitting shows no verdict, only a sign-in prompt
+- 3/5 correct (60%) completes the course; 2/5 shows "Keep going!" and a retake; a failing retake keeps the badge
 - Progress bar updates after each question
 - Last question shows "View results" instead of "Next question"
 - Completion view shows correct score, trophy, and dynamic message
@@ -507,24 +522,25 @@ User ─────────< Progress >───────── Course
 - [x] Filter by status (draft/published)
 - [x] "Create course" button
 - [x] Course editor drawer (slides from right)
-- [x] Course form (title, description, YouTube URL, tool, skill, difficulty)
-- [x] Quiz question editor (add/edit/delete/reorder questions)
+- [x] Course form (title, description, YouTube URL, tool, skill, difficulty, creator, video length mm:ss — BR-28, fixed 2026-11)
+- [x] Quiz question editor (add/edit/delete/reorder questions); questions are saved with the course in one transaction (BR-29, fixed 2026-11)
 - [x] MC question editor (question text, 4 options, mark correct, explanation)
-- [x] SA question editor (question text, sample answer, keywords, explanation)
+- [x] SA question editor (question text, required sample answer, explanation — BR-29; keywords replaced by AI grading)
 - [x] Toggle course publish/unpublish
-- [x] Delete course with confirmation dialog
+- [x] Archive course with confirmation dialog; restore from the Archived filter (BR-31)
+- [x] Copy a preview link for drafts (BR-05)
 
 **User Management** (`/admin/users`):
 - [x] User table (name, email, provider, registered, last active)
 - [x] Search users by name/email
-- [x] Expandable row to view user's course progress
+- [x] Expandable row to view user's course progress (BR-34, built 2026-11 — was checked before it existed)
 - [x] Progress details (in-progress and completed courses with scores)
 
 **Category Management** (`/admin/categories`):
 - [x] Tool category list with drag-and-drop reordering
 - [x] Skill category list with drag-and-drop reordering
-- [x] Add/edit/delete tools
-- [x] Add/edit/delete skills
+- [x] Add/edit/archive tools (BR-33)
+- [x] Add/edit/archive skills (BR-33)
 - [x] Category count display
 
 #### User Flows
@@ -543,18 +559,20 @@ User ─────────< Progress >───────── Course
 | `GET` | `/api/v1/admin/courses` | List all courses (with search/filter) |
 | `POST` | `/api/v1/admin/courses` | Create course |
 | `PUT` | `/api/v1/admin/courses/:id` | Update course |
-| `DELETE` | `/api/v1/admin/courses/:id` | Delete course |
+| `DELETE` | `/api/v1/admin/courses/:id` | Archive course (BR-31) |
+| `PUT` | `/api/v1/admin/courses/:id/restore` | Restore archived course as draft |
+| `POST` | `/api/v1/admin/courses/:id/preview-link` | Preview link for a draft (BR-05) |
 | `PUT` | `/api/v1/admin/courses/:id/publish` | Toggle publish status |
 | `GET` | `/api/v1/admin/users` | List all users |
 | `GET` | `/api/v1/admin/users/:id/progress` | Get user's progress |
 | `GET` | `/api/v1/admin/categories` | List tools and skills |
 | `POST` | `/api/v1/admin/tools` | Create tool |
 | `PUT` | `/api/v1/admin/tools/:id` | Update tool |
-| `DELETE` | `/api/v1/admin/tools/:id` | Delete tool |
+| `DELETE` | `/api/v1/admin/tools/:id` | Archive tool (BR-33) |
 | `PUT` | `/api/v1/admin/tools/reorder` | Reorder tools |
 | `POST` | `/api/v1/admin/skills` | Create skill |
 | `PUT` | `/api/v1/admin/skills/:id` | Update skill |
-| `DELETE` | `/api/v1/admin/skills/:id` | Delete skill |
+| `DELETE` | `/api/v1/admin/skills/:id` | Archive skill (BR-33) |
 | `PUT` | `/api/v1/admin/skills/reorder` | Reorder skills |
 
 #### Success Criteria
@@ -571,7 +589,9 @@ User ─────────< Progress >───────── Course
 - Authorization: non-admin users are redirected from all `/admin/*` routes
 - Dashboard: 4 stat cards render, trend chart renders, popular courses show
 - Course management: search filters table, create/edit in drawer, toggle publish, delete with confirmation
-- Question editor: add MC question with 4 options + correct answer, add SA question with keywords
+- Question editor: add MC question with 4 options + correct answer, add SA question with a sample answer (required)
+- Saving a course saves its questions (added, edited, removed, reordered) in one transaction
+- Dashboard "New Users This Week" sums the last 7 days only (BR-35)
 - User management: search users, expand row to see progress details
 - Category management: add/edit/delete tools and skills, drag to reorder
 - Empty states: "Create your first course", "No users yet", empty category lists
@@ -796,11 +816,11 @@ Phases 1–6 are complete. The following phases outline the product's long-term 
 #### Features
 
 - **Creator Revenue Sharing** — Creators earn based on course completion count. Transparent revenue dashboard with payout history.
-- **Certificates & Credentials** — Verifiable completion certificates. Options: digitally signed PDF (simple) or blockchain-backed credential (advanced).
+- **Certificates & Credentials** — Verifiable completion certificates. Options: digitally signed PDF (simple) or blockchain-backed credential (advanced). **Decided 2026-11-03: certificates are free for learners**; conditions to be set in this phase (PG-05-1). Enterprise/team plans may charge companies.
 - **Enterprise / Team Plans** — Company accounts with bulk enrollment. Admin dashboard shows employee learning progress and completion rates.
-- **Sponsorship / Featured Courses** — AI tool vendors (OpenAI, Midjourney, etc.) can sponsor featured placement for courses using their tools.
+- ~~**Sponsorship / Featured Courses**~~ — **Decided 2026-11-03: not doing.** Course order can't be bought (product guide PG-05-4).
 - **Course Reviews & Ratings** — Star ratings + text reviews from learners. Surfaces quality courses and helps new users choose.
-- **Gamification** — Learning streaks, XP system, achievement badges, and leaderboards. Increases daily active usage and course completion rates.
+- **Gamification** — Learning streaks, XP system, achievement badges. Increases daily active usage and course completion rates. **Decided 2026-11-03: no leaderboards** — scores stay private (PG-05-3).
 
 #### Technical Approach
 

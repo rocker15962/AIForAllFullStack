@@ -33,6 +33,7 @@ A nonprofit AI education platform that partners with YouTube creators to deliver
 | **Gin** | Web framework | Most popular Go web framework, extremely high performance, largest community and middleware ecosystem |
 | **sqlc** | Data access | SQL-first approach: write raw SQL, auto-generate type-safe Go code. Best performance, zero magic — learning SQL is learning a real skill |
 | **OAuth2 + JWT** | Authentication | Google/Facebook OAuth login → issue JWT token → stateless verification. No session store needed for horizontal scaling |
+| **Anthropic Go SDK** | Short-answer grading | Short answers are graded by Claude against the author's sample answer (any language), replacing keyword matching. The official SDK handles retries, timeouts and structured JSON output; set `ANTHROPIC_API_KEY` (see `docs/ENVIRONMENT.md`) |
 
 ### Infrastructure
 
@@ -269,20 +270,20 @@ HTTP Request
 
 ## API Overview
 
-39 endpoints across 7 domains, all under `/api/v1/`:
+44 endpoints across 7 domains, all under `/api/v1/`:
 
 | Domain | Endpoints | Auth | Description |
 |--------|-----------|------|-------------|
 | Health | `GET /health` | — | Service health check |
 | Auth | `GET /auth/google/login`, `GET /auth/google/callback`, `POST /auth/refresh`, `POST /auth/logout`, `GET /auth/me` | Partial | Google OAuth2 flow + session management |
-| Courses | `GET /courses`, `GET /courses/:id`, `GET /courses/:id/recommended`, `POST /courses/:id/submit`, `POST /courses/:id/complete` | Partial | Browse, learn, submit answers, complete courses |
+| Courses | `GET /courses`, `GET /courses/:id`, `GET /courses/:id/recommended`, `GET /courses/:id/progress`, `POST /courses/:id/start`, `POST /courses/:id/submit`, `POST /courses/:id/complete`, `POST /courses/:id/retake` | Partial | Browse, learn, resume, submit answers (AI-graded short answers), complete and retake courses |
 | Categories | `GET /tools`, `GET /skills`, `GET /creators` | — | Public tool/skill/creator listings |
 | User | `GET /my/progress`, `GET /my/completed`, `GET /my/badges`, `GET /my/stats`, `GET /my/profile`, `PUT /my/profile`, `POST /my/avatar` | Required | Learning progress, profile management |
-| Admin | 18 endpoints (`/admin/dashboard`, `/admin/courses/*`, `/admin/users/*`, `/admin/tools/*`, `/admin/skills/*`) | Admin | Dashboard, course/user/category CRUD |
+| Admin | 20 endpoints (`/admin/dashboard`, `/admin/courses/*`, `/admin/users/*`, `/admin/tools/*`, `/admin/skills/*`) | Admin | Dashboard, course/user/category CRUD |
 
 <p align="center">
   <img src="docs/screenshots/swagger-ui.png" alt="Swagger UI — Interactive API documentation" width="800" />
-  <br><em>Swagger UI — Interactive API documentation for all 39 endpoints</em>
+  <br><em>Swagger UI — Interactive API documentation for all 44 endpoints</em>
 </p>
 
 ## Testing

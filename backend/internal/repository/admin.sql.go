@@ -13,10 +13,59 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const adminArchiveCourse = `-- name: AdminArchiveCourse :one
+UPDATE courses SET status = 'archived'::course_status, preview_token = NULL, updated_at = NOW()
+WHERE id = $1
+RETURNING id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at, preview_token
+`
+
+// BR-31: "delete" archives the course; progress and badges are kept.
+func (q *Queries) AdminArchiveCourse(ctx context.Context, id uuid.UUID) (Course, error) {
+	row := q.db.QueryRow(ctx, adminArchiveCourse, id)
+	var i Course
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.YoutubeUrl,
+		&i.YoutubeID,
+		&i.ThumbnailUrl,
+		&i.ToolID,
+		&i.SkillID,
+		&i.CreatorID,
+		&i.Difficulty,
+		&i.Duration,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.PreviewToken,
+	)
+	return i, err
+}
+
+const adminArchiveSkill = `-- name: AdminArchiveSkill :exec
+UPDATE skills SET archived_at = NOW() WHERE id = $1 AND archived_at IS NULL
+`
+
+func (q *Queries) AdminArchiveSkill(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, adminArchiveSkill, id)
+	return err
+}
+
+const adminArchiveTool = `-- name: AdminArchiveTool :exec
+UPDATE tools SET archived_at = NOW() WHERE id = $1 AND archived_at IS NULL
+`
+
+// BR-33: archive instead of delete; courses keep the category.
+func (q *Queries) AdminArchiveTool(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, adminArchiveTool, id)
+	return err
+}
+
 const adminCreateCourse = `-- name: AdminCreateCourse :one
 INSERT INTO courses (title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-RETURNING id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at
+RETURNING id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at, preview_token
 `
 
 type AdminCreateCourseParams struct {
@@ -63,12 +112,13 @@ func (q *Queries) AdminCreateCourse(ctx context.Context, arg AdminCreateCoursePa
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PreviewToken,
 	)
 	return i, err
 }
 
 const adminCreateSkill = `-- name: AdminCreateSkill :one
-INSERT INTO skills (name, icon, "order") VALUES ($1, $2, $3) RETURNING id, name, icon, "order"
+INSERT INTO skills (name, icon, "order") VALUES ($1, $2, $3) RETURNING id, name, icon, "order", archived_at
 `
 
 type AdminCreateSkillParams struct {
@@ -85,12 +135,13 @@ func (q *Queries) AdminCreateSkill(ctx context.Context, arg AdminCreateSkillPara
 		&i.Name,
 		&i.Icon,
 		&i.Order,
+		&i.ArchivedAt,
 	)
 	return i, err
 }
 
 const adminCreateTool = `-- name: AdminCreateTool :one
-INSERT INTO tools (name, icon, "order") VALUES ($1, $2, $3) RETURNING id, name, icon, "order"
+INSERT INTO tools (name, icon, "order") VALUES ($1, $2, $3) RETURNING id, name, icon, "order", archived_at
 `
 
 type AdminCreateToolParams struct {
@@ -108,35 +159,28 @@ func (q *Queries) AdminCreateTool(ctx context.Context, arg AdminCreateToolParams
 		&i.Name,
 		&i.Icon,
 		&i.Order,
+		&i.ArchivedAt,
 	)
 	return i, err
 }
 
-const adminDeleteCourse = `-- name: AdminDeleteCourse :exec
-DELETE FROM courses WHERE id = $1
+const adminEnsurePreviewToken = `-- name: AdminEnsurePreviewToken :one
+UPDATE courses SET preview_token = COALESCE(preview_token, $1::text)
+WHERE id = $2 AND status = 'draft'
+RETURNING preview_token
 `
 
-func (q *Queries) AdminDeleteCourse(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, adminDeleteCourse, id)
-	return err
+type AdminEnsurePreviewTokenParams struct {
+	Token string    `json:"token"`
+	ID    uuid.UUID `json:"id"`
 }
 
-const adminDeleteSkill = `-- name: AdminDeleteSkill :exec
-DELETE FROM skills WHERE id = $1
-`
-
-func (q *Queries) AdminDeleteSkill(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, adminDeleteSkill, id)
-	return err
-}
-
-const adminDeleteTool = `-- name: AdminDeleteTool :exec
-DELETE FROM tools WHERE id = $1
-`
-
-func (q *Queries) AdminDeleteTool(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, adminDeleteTool, id)
-	return err
+// BR-05: reuse the existing preview token, or store the new one. Only unpublished courses.
+func (q *Queries) AdminEnsurePreviewToken(ctx context.Context, arg AdminEnsurePreviewTokenParams) (pgtype.Text, error) {
+	row := q.db.QueryRow(ctx, adminEnsurePreviewToken, arg.Token, arg.ID)
+	var preview_token pgtype.Text
+	err := row.Scan(&preview_token)
+	return preview_token, err
 }
 
 const adminGetCourseStatus = `-- name: AdminGetCourseStatus :one
@@ -151,9 +195,11 @@ func (q *Queries) AdminGetCourseStatus(ctx context.Context, id uuid.UUID) (Cours
 }
 
 const adminGetUserProgress = `-- name: AdminGetUserProgress :many
-SELECT p.course_id, p.status, p.score, p.completed_at, p.current_question,
-       c.title AS course_title,
-       (SELECT COUNT(*) FROM questions q WHERE q.course_id = c.id)::int AS total_questions
+SELECT p.course_id, p.status, p.score, p.completed_at, p.current_question, p.last_accessed_at,
+       c.title AS course_title, c.status AS course_status,
+       (SELECT COUNT(*) FROM questions q WHERE q.course_id = c.id)::int AS total_questions,
+       (SELECT COUNT(DISTINCT a->>'questionId') FROM jsonb_array_elements(p.answers) a
+        WHERE a->>'questionId' IN (SELECT q.id::text FROM questions q WHERE q.course_id = c.id))::int AS answered_count
 FROM progress p
 JOIN courses c ON c.id = p.course_id
 WHERE p.user_id = $1
@@ -166,8 +212,11 @@ type AdminGetUserProgressRow struct {
 	Score           pgtype.Numeric     `json:"score"`
 	CompletedAt     pgtype.Timestamptz `json:"completed_at"`
 	CurrentQuestion pgtype.Int4        `json:"current_question"`
+	LastAccessedAt  time.Time          `json:"last_accessed_at"`
 	CourseTitle     string             `json:"course_title"`
+	CourseStatus    CourseStatus       `json:"course_status"`
 	TotalQuestions  int32              `json:"total_questions"`
+	AnsweredCount   int32              `json:"answered_count"`
 }
 
 func (q *Queries) AdminGetUserProgress(ctx context.Context, userID uuid.UUID) ([]AdminGetUserProgressRow, error) {
@@ -185,8 +234,71 @@ func (q *Queries) AdminGetUserProgress(ctx context.Context, userID uuid.UUID) ([
 			&i.Score,
 			&i.CompletedAt,
 			&i.CurrentQuestion,
+			&i.LastAccessedAt,
 			&i.CourseTitle,
+			&i.CourseStatus,
 			&i.TotalQuestions,
+			&i.AnsweredCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const adminListActiveSkills = `-- name: AdminListActiveSkills :many
+SELECT id, name, icon, "order", archived_at FROM skills WHERE archived_at IS NULL ORDER BY "order"
+`
+
+func (q *Queries) AdminListActiveSkills(ctx context.Context) ([]Skill, error) {
+	rows, err := q.db.Query(ctx, adminListActiveSkills)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Skill{}
+	for rows.Next() {
+		var i Skill
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Icon,
+			&i.Order,
+			&i.ArchivedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const adminListActiveTools = `-- name: AdminListActiveTools :many
+SELECT id, name, icon, "order", archived_at FROM tools WHERE archived_at IS NULL ORDER BY "order"
+`
+
+func (q *Queries) AdminListActiveTools(ctx context.Context) ([]Tool, error) {
+	rows, err := q.db.Query(ctx, adminListActiveTools)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Tool{}
+	for rows.Next() {
+		var i Tool
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Icon,
+			&i.Order,
+			&i.ArchivedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -199,11 +311,13 @@ func (q *Queries) AdminGetUserProgress(ctx context.Context, userID uuid.UUID) ([
 }
 
 const adminListCourses = `-- name: AdminListCourses :many
-SELECT c.id, c.title, c.description, c.youtube_url, c.youtube_id, c.thumbnail_url, c.tool_id, c.skill_id, c.creator_id, c.difficulty, c.duration, c.status, c.created_at, c.updated_at, COUNT(q.id)::int AS question_count
+SELECT c.id, c.title, c.description, c.youtube_url, c.youtube_id, c.thumbnail_url, c.tool_id, c.skill_id, c.creator_id, c.difficulty, c.duration, c.status, c.created_at, c.updated_at, c.preview_token, COUNT(q.id)::int AS question_count
 FROM courses c
 LEFT JOIN questions q ON q.course_id = c.id
 WHERE ($1::text IS NULL OR c.title ILIKE '%' || $1 || '%')
-  AND ($2::text IS NULL OR c.status::text = $2)
+  -- archived courses only show up when explicitly filtered (BR-31)
+  AND (($2::text IS NULL AND c.status != 'archived')
+       OR c.status::text = $2)
 GROUP BY c.id
 ORDER BY c.created_at DESC
 `
@@ -228,6 +342,7 @@ type AdminListCoursesRow struct {
 	Status        CourseStatus    `json:"status"`
 	CreatedAt     time.Time       `json:"created_at"`
 	UpdatedAt     time.Time       `json:"updated_at"`
+	PreviewToken  pgtype.Text     `json:"preview_token"`
 	QuestionCount int32           `json:"question_count"`
 }
 
@@ -256,6 +371,7 @@ func (q *Queries) AdminListCourses(ctx context.Context, arg AdminListCoursesPara
 			&i.Status,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.PreviewToken,
 			&i.QuestionCount,
 		); err != nil {
 			return nil, err
@@ -269,22 +385,35 @@ func (q *Queries) AdminListCourses(ctx context.Context, arg AdminListCoursesPara
 }
 
 const adminListUsers = `-- name: AdminListUsers :many
-SELECT id, name, email, avatar_url, provider, is_admin, created_at, last_active_at
+SELECT id, name, email, avatar_url, provider, is_admin, created_at, last_active_at,
+       (SELECT COUNT(*) FROM progress p WHERE p.user_id = users.id AND p.status = 'completed')::int AS completed_count
 FROM users
 WHERE ($1::text IS NULL OR name ILIKE '%' || $1 || '%' OR email ILIKE '%' || $1 || '%')
 ORDER BY created_at DESC
 `
 
+type AdminListUsersRow struct {
+	ID             uuid.UUID    `json:"id"`
+	Name           string       `json:"name"`
+	Email          string       `json:"email"`
+	AvatarUrl      string       `json:"avatar_url"`
+	Provider       AuthProvider `json:"provider"`
+	IsAdmin        bool         `json:"is_admin"`
+	CreatedAt      time.Time    `json:"created_at"`
+	LastActiveAt   time.Time    `json:"last_active_at"`
+	CompletedCount int32        `json:"completed_count"`
+}
+
 // Admin user list
-func (q *Queries) AdminListUsers(ctx context.Context, search pgtype.Text) ([]User, error) {
+func (q *Queries) AdminListUsers(ctx context.Context, search pgtype.Text) ([]AdminListUsersRow, error) {
 	rows, err := q.db.Query(ctx, adminListUsers, search)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []User{}
+	items := []AdminListUsersRow{}
 	for rows.Next() {
-		var i User
+		var i AdminListUsersRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
@@ -294,6 +423,7 @@ func (q *Queries) AdminListUsers(ctx context.Context, search pgtype.Text) ([]Use
 			&i.IsAdmin,
 			&i.CreatedAt,
 			&i.LastActiveAt,
+			&i.CompletedCount,
 		); err != nil {
 			return nil, err
 		}
@@ -306,11 +436,12 @@ func (q *Queries) AdminListUsers(ctx context.Context, search pgtype.Text) ([]Use
 }
 
 const adminPublishCourse = `-- name: AdminPublishCourse :one
-UPDATE courses SET status = 'published'::course_status, updated_at = NOW()
+UPDATE courses SET status = 'published'::course_status, preview_token = NULL, updated_at = NOW()
 WHERE id = $1
-RETURNING id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at
+RETURNING id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at, preview_token
 `
 
+// Publishing invalidates the preview link (BR-05).
 func (q *Queries) AdminPublishCourse(ctx context.Context, id uuid.UUID) (Course, error) {
 	row := q.db.QueryRow(ctx, adminPublishCourse, id)
 	var i Course
@@ -329,6 +460,36 @@ func (q *Queries) AdminPublishCourse(ctx context.Context, id uuid.UUID) (Course,
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PreviewToken,
+	)
+	return i, err
+}
+
+const adminRestoreCourse = `-- name: AdminRestoreCourse :one
+UPDATE courses SET status = 'draft'::course_status, updated_at = NOW()
+WHERE id = $1 AND status = 'archived'
+RETURNING id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at, preview_token
+`
+
+func (q *Queries) AdminRestoreCourse(ctx context.Context, id uuid.UUID) (Course, error) {
+	row := q.db.QueryRow(ctx, adminRestoreCourse, id)
+	var i Course
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.YoutubeUrl,
+		&i.YoutubeID,
+		&i.ThumbnailUrl,
+		&i.ToolID,
+		&i.SkillID,
+		&i.CreatorID,
+		&i.Difficulty,
+		&i.Duration,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.PreviewToken,
 	)
 	return i, err
 }
@@ -336,7 +497,7 @@ func (q *Queries) AdminPublishCourse(ctx context.Context, id uuid.UUID) (Course,
 const adminUnpublishCourse = `-- name: AdminUnpublishCourse :one
 UPDATE courses SET status = 'draft'::course_status, updated_at = NOW()
 WHERE id = $1
-RETURNING id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at
+RETURNING id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at, preview_token
 `
 
 func (q *Queries) AdminUnpublishCourse(ctx context.Context, id uuid.UUID) (Course, error) {
@@ -357,6 +518,7 @@ func (q *Queries) AdminUnpublishCourse(ctx context.Context, id uuid.UUID) (Cours
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PreviewToken,
 	)
 	return i, err
 }
@@ -365,7 +527,7 @@ const adminUpdateCourse = `-- name: AdminUpdateCourse :one
 UPDATE courses
 SET title = $1, description = $2, youtube_url = $3, youtube_id = $4, thumbnail_url = $5, tool_id = $6, skill_id = $7, creator_id = $8, difficulty = $9, duration = $10, updated_at = NOW()
 WHERE id = $11
-RETURNING id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at
+RETURNING id, title, description, youtube_url, youtube_id, thumbnail_url, tool_id, skill_id, creator_id, difficulty, duration, status, created_at, updated_at, preview_token
 `
 
 type AdminUpdateCourseParams struct {
@@ -412,12 +574,13 @@ func (q *Queries) AdminUpdateCourse(ctx context.Context, arg AdminUpdateCoursePa
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PreviewToken,
 	)
 	return i, err
 }
 
 const adminUpdateSkill = `-- name: AdminUpdateSkill :one
-UPDATE skills SET name = $1, icon = $2 WHERE id = $3 RETURNING id, name, icon, "order"
+UPDATE skills SET name = $1, icon = $2 WHERE id = $3 RETURNING id, name, icon, "order", archived_at
 `
 
 type AdminUpdateSkillParams struct {
@@ -434,12 +597,13 @@ func (q *Queries) AdminUpdateSkill(ctx context.Context, arg AdminUpdateSkillPara
 		&i.Name,
 		&i.Icon,
 		&i.Order,
+		&i.ArchivedAt,
 	)
 	return i, err
 }
 
 const adminUpdateTool = `-- name: AdminUpdateTool :one
-UPDATE tools SET name = $1, icon = $2 WHERE id = $3 RETURNING id, name, icon, "order"
+UPDATE tools SET name = $1, icon = $2 WHERE id = $3 RETURNING id, name, icon, "order", archived_at
 `
 
 type AdminUpdateToolParams struct {
@@ -456,6 +620,7 @@ func (q *Queries) AdminUpdateTool(ctx context.Context, arg AdminUpdateToolParams
 		&i.Name,
 		&i.Icon,
 		&i.Order,
+		&i.ArchivedAt,
 	)
 	return i, err
 }

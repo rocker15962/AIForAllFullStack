@@ -28,7 +28,7 @@ export function AnswerFeedback({
           {correct ? '✓ Correct!' : '✗ Incorrect'}
         </p>
 
-        {!correct && (
+        {!correct && correctAnswer && (
           <p
             className={`mb-2 text-xs ${correct ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}
           >

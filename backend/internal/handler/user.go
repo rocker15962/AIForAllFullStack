@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -78,6 +79,8 @@ func (h *UserHandler) GetProgress(c *gin.Context) {
 			"currentQuestion": answeredCount,
 			"totalQuestions":  r.TotalQuestions,
 			"lastAccessedAt":  r.LastAccessedAt.Format(time.RFC3339),
+			// BR-31: archived (or unpublished) courses stay listed but can no longer be opened.
+			"courseStatus": string(r.CourseStatus),
 		}
 	}
 
@@ -125,6 +128,7 @@ func (h *UserHandler) GetCompleted(c *gin.Context) {
 			"score":           score,
 			"totalQuestions":  r.TotalQuestions,
 			"completedAt":     completedAt,
+			"courseStatus":    string(r.CourseStatus),
 		}
 	}
 
@@ -152,8 +156,8 @@ func (h *UserHandler) GetBadges(c *gin.Context) {
 	items := make([]gin.H, len(rows))
 	for i, r := range rows {
 		earnedAt := ""
-		if r.CompletedAt.Valid {
-			earnedAt = r.CompletedAt.Time.Format(time.RFC3339)
+		if r.BadgeEarnedAt.Valid {
+			earnedAt = r.BadgeEarnedAt.Time.Format(time.RFC3339)
 		}
 		items[i] = gin.H{
 			"id":           r.ID.String(),
@@ -161,6 +165,7 @@ func (h *UserHandler) GetBadges(c *gin.Context) {
 			"courseTitle":  r.Title,
 			"thumbnailUrl": r.ThumbnailUrl,
 			"earnedAt":     earnedAt,
+			"courseStatus": string(r.CourseStatus),
 		}
 	}
 
@@ -262,14 +267,17 @@ func (h *UserHandler) GetStats(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"inProgress": counts.InProgressCount,
 		"completed":  counts.CompletedCount,
-		"badges":     counts.CompletedCount,
+		"badges":     counts.BadgeCount,
 	})
 }
+
+// maxAvatarBytes is the largest avatar upload accepted (BR-25).
+const maxAvatarBytes = 5 << 20
 
 // UploadAvatar godoc
 //
 //	@Summary		Upload avatar
-//	@Description	Upload a new profile avatar (max 2MB, jpg/png/webp)
+//	@Description	Upload a new profile avatar (max 5MB, jpg/png/webp). The web app crops it to a square before uploading.
 //	@Tags			user
 //	@Accept			multipart/form-data
 //	@Produce		json
@@ -278,6 +286,9 @@ func (h *UserHandler) GetStats(c *gin.Context) {
 //	@Failure		401	{object}	map[string]interface{}
 //	@Router			/my/avatar [post]
 func (h *UserHandler) UploadAvatar(c *gin.Context) {
+	// Leave room for multipart overhead on top of the file itself.
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxAvatarBytes+1<<20)
+
 	userID := c.MustGet(middleware.ContextKeyUserID).(uuid.UUID)
 
 	file, err := c.FormFile("avatar")
@@ -286,12 +297,13 @@ func (h *UserHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	if file.Size > 2*1024*1024 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "file too large (max 2MB)"})
+	// BR-25: up to 5MB.
+	if file.Size > maxAvatarBytes {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "file too large (max 5MB)"})
 		return
 	}
 
-	ext := filepath.Ext(file.Filename)
+	ext := strings.ToLower(filepath.Ext(file.Filename))
 	allowed := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".webp": true}
 	if !allowed[ext] {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "only jpg, png, webp allowed"})

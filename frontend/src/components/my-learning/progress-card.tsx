@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { isCourseAvailable } from '@/types'
 import type { InProgressCourse } from '@/types'
 
 interface ProgressCardProps {
@@ -75,13 +76,19 @@ export function ProgressCard({ course }: ProgressCardProps) {
           <span className="text-xs text-zinc-400">{formatShortDate(course.lastAccessedAt)}</span>
         </div>
 
-        {/* Continue button */}
-        <Link
-          href={`/courses/${course.courseId}`}
-          className="block rounded-lg bg-cyan-500 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-cyan-600"
-        >
-          Continue Learning
-        </Link>
+        {/* Continue button — archived courses can no longer be opened (BR-31) */}
+        {isCourseAvailable(course.courseStatus) ? (
+          <Link
+            href={`/courses/${course.courseId}`}
+            className="block rounded-lg bg-cyan-500 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-cyan-600"
+          >
+            Continue Learning
+          </Link>
+        ) : (
+          <p className="rounded-lg bg-zinc-100 py-2.5 text-center text-sm font-medium text-zinc-500 dark:bg-zinc-700/60 dark:text-zinc-400">
+            No longer available
+          </p>
+        )}
       </div>
     </div>
   )

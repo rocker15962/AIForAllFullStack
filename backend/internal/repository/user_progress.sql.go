@@ -17,7 +17,8 @@ import (
 const countUserProgress = `-- name: CountUserProgress :one
 SELECT
   COUNT(*) FILTER (WHERE status = 'in_progress')::int AS in_progress_count,
-  COUNT(*) FILTER (WHERE status = 'completed')::int AS completed_count
+  COUNT(*) FILTER (WHERE status = 'completed')::int AS completed_count,
+  COUNT(*) FILTER (WHERE badge_earned_at IS NOT NULL)::int AS badge_count
 FROM progress
 WHERE user_id = $1
 `
@@ -25,32 +26,35 @@ WHERE user_id = $1
 type CountUserProgressRow struct {
 	InProgressCount int32 `json:"in_progress_count"`
 	CompletedCount  int32 `json:"completed_count"`
+	BadgeCount      int32 `json:"badge_count"`
 }
 
 func (q *Queries) CountUserProgress(ctx context.Context, userID uuid.UUID) (CountUserProgressRow, error) {
 	row := q.db.QueryRow(ctx, countUserProgress, userID)
 	var i CountUserProgressRow
-	err := row.Scan(&i.InProgressCount, &i.CompletedCount)
+	err := row.Scan(&i.InProgressCount, &i.CompletedCount, &i.BadgeCount)
 	return i, err
 }
 
 const getUserBadges = `-- name: GetUserBadges :many
-SELECT p.id, p.course_id, p.completed_at,
-       c.title, c.thumbnail_url
+SELECT p.id, p.course_id, p.badge_earned_at,
+       c.title, c.thumbnail_url, c.status AS course_status
 FROM progress p
 JOIN courses c ON c.id = p.course_id
-WHERE p.user_id = $1 AND p.status = 'completed'
-ORDER BY p.completed_at DESC
+WHERE p.user_id = $1 AND p.badge_earned_at IS NOT NULL
+ORDER BY p.badge_earned_at DESC
 `
 
 type GetUserBadgesRow struct {
-	ID           uuid.UUID          `json:"id"`
-	CourseID     uuid.UUID          `json:"course_id"`
-	CompletedAt  pgtype.Timestamptz `json:"completed_at"`
-	Title        string             `json:"title"`
-	ThumbnailUrl string             `json:"thumbnail_url"`
+	ID            uuid.UUID          `json:"id"`
+	CourseID      uuid.UUID          `json:"course_id"`
+	BadgeEarnedAt pgtype.Timestamptz `json:"badge_earned_at"`
+	Title         string             `json:"title"`
+	ThumbnailUrl  string             `json:"thumbnail_url"`
+	CourseStatus  CourseStatus       `json:"course_status"`
 }
 
+// BR-12 / BR-16: badges are kept even when a later attempt drops below the pass line.
 func (q *Queries) GetUserBadges(ctx context.Context, userID uuid.UUID) ([]GetUserBadgesRow, error) {
 	rows, err := q.db.Query(ctx, getUserBadges, userID)
 	if err != nil {
@@ -63,9 +67,10 @@ func (q *Queries) GetUserBadges(ctx context.Context, userID uuid.UUID) ([]GetUse
 		if err := rows.Scan(
 			&i.ID,
 			&i.CourseID,
-			&i.CompletedAt,
+			&i.BadgeEarnedAt,
 			&i.Title,
 			&i.ThumbnailUrl,
+			&i.CourseStatus,
 		); err != nil {
 			return nil, err
 		}
@@ -79,7 +84,7 @@ func (q *Queries) GetUserBadges(ctx context.Context, userID uuid.UUID) ([]GetUse
 
 const getUserCompleted = `-- name: GetUserCompleted :many
 SELECT p.id, p.course_id, p.score, p.completed_at,
-       c.title, c.thumbnail_url, c.difficulty, c.tool_id, c.skill_id,
+       c.title, c.thumbnail_url, c.difficulty, c.tool_id, c.skill_id, c.status AS course_status,
        (SELECT COUNT(*) FROM questions q WHERE q.course_id = c.id)::int AS total_questions
 FROM progress p
 JOIN courses c ON c.id = p.course_id
@@ -97,6 +102,7 @@ type GetUserCompletedRow struct {
 	Difficulty     DifficultyLevel    `json:"difficulty"`
 	ToolID         uuid.UUID          `json:"tool_id"`
 	SkillID        uuid.UUID          `json:"skill_id"`
+	CourseStatus   CourseStatus       `json:"course_status"`
 	TotalQuestions int32              `json:"total_questions"`
 }
 
@@ -119,6 +125,7 @@ func (q *Queries) GetUserCompleted(ctx context.Context, userID uuid.UUID) ([]Get
 			&i.Difficulty,
 			&i.ToolID,
 			&i.SkillID,
+			&i.CourseStatus,
 			&i.TotalQuestions,
 		); err != nil {
 			return nil, err
@@ -133,7 +140,7 @@ func (q *Queries) GetUserCompleted(ctx context.Context, userID uuid.UUID) ([]Get
 
 const getUserInProgress = `-- name: GetUserInProgress :many
 SELECT p.id, p.course_id, p.current_question, p.answers, p.started_at, p.last_accessed_at,
-       c.title, c.thumbnail_url, c.difficulty, c.tool_id, c.skill_id,
+       c.title, c.thumbnail_url, c.difficulty, c.tool_id, c.skill_id, c.status AS course_status,
        (SELECT COUNT(*) FROM questions q WHERE q.course_id = c.id)::int AS total_questions
 FROM progress p
 JOIN courses c ON c.id = p.course_id
@@ -153,6 +160,7 @@ type GetUserInProgressRow struct {
 	Difficulty      DifficultyLevel `json:"difficulty"`
 	ToolID          uuid.UUID       `json:"tool_id"`
 	SkillID         uuid.UUID       `json:"skill_id"`
+	CourseStatus    CourseStatus    `json:"course_status"`
 	TotalQuestions  int32           `json:"total_questions"`
 }
 
@@ -177,6 +185,7 @@ func (q *Queries) GetUserInProgress(ctx context.Context, userID uuid.UUID) ([]Ge
 			&i.Difficulty,
 			&i.ToolID,
 			&i.SkillID,
+			&i.CourseStatus,
 			&i.TotalQuestions,
 		); err != nil {
 			return nil, err

@@ -33,7 +33,8 @@ paths:
         in: query
         name: search
         type: string
-      - description: Filter by status (draft/published)
+      - description: Filter by status (draft/published/archived). Archived courses
+          are listed only with status=archived.
         in: query
         name: status
         type: string
@@ -56,9 +57,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new course
+      description: Create a new course together with its questions (one transaction)
       parameters:
-      - description: Course data
+      - description: Course data with questions
         in: body
         name: body
         required: true
@@ -72,6 +73,11 @@ paths:
           schema:
             additionalProperties: true
             type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
         "403":
           description: Forbidden
           schema:
@@ -82,7 +88,8 @@ paths:
       - admin
   /admin/courses/{id}:
     delete:
-      description: Delete a course and its questions
+      description: 'Archives the course (BR-31): hidden from learners, progress and
+        badges are kept'
       parameters:
       - description: Course ID
         in: path
@@ -102,7 +109,7 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Delete course
+      summary: Archive course
       tags:
       - admin
     get:
@@ -132,14 +139,15 @@ paths:
     put:
       consumes:
       - application/json
-      description: Update an existing course
+      description: Update a course, its status and its questions (one transaction).
+        Questions left out of the list are deleted.
       parameters:
       - description: Course ID
         in: path
         name: id
         required: true
         type: string
-      - description: Course data
+      - description: Course data with questions
         in: body
         name: body
         required: true
@@ -153,12 +161,43 @@ paths:
           schema:
             additionalProperties: true
             type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
         "403":
           description: Forbidden
           schema:
             additionalProperties: true
             type: object
       summary: Update course
+      tags:
+      - admin
+  /admin/courses/{id}/preview-link:
+    post:
+      description: Returns a shareable preview link for a draft course (BR-05). The
+        same link is returned until the course is published, which invalidates it.
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create preview link
       tags:
       - admin
   /admin/courses/{id}/publish:
@@ -184,6 +223,31 @@ paths:
             additionalProperties: true
             type: object
       summary: Toggle course publish status
+      tags:
+      - admin
+  /admin/courses/{id}/restore:
+    put:
+      description: Moves an archived course back to draft
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restore archived course
       tags:
       - admin
   /admin/dashboard:
@@ -229,6 +293,8 @@ paths:
       - admin
   /admin/skills/{id}:
     delete:
+      description: 'Archives the skill (BR-33): hidden from filters, courses keep
+        it'
       parameters:
       - description: Skill ID
         in: path
@@ -243,7 +309,7 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Delete skill
+      summary: Archive skill
       tags:
       - admin
     put:
@@ -318,6 +384,7 @@ paths:
       - admin
   /admin/tools/{id}:
     delete:
+      description: 'Archives the tool (BR-33): hidden from filters, courses keep it'
       parameters:
       - description: Tool ID
         in: path
@@ -332,7 +399,7 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Delete tool
+      summary: Archive tool
       tags:
       - admin
     put:
@@ -561,12 +628,18 @@ paths:
       - courses
   /courses/{id}:
     get:
-      description: Returns course with questions
+      description: Returns a course with its questions (without answers). Unpublished
+        courses are visible only to admins or with a valid preview token; archived
+        courses only to admins.
       parameters:
       - description: Course ID
         in: path
         name: id
         required: true
+        type: string
+      - description: Preview token for an unpublished course
+        in: query
+        name: preview
         type: string
       produces:
       - application/json
@@ -586,7 +659,8 @@ paths:
       - courses
   /courses/{id}/complete:
     post:
-      description: Mark a course as completed and calculate score
+      description: Scores the current round once every question is answered. 60% or
+        more completes the course and earns the badge; badges are never taken back.
       parameters:
       - description: Course ID
         in: path
@@ -606,12 +680,44 @@ paths:
           schema:
             additionalProperties: true
             type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties: true
+            type: object
       summary: Complete course
+      tags:
+      - courses
+  /courses/{id}/progress:
+    get:
+      description: Returns the signed-in learner's current round, used to resume at
+        the first unanswered question
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: My progress in a course
       tags:
       - courses
   /courses/{id}/recommended:
     get:
-      description: Returns recommended courses based on the current course
+      description: Up to 4 published courses with the same tool or skill, excluding
+        this course and, when signed in, courses the learner has completed
       parameters:
       - description: Course ID
         in: path
@@ -629,16 +735,74 @@ paths:
       summary: Get recommended courses
       tags:
       - courses
-  /courses/{id}/submit:
+  /courses/{id}/retake:
     post:
-      consumes:
-      - application/json
-      description: Submit an answer for a course question
+      description: 'Starts a new round: previous answers and score are replaced; an
+        earned badge is kept'
       parameters:
       - description: Course ID
         in: path
         name: id
         required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retake course quiz
+      tags:
+      - courses
+  /courses/{id}/start:
+    post:
+      description: Creates the in-progress record once the video has played 10% of
+        its length (idempotent)
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Start course
+      tags:
+      - courses
+  /courses/{id}/submit:
+    post:
+      consumes:
+      - application/json
+      description: Grades an answer. Answers to published courses are recorded once
+        per question per round; previews are graded only. Short answers are graded
+        by AI against the sample answer; 503 means try again later (not recorded).
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Preview token for an unpublished course
+        in: query
+        name: preview
         type: string
       - description: Answer submission
         in: body
@@ -656,6 +820,11 @@ paths:
             type: object
         "401":
           description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "503":
+          description: Service Unavailable
           schema:
             additionalProperties: true
             type: object
@@ -694,7 +863,8 @@ paths:
     post:
       consumes:
       - multipart/form-data
-      description: Upload a new profile avatar (max 2MB, jpg/png/webp)
+      description: Upload a new profile avatar (max 5MB, jpg/png/webp). The web app
+        crops it to a square before uploading.
       parameters:
       - description: Avatar image
         in: formData
@@ -841,7 +1011,8 @@ paths:
       - user
   /skills:
     get:
-      description: Returns all skill categories
+      description: Returns all skill categories, including archived ones (archived_at
+        set) so existing courses can show their names. Hide archived ones in filters.
       produces:
       - application/json
       responses:
@@ -855,7 +1026,8 @@ paths:
       - categories
   /tools:
     get:
-      description: Returns all tool categories
+      description: Returns all tool categories, including archived ones (archived_at
+        set) so existing courses can show their names. Hide archived ones in filters.
       produces:
       - application/json
       responses:

@@ -4,7 +4,7 @@
 
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced'
 export type AuthProvider = 'google' | 'facebook'
-export type CourseStatus = 'draft' | 'published'
+export type CourseStatus = 'draft' | 'published' | 'archived'
 export type ProgressStatus = 'in_progress' | 'completed'
 export type QuestionType = 'multiple_choice' | 'short_answer'
 
@@ -145,6 +145,8 @@ export interface InProgressCourse {
   currentQuestion: number
   totalQuestions: number
   lastAccessedAt: string
+  /** Archived or unpublished courses stay listed but can't be opened (BR-31). */
+  courseStatus?: CourseStatus
 }
 
 /** Completed course for My Learning */
@@ -159,6 +161,7 @@ export interface CompletedCourse {
   score: number
   totalQuestions: number
   completedAt: string
+  courseStatus?: CourseStatus
 }
 
 /** Badge earned from completing a course */
@@ -168,6 +171,12 @@ export interface Badge {
   courseTitle: string
   thumbnailUrl: string
   earnedAt: string
+  courseStatus?: CourseStatus
+}
+
+/** A course a learner has history with can still be opened only while it is published (BR-31). */
+export function isCourseAvailable(status?: CourseStatus): boolean {
+  return !status || status === 'published'
 }
 
 /** Recommended course (after completion) */

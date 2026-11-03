@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { SlidersHorizontal } from 'lucide-react'
-import { SearchBar, FilterSidebar, CourseGrid } from '@/components/course-discovery'
+import { SearchBar, FilterSidebar, CourseGrid, ResultsBar } from '@/components/course-discovery'
+import { useDebouncedValue } from '@/lib/use-debounced-value'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
@@ -12,6 +13,8 @@ interface Tool {
   name: string
   icon: string
   order: number
+  /** Set when the category is archived (BR-33): hidden from filters, still named on cards. */
+  archived_at?: string | null
 }
 
 interface Skill {
@@ -19,6 +22,7 @@ interface Skill {
   name: string
   icon: string
   order: number
+  archived_at?: string | null
 }
 
 interface CourseItem {
@@ -82,8 +86,9 @@ async function fetchCourses(params: {
 export default function CoursesPage() {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
 
-  // Filter state
-  const [search, setSearch] = useState('')
+  // Filter state — the search box is controlled; the query uses a debounced copy (300ms)
+  const [searchInput, setSearchInput] = useState('')
+  const search = useDebouncedValue(searchInput.trim(), 300)
   const [toolId, setToolId] = useState<string | null>(null)
   const [skillId, setSkillId] = useState<string | null>(null)
   const [difficulty, setDifficulty] = useState<string | null>(null)
@@ -111,6 +116,8 @@ export default function CoursesPage() {
   })
 
   const courses = courseData?.courses ?? []
+  // `total` is the filtered count across all pages, not just the first page
+  const total = courseData?.total ?? 0
 
   // Build name lookup maps
   const toolNames: Record<string, string> = {}
@@ -128,7 +135,18 @@ export default function CoursesPage() {
     creatorAvatarUrls[cr.id] = cr.avatar_url
   }
 
+  const activeTools = tools.filter((t) => !t.archived_at)
+  const activeSkills = skills.filter((s) => !s.archived_at)
+
   const activeFilterCount = [toolId, skillId, difficulty].filter(Boolean).length
+  const hasActiveFilters = activeFilterCount > 0 || searchInput.trim() !== ''
+
+  function clearAllFilters() {
+    setSearchInput('')
+    setToolId(null)
+    setSkillId(null)
+    setDifficulty(null)
+  }
 
   return (
     <div className="px-6 py-8 sm:px-10">
@@ -145,11 +163,11 @@ export default function CoursesPage() {
         {/* Sidebar (desktop) */}
         <div className="hidden lg:block">
           <div className="mb-6">
-            <SearchBar value={search} onChange={setSearch} />
+            <SearchBar value={searchInput} onChange={setSearchInput} />
           </div>
           <FilterSidebar
-            tools={tools}
-            skills={skills}
+            tools={activeTools}
+            skills={activeSkills}
             selectedToolId={toolId}
             selectedSkillId={skillId}
             selectedDifficulty={difficulty}
@@ -164,7 +182,7 @@ export default function CoursesPage() {
           {/* Mobile: search + filter button */}
           <div className="mb-4 flex gap-2 lg:hidden">
             <div className="flex-1">
-              <SearchBar value={search} onChange={setSearch} />
+              <SearchBar value={searchInput} onChange={setSearchInput} />
             </div>
             <button
               onClick={() => setMobileFilterOpen(true)}
@@ -186,13 +204,20 @@ export default function CoursesPage() {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
             </div>
           ) : (
-            <CourseGrid
-              courses={courses}
-              toolNames={toolNames}
-              skillNames={skillNames}
-              creatorNames={creatorNames}
-              creatorAvatarUrls={creatorAvatarUrls}
-            />
+            <>
+              <ResultsBar
+                count={total}
+                hasActiveFilters={hasActiveFilters}
+                onClearAll={clearAllFilters}
+              />
+              <CourseGrid
+                courses={courses}
+                toolNames={toolNames}
+                skillNames={skillNames}
+                creatorNames={creatorNames}
+                creatorAvatarUrls={creatorAvatarUrls}
+              />
+            </>
           )}
         </div>
       </div>
@@ -219,8 +244,8 @@ export default function CoursesPage() {
               </button>
             </div>
             <FilterSidebar
-              tools={tools}
-              skills={skills}
+              tools={activeTools}
+              skills={activeSkills}
               selectedToolId={toolId}
               selectedSkillId={skillId}
               selectedDifficulty={difficulty}

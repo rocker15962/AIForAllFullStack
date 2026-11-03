@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { courseFormSchema } from '@/lib/schemas'
+import { formatDuration, parseDuration } from '@/lib/duration'
+import { toQuestionPayload } from './question-payload'
 import type { Difficulty, Question } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
@@ -17,9 +19,16 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 interface ToolOption {
   id: string
   name: string
+  archived_at?: string | null
 }
 
 interface SkillOption {
+  id: string
+  name: string
+  archived_at?: string | null
+}
+
+interface CreatorOption {
   id: string
   name: string
 }
@@ -31,7 +40,9 @@ interface CourseFormData {
   toolId: string
   skillId: string
   difficulty: Difficulty
-  duration: number
+  creatorId: string
+  /** Video length as mm:ss (BR-28) */
+  durationText: string
 }
 
 interface ExistingCourse {
@@ -66,7 +77,8 @@ const emptyForm: CourseFormData = {
   toolId: '',
   skillId: '',
   difficulty: 'beginner',
-  duration: 0,
+  creatorId: '',
+  durationText: '',
 }
 
 function extractYouTubeId(url: string): string | null {
@@ -92,6 +104,7 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
   const [form, setForm] = useState<CourseFormData>(emptyForm)
   const [tools, setTools] = useState<ToolOption[]>([])
   const [skills, setSkills] = useState<SkillOption[]>([])
+  const [creators, setCreators] = useState<CreatorOption[]>([])
   const [questions, setQuestions] = useState<Question[]>([])
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -106,19 +119,21 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
         toolId: course.toolId,
         skillId: course.skillId,
         difficulty: (course.difficulty as Difficulty) || 'beginner',
-        duration: course.duration,
+        creatorId: course.creatorId || '',
+        durationText: formatDuration(course.duration),
       })
       setQuestions(course.questions || [])
     }
   }, [course])
 
-  // Fetch tools and skills
+  // Fetch tools, skills and creators
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const [toolsRes, skillsRes] = await Promise.all([
+        const [toolsRes, skillsRes, creatorsRes] = await Promise.all([
           fetch(`${API_URL}/api/v1/tools`),
           fetch(`${API_URL}/api/v1/skills`),
+          fetch(`${API_URL}/api/v1/creators`),
         ])
         if (toolsRes.ok) {
           const data = (await toolsRes.json()) as { tools: ToolOption[] }
@@ -128,6 +143,10 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
           const data = (await skillsRes.json()) as { skills: SkillOption[] }
           setSkills(data.skills || [])
         }
+        if (creatorsRes.ok) {
+          const data = (await creatorsRes.json()) as { creators: CreatorOption[] }
+          setCreators(data.creators || [])
+        }
       } catch {
         // Silently handle — empty dropdowns
       }
@@ -135,7 +154,7 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
     fetchCategories()
   }, [])
 
-  const handleChange = useCallback((field: keyof CourseFormData, value: string | number) => {
+  const handleChange = useCallback((field: keyof CourseFormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
   }, [])
 
@@ -176,15 +195,20 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
           thumbnailUrl: `https://img.youtube.com/vi/${extractYouTubeId(form.youtubeUrl) || ''}/maxresdefault.jpg`,
           toolId: form.toolId,
           skillId: form.skillId,
-          creatorId: course?.creatorId || 'c1000000-0000-0000-0000-000000000001',
+          creatorId: form.creatorId,
           difficulty: form.difficulty,
-          duration: form.duration,
+          duration: parseDuration(form.durationText) ?? 0,
           status,
+          // BR-29: questions are saved with the course, in this order
+          questions: questions.map(toQuestionPayload),
         }),
       })
 
       if (!res.ok) {
-        throw new Error(`Failed to ${isEdit ? 'update' : 'create'} course (${res.status})`)
+        const body = (await res.json().catch(() => null)) as { error?: string } | null
+        throw new Error(
+          body?.error || `Failed to ${isEdit ? 'update' : 'create'} course (${res.status})`,
+        )
       }
 
       router.push('/admin/courses')
@@ -196,6 +220,10 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
   }
 
   const videoId = extractYouTubeId(form.youtubeUrl)
+
+  // BR-33: archived categories can't be newly assigned, but a course keeps its current one.
+  const toolOptions = tools.filter((t) => !t.archived_at || t.id === form.toolId)
+  const skillOptions = skills.filter((s) => !s.archived_at || s.id === form.skillId)
 
   const selectClasses =
     'w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-zinc-900 transition-colors outline-none focus:border-cyan-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-cyan-500'
@@ -329,9 +357,9 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
                 className={selectClasses}
               >
                 <option value="">Select tool</option>
-                {tools.map((t) => (
+                {toolOptions.map((t) => (
                   <option key={t.id} value={t.id}>
-                    {t.name}
+                    {t.archived_at ? `${t.name} (archived)` : t.name}
                   </option>
                 ))}
               </select>
@@ -345,9 +373,9 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
                 className={selectClasses}
               >
                 <option value="">Select skill</option>
-                {skills.map((s) => (
+                {skillOptions.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.name}
+                    {s.archived_at ? `${s.name} (archived)` : s.name}
                   </option>
                 ))}
               </select>
@@ -368,6 +396,43 @@ export function CourseEditor({ course, isEdit }: CourseEditorProps) {
                   </option>
                 ))}
               </select>
+            </label>
+          </div>
+
+          {/* Creator / Video length row (BR-28) */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <label className="flex flex-col gap-1.5">
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Creator</span>
+              <select
+                value={form.creatorId}
+                onChange={(e) => handleChange('creatorId', e.target.value)}
+                className={selectClasses}
+              >
+                <option value="">Select creator</option>
+                {creators.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="flex flex-col gap-1.5">
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Video length
+              </span>
+              <Input
+                type="text"
+                inputMode="numeric"
+                value={form.durationText}
+                onChange={(e) => handleChange('durationText', e.target.value)}
+                placeholder="e.g. 12:30"
+                aria-describedby="video-length-hint"
+                className="h-10 rounded-lg border-zinc-200 bg-zinc-50 px-3 text-sm text-zinc-900 focus-visible:border-cyan-400 focus-visible:bg-white dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus-visible:border-cyan-500"
+              />
+              <span id="video-length-hint" className="text-xs text-zinc-500 dark:text-zinc-400">
+                Format mm:ss. A learner counts as started after watching 10% of the video.
+              </span>
             </label>
           </div>
         </div>

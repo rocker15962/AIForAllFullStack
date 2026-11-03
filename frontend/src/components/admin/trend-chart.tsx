@@ -32,7 +32,8 @@ export function TrendChart({ data }: TrendChartProps) {
     displayDate: formatDate(point.date),
   }))
 
-  const totalNewUsers = data.reduce((sum, point) => sum + point.newUsers, 0)
+  // "New Users This Week" covers the last 7 data points (days); the chart itself spans 30 days.
+  const totalNewUsers = data.slice(-7).reduce((sum, point) => sum + point.newUsers, 0)
   const avgActiveUsers =
     data.length > 0
       ? Math.round(data.reduce((sum, point) => sum + point.totalUsers, 0) / data.length)

@@ -33,6 +33,9 @@ services:
       - GOOGLE_REDIRECT_URL=http://localhost:8080/api/v1/auth/google/callback
       - JWT_SECRET=${JWT_SECRET:-dev-jwt-secret-change-in-production}
       - FRONTEND_URL=http://localhost:3000
+      # BR-09: short answers are graded by Claude against the sample answer
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - CLAUDE_GRADER_MODEL=${CLAUDE_GRADER_MODEL:-}
     depends_on:
       postgres:
         condition: service_healthy

@@ -33,6 +33,7 @@
 | **Gin** | Web 框架 | Go 生態中最流行的 Web 框架，效能極高，社群最大，學習資源與中介軟體生態最豐富 |
 | **sqlc** | 資料存取 | SQL-first 方式：撰寫原生 SQL，自動生成型別安全的 Go 程式碼。效能最高、零魔法、學 SQL 就是學真正的技能 |
 | **OAuth2 + JWT** | 認證 | Google/Facebook OAuth 登入後發 JWT token，無狀態驗證。水平擴展時不需 session store |
+| **Anthropic Go SDK** | 簡答題判定 | 簡答題改由 Claude 依作者的範例答案判定（中英文都可），取代關鍵字比對。官方 SDK 處理重試、逾時與結構化 JSON 輸出；需設定 `ANTHROPIC_API_KEY`（見 `docs/ENVIRONMENT.md`） |
 
 ### 基礎設施
 
@@ -269,20 +270,20 @@ HTTP Request
 
 ## API 概覽
 
-39 個端點，分為 7 個領域，皆位於 `/api/v1/` 下：
+44 個端點，分為 7 個領域，皆位於 `/api/v1/` 下：
 
 | 領域 | 端點 | 認證 | 說明 |
 |------|------|------|------|
 | Health | `GET /health` | — | 服務健康檢查 |
 | Auth | `GET /auth/google/login`, `GET /auth/google/callback`, `POST /auth/refresh`, `POST /auth/logout`, `GET /auth/me` | 部分 | Google OAuth2 流程 + session 管理 |
-| Courses | `GET /courses`, `GET /courses/:id`, `GET /courses/:id/recommended`, `POST /courses/:id/submit`, `POST /courses/:id/complete` | 部分 | 瀏覽、學習、答題、完課 |
+| Courses | `GET /courses`, `GET /courses/:id`, `GET /courses/:id/recommended`, `GET /courses/:id/progress`, `POST /courses/:id/start`, `POST /courses/:id/submit`, `POST /courses/:id/complete`, `POST /courses/:id/retake` | 部分 | 瀏覽、學習、接續、答題（簡答題由 AI 判定）、完課與重做 |
 | Categories | `GET /tools`, `GET /skills`, `GET /creators` | — | 公開的工具/技能/創作者列表 |
 | User | `GET /my/progress`, `GET /my/completed`, `GET /my/badges`, `GET /my/stats`, `GET /my/profile`, `PUT /my/profile`, `POST /my/avatar` | 必要 | 學習進度、個人資料管理 |
-| Admin | 18 個端點（`/admin/dashboard`, `/admin/courses/*`, `/admin/users/*`, `/admin/tools/*`, `/admin/skills/*`） | 管理員 | 儀表板、課程/使用者/分類 CRUD |
+| Admin | 20 個端點（`/admin/dashboard`, `/admin/courses/*`, `/admin/users/*`, `/admin/tools/*`, `/admin/skills/*`） | 管理員 | 儀表板、課程/使用者/分類 CRUD |
 
 <p align="center">
   <img src="docs/screenshots/swagger-ui.png" alt="Swagger UI — 互動式 API 文件" width="800" />
-  <br><em>Swagger UI — 39 個端點的互動式 API 文件</em>
+  <br><em>Swagger UI — 44 個端點的互動式 API 文件</em>
 </p>
 
 ## 測試

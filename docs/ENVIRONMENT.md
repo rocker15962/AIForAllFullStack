@@ -33,6 +33,15 @@ cp .env.example .env
 | `JWT_SECRET` | Yes | — | Secret key for signing JWT tokens (minimum 32 characters) |
 | `FRONTEND_URL` | Yes | `http://localhost:3000` | Frontend URL for CORS and OAuth redirect |
 
+## AI Grading (short answers)
+
+Short-answer questions are graded by Claude against the question's sample answer (business rule BR-09).
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `ANTHROPIC_API_KEY` | For short answers | — | Anthropic API key. Without it, short-answer submissions return HTTP 503 ("please try again later") and are not scored; multiple-choice questions are unaffected. |
+| `CLAUDE_GRADER_MODEL` | No | `claude-opus-5-5` | Model used for grading. Each short-answer submission makes one API call (low effort, 20-second timeout, one retry). |
+
 ## Frontend
 
 | Variable | Required | Default | Description |

@@ -28,7 +28,9 @@ SELECT c.*, COUNT(q.id)::int AS question_count
 FROM courses c
 LEFT JOIN questions q ON q.course_id = c.id
 WHERE (sqlc.narg('search')::text IS NULL OR c.title ILIKE '%' || sqlc.narg('search') || '%')
-  AND (sqlc.narg('status_filter')::text IS NULL OR c.status::text = sqlc.narg('status_filter'))
+  -- archived courses only show up when explicitly filtered (BR-31)
+  AND ((sqlc.narg('status_filter')::text IS NULL AND c.status != 'archived')
+       OR c.status::text = sqlc.narg('status_filter'))
 GROUP BY c.id
 ORDER BY c.created_at DESC;
 
@@ -43,14 +45,29 @@ SET title = $1, description = $2, youtube_url = $3, youtube_id = $4, thumbnail_u
 WHERE id = $11
 RETURNING *;
 
--- name: AdminDeleteCourse :exec
-DELETE FROM courses WHERE id = $1;
+-- BR-31: "delete" archives the course; progress and badges are kept.
+-- name: AdminArchiveCourse :one
+UPDATE courses SET status = 'archived'::course_status, preview_token = NULL, updated_at = NOW()
+WHERE id = $1
+RETURNING *;
+
+-- name: AdminRestoreCourse :one
+UPDATE courses SET status = 'draft'::course_status, updated_at = NOW()
+WHERE id = $1 AND status = 'archived'
+RETURNING *;
+
+-- BR-05: reuse the existing preview token, or store the new one. Only unpublished courses.
+-- name: AdminEnsurePreviewToken :one
+UPDATE courses SET preview_token = COALESCE(preview_token, sqlc.arg('token')::text)
+WHERE id = sqlc.arg('id') AND status = 'draft'
+RETURNING preview_token;
 
 -- name: AdminGetCourseStatus :one
 SELECT status FROM courses WHERE id = $1;
 
+-- Publishing invalidates the preview link (BR-05).
 -- name: AdminPublishCourse :one
-UPDATE courses SET status = 'published'::course_status, updated_at = NOW()
+UPDATE courses SET status = 'published'::course_status, preview_token = NULL, updated_at = NOW()
 WHERE id = $1
 RETURNING *;
 
@@ -61,15 +78,18 @@ RETURNING *;
 
 -- Admin user list
 -- name: AdminListUsers :many
-SELECT id, name, email, avatar_url, provider, is_admin, created_at, last_active_at
+SELECT id, name, email, avatar_url, provider, is_admin, created_at, last_active_at,
+       (SELECT COUNT(*) FROM progress p WHERE p.user_id = users.id AND p.status = 'completed')::int AS completed_count
 FROM users
 WHERE (sqlc.narg('search')::text IS NULL OR name ILIKE '%' || sqlc.narg('search') || '%' OR email ILIKE '%' || sqlc.narg('search') || '%')
 ORDER BY created_at DESC;
 
 -- name: AdminGetUserProgress :many
-SELECT p.course_id, p.status, p.score, p.completed_at, p.current_question,
-       c.title AS course_title,
-       (SELECT COUNT(*) FROM questions q WHERE q.course_id = c.id)::int AS total_questions
+SELECT p.course_id, p.status, p.score, p.completed_at, p.current_question, p.last_accessed_at,
+       c.title AS course_title, c.status AS course_status,
+       (SELECT COUNT(*) FROM questions q WHERE q.course_id = c.id)::int AS total_questions,
+       (SELECT COUNT(DISTINCT a->>'questionId') FROM jsonb_array_elements(p.answers) a
+        WHERE a->>'questionId' IN (SELECT q.id::text FROM questions q WHERE q.course_id = c.id))::int AS answered_count
 FROM progress p
 JOIN courses c ON c.id = p.course_id
 WHERE p.user_id = $1
@@ -82,8 +102,12 @@ INSERT INTO tools (name, icon, "order") VALUES ($1, $2, $3) RETURNING *;
 -- name: AdminUpdateTool :one
 UPDATE tools SET name = $1, icon = $2 WHERE id = $3 RETURNING *;
 
--- name: AdminDeleteTool :exec
-DELETE FROM tools WHERE id = $1;
+-- BR-33: archive instead of delete; courses keep the category.
+-- name: AdminArchiveTool :exec
+UPDATE tools SET archived_at = NOW() WHERE id = $1 AND archived_at IS NULL;
+
+-- name: AdminListActiveTools :many
+SELECT * FROM tools WHERE archived_at IS NULL ORDER BY "order";
 
 -- name: AdminCreateSkill :one
 INSERT INTO skills (name, icon, "order") VALUES ($1, $2, $3) RETURNING *;
@@ -91,5 +115,8 @@ INSERT INTO skills (name, icon, "order") VALUES ($1, $2, $3) RETURNING *;
 -- name: AdminUpdateSkill :one
 UPDATE skills SET name = $1, icon = $2 WHERE id = $3 RETURNING *;
 
--- name: AdminDeleteSkill :exec
-DELETE FROM skills WHERE id = $1;
+-- name: AdminArchiveSkill :exec
+UPDATE skills SET archived_at = NOW() WHERE id = $1 AND archived_at IS NULL;
+
+-- name: AdminListActiveSkills :many
+SELECT * FROM skills WHERE archived_at IS NULL ORDER BY "order";

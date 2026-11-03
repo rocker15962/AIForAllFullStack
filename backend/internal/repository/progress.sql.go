@@ -13,41 +13,10 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const completeProgress = `-- name: CompleteProgress :one
-UPDATE progress
-SET status = 'completed', score = $1, completed_at = NOW(), last_accessed_at = NOW()
-WHERE user_id = $2 AND course_id = $3
-RETURNING id, user_id, course_id, status, current_question, score, answers, started_at, completed_at, last_accessed_at
-`
-
-type CompleteProgressParams struct {
-	Score    pgtype.Numeric `json:"score"`
-	UserID   uuid.UUID      `json:"user_id"`
-	CourseID uuid.UUID      `json:"course_id"`
-}
-
-func (q *Queries) CompleteProgress(ctx context.Context, arg CompleteProgressParams) (Progress, error) {
-	row := q.db.QueryRow(ctx, completeProgress, arg.Score, arg.UserID, arg.CourseID)
-	var i Progress
-	err := row.Scan(
-		&i.ID,
-		&i.UserID,
-		&i.CourseID,
-		&i.Status,
-		&i.CurrentQuestion,
-		&i.Score,
-		&i.Answers,
-		&i.StartedAt,
-		&i.CompletedAt,
-		&i.LastAccessedAt,
-	)
-	return i, err
-}
-
 const createProgress = `-- name: CreateProgress :one
 INSERT INTO progress (user_id, course_id, status, current_question, answers)
 VALUES ($1, $2, 'in_progress', $3, $4)
-RETURNING id, user_id, course_id, status, current_question, score, answers, started_at, completed_at, last_accessed_at
+RETURNING id, user_id, course_id, status, current_question, score, answers, started_at, completed_at, last_accessed_at, badge_earned_at
 `
 
 type CreateProgressParams struct {
@@ -76,12 +45,57 @@ func (q *Queries) CreateProgress(ctx context.Context, arg CreateProgressParams) 
 		&i.StartedAt,
 		&i.CompletedAt,
 		&i.LastAccessedAt,
+		&i.BadgeEarnedAt,
+	)
+	return i, err
+}
+
+const finishAttempt = `-- name: FinishAttempt :one
+UPDATE progress
+SET status = CASE WHEN $1::boolean THEN 'completed'::progress_status ELSE 'in_progress'::progress_status END,
+    score = $2,
+    completed_at = CASE WHEN $1::boolean THEN NOW() ELSE NULL END,
+    badge_earned_at = CASE WHEN $1::boolean THEN COALESCE(badge_earned_at, NOW()) ELSE badge_earned_at END,
+    last_accessed_at = NOW()
+WHERE user_id = $3 AND course_id = $4
+RETURNING id, user_id, course_id, status, current_question, score, answers, started_at, completed_at, last_accessed_at, badge_earned_at
+`
+
+type FinishAttemptParams struct {
+	Passed   bool           `json:"passed"`
+	Score    pgtype.Numeric `json:"score"`
+	UserID   uuid.UUID      `json:"user_id"`
+	CourseID uuid.UUID      `json:"course_id"`
+}
+
+// BR-12 / BR-16: record the result of the latest attempt. Passing (>= 60%) marks the course
+// completed and earns the badge; the badge is never taken back by a later attempt.
+func (q *Queries) FinishAttempt(ctx context.Context, arg FinishAttemptParams) (Progress, error) {
+	row := q.db.QueryRow(ctx, finishAttempt,
+		arg.Passed,
+		arg.Score,
+		arg.UserID,
+		arg.CourseID,
+	)
+	var i Progress
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.CourseID,
+		&i.Status,
+		&i.CurrentQuestion,
+		&i.Score,
+		&i.Answers,
+		&i.StartedAt,
+		&i.CompletedAt,
+		&i.LastAccessedAt,
+		&i.BadgeEarnedAt,
 	)
 	return i, err
 }
 
 const getProgress = `-- name: GetProgress :one
-SELECT id, user_id, course_id, status, current_question, score, answers, started_at, completed_at, last_accessed_at FROM progress WHERE user_id = $1 AND course_id = $2
+SELECT id, user_id, course_id, status, current_question, score, answers, started_at, completed_at, last_accessed_at, badge_earned_at FROM progress WHERE user_id = $1 AND course_id = $2
 `
 
 type GetProgressParams struct {
@@ -103,15 +117,66 @@ func (q *Queries) GetProgress(ctx context.Context, arg GetProgressParams) (Progr
 		&i.StartedAt,
 		&i.CompletedAt,
 		&i.LastAccessedAt,
+		&i.BadgeEarnedAt,
 	)
 	return i, err
+}
+
+const retakeProgress = `-- name: RetakeProgress :one
+UPDATE progress
+SET answers = '[]', current_question = 0, status = 'in_progress', score = NULL,
+    completed_at = NULL, last_accessed_at = NOW()
+WHERE user_id = $1 AND course_id = $2
+RETURNING id, user_id, course_id, status, current_question, score, answers, started_at, completed_at, last_accessed_at, badge_earned_at
+`
+
+type RetakeProgressParams struct {
+	UserID   uuid.UUID `json:"user_id"`
+	CourseID uuid.UUID `json:"course_id"`
+}
+
+// BR-16: a retake starts a new round that replaces the previous answers and score.
+func (q *Queries) RetakeProgress(ctx context.Context, arg RetakeProgressParams) (Progress, error) {
+	row := q.db.QueryRow(ctx, retakeProgress, arg.UserID, arg.CourseID)
+	var i Progress
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.CourseID,
+		&i.Status,
+		&i.CurrentQuestion,
+		&i.Score,
+		&i.Answers,
+		&i.StartedAt,
+		&i.CompletedAt,
+		&i.LastAccessedAt,
+		&i.BadgeEarnedAt,
+	)
+	return i, err
+}
+
+const startProgress = `-- name: StartProgress :exec
+INSERT INTO progress (user_id, course_id, status, current_question, answers)
+VALUES ($1, $2, 'in_progress', 0, '[]')
+ON CONFLICT (user_id, course_id) DO UPDATE SET last_accessed_at = NOW()
+`
+
+type StartProgressParams struct {
+	UserID   uuid.UUID `json:"user_id"`
+	CourseID uuid.UUID `json:"course_id"`
+}
+
+// BR-17: the in-progress record is created once the video has played 10%.
+func (q *Queries) StartProgress(ctx context.Context, arg StartProgressParams) error {
+	_, err := q.db.Exec(ctx, startProgress, arg.UserID, arg.CourseID)
+	return err
 }
 
 const updateProgressAnswers = `-- name: UpdateProgressAnswers :one
 UPDATE progress
 SET answers = $1, current_question = $2, last_accessed_at = NOW()
 WHERE user_id = $3 AND course_id = $4
-RETURNING id, user_id, course_id, status, current_question, score, answers, started_at, completed_at, last_accessed_at
+RETURNING id, user_id, course_id, status, current_question, score, answers, started_at, completed_at, last_accessed_at, badge_earned_at
 `
 
 type UpdateProgressAnswersParams struct {
@@ -140,6 +205,7 @@ func (q *Queries) UpdateProgressAnswers(ctx context.Context, arg UpdateProgressA
 		&i.StartedAt,
 		&i.CompletedAt,
 		&i.LastAccessedAt,
+		&i.BadgeEarnedAt,
 	)
 	return i, err
 }
