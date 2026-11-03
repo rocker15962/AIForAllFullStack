@@ -1,4 +1,4 @@
-/* @ds-bundle: {"format":4,"namespace":"AIForAllNeutralDS_acd6b1","components":[{"name":"Avatar","sourcePath":"components/core/Avatar.jsx"},{"name":"Badge","sourcePath":"components/core/Badge.jsx"},{"name":"Button","sourcePath":"components/core/Button.jsx"},{"name":"ICON_NAMES","sourcePath":"components/core/Icon.jsx"},{"name":"Icon","sourcePath":"components/core/Icon.jsx"},{"name":"Spinner","sourcePath":"components/core/Spinner.jsx"},{"name":"StatusDot","sourcePath":"components/core/StatusDot.jsx"},{"name":"Tag","sourcePath":"components/core/Tag.jsx"},{"name":"Wordmark","sourcePath":"components/core/Wordmark.jsx"},{"name":"ActionCard","sourcePath":"components/data/ActionCard.jsx"},{"name":"Card","sourcePath":"components/data/Card.jsx"},{"name":"DataTable","sourcePath":"components/data/DataTable.jsx"},{"name":"MediaCard","sourcePath":"components/data/MediaCard.jsx"},{"name":"RankedList","sourcePath":"components/data/RankedList.jsx"},{"name":"ResultSummary","sourcePath":"components/data/ResultSummary.jsx"},{"name":"SortableList","sourcePath":"components/data/SortableList.jsx"},{"name":"StatCard","sourcePath":"components/data/StatCard.jsx"},{"name":"TrendChart","sourcePath":"components/data/TrendChart.jsx"},{"name":"Alert","sourcePath":"components/feedback/Alert.jsx"},{"name":"ConfirmDialog","sourcePath":"components/feedback/ConfirmDialog.jsx"},{"name":"Dialog","sourcePath":"components/feedback/Dialog.jsx"},{"name":"EmptyState","sourcePath":"components/feedback/EmptyState.jsx"},{"name":"ErrorState","sourcePath":"components/feedback/ErrorState.jsx"},{"name":"InlineBanner","sourcePath":"components/feedback/InlineBanner.jsx"},{"name":"ProgressBar","sourcePath":"components/feedback/ProgressBar.jsx"},{"name":"SegmentedProgress","sourcePath":"components/feedback/SegmentedProgress.jsx"},{"name":"Toast","sourcePath":"components/feedback/Toast.jsx"},{"name":"ToastStack","sourcePath":"components/feedback/Toast.jsx"},{"name":"Checkbox","sourcePath":"components/forms/Checkbox.jsx"},{"name":"ChoiceGroup","sourcePath":"components/forms/ChoiceGroup.jsx"},{"name":"FilterChips","sourcePath":"components/forms/FilterChips.jsx"},{"name":"FilterGroup","sourcePath":"components/forms/FilterGroup.jsx"},{"name":"FormField","sourcePath":"components/forms/FormField.jsx"},{"name":"Input","sourcePath":"components/forms/Input.jsx"},{"name":"Radio","sourcePath":"components/forms/Radio.jsx"},{"name":"SearchInput","sourcePath":"components/forms/SearchInput.jsx"},{"name":"SegmentedControl","sourcePath":"components/forms/SegmentedControl.jsx"},{"name":"Select","sourcePath":"components/forms/Select.jsx"},{"name":"Textarea","sourcePath":"components/forms/Textarea.jsx"},{"name":"AuthCard","sourcePath":"components/marketing/AuthCard.jsx"},{"name":"FeatureCard","sourcePath":"components/marketing/FeatureCard.jsx"},{"name":"Section","sourcePath":"components/marketing/Section.jsx"},{"name":"SiteFooter","sourcePath":"components/marketing/SiteFooter.jsx"},{"name":"StepItem","sourcePath":"components/marketing/StepItem.jsx"},{"name":"VideoFrame","sourcePath":"components/marketing/VideoFrame.jsx"},{"name":"BackLink","sourcePath":"components/navigation/BackLink.jsx"},{"name":"MobileMenu","sourcePath":"components/navigation/MobileMenu.jsx"},{"name":"PageHeader","sourcePath":"components/navigation/PageHeader.jsx"},{"name":"Tabs","sourcePath":"components/navigation/Tabs.jsx"},{"name":"TopNav","sourcePath":"components/navigation/TopNav.jsx"},{"name":"UserMenu","sourcePath":"components/navigation/UserMenu.jsx"}],"sourceHashes":{"components/core/Avatar.jsx":"f843e324827b","components/core/Badge.jsx":"d164d4c27c2a","components/core/Button.jsx":"be7a4e75e2e4","components/core/Icon.jsx":"eb532003e143","components/core/Spinner.jsx":"2b460daa096e","components/core/StatusDot.jsx":"63694066f32a","components/core/Tag.jsx":"f0239af31b7e","components/core/Wordmark.jsx":"5dc6bc0c52fd","components/data/ActionCard.jsx":"ce92e68e2378","components/data/Card.jsx":"fb6d30cac967","components/data/DataTable.jsx":"9e853e9d5151","components/data/MediaCard.jsx":"ae62a7e9f548","components/data/RankedList.jsx":"7e7c2b9f17f0","components/data/ResultSummary.jsx":"35e7bfbd25ad","components/data/SortableList.jsx":"c5181372cb35","components/data/StatCard.jsx":"af960e2e8aae","components/data/TrendChart.jsx":"2d92b7e16032","components/feedback/Alert.jsx":"12bb42cdc1bf","components/feedback/ConfirmDialog.jsx":"9732c25dab75","components/feedback/Dialog.jsx":"65a6299875de","components/feedback/EmptyState.jsx":"3f42898a3820","components/feedback/ErrorState.jsx":"350aa3a85957","components/feedback/InlineBanner.jsx":"a7b7768d13ca","components/feedback/ProgressBar.jsx":"e35dd9b895b0","components/feedback/SegmentedProgress.jsx":"41417d8a5cbc","components/feedback/Toast.jsx":"f8a01836a4ae","components/forms/Checkbox.jsx":"592a6f9cf1af","components/forms/ChoiceGroup.jsx":"0b095fe0c0a0","components/forms/FilterChips.jsx":"7acbfc4c2ae0","components/forms/FilterGroup.jsx":"5de2948cc779","components/forms/FormField.jsx":"6fdffb2c95bc","components/forms/Input.jsx":"dcac9acef42d","components/forms/Radio.jsx":"03da3f173e45","components/forms/SearchInput.jsx":"fa742bf3cf23","components/forms/SegmentedControl.jsx":"6409fbac9577","components/forms/Select.jsx":"0fdb233959d3","components/forms/Textarea.jsx":"1114291a2122","components/marketing/AuthCard.jsx":"21a3683e77d8","components/marketing/FeatureCard.jsx":"399cb95daeef","components/marketing/Section.jsx":"33c8eef1b824","components/marketing/SiteFooter.jsx":"c3731ace2524","components/marketing/StepItem.jsx":"2d6f4f442bf2","components/marketing/VideoFrame.jsx":"c6578448cd52","components/navigation/BackLink.jsx":"9dcded7ef11a","components/navigation/MobileMenu.jsx":"8a3ef9d8537c","components/navigation/PageHeader.jsx":"94867470bdb5","components/navigation/Tabs.jsx":"62a4e9a9d08d","components/navigation/TopNav.jsx":"9c1b640195f4","components/navigation/UserMenu.jsx":"9c7caf279fcb","ui_kits/admin/AdminShell.jsx":"c80ca46f0ccd","ui_kits/admin/CategoriesScreen.jsx":"c5230d355d5c","ui_kits/admin/ContentScreen.jsx":"303190d3e20b","ui_kits/admin/EditorScreen.jsx":"2d1efaa7196b","ui_kits/admin/MembersScreen.jsx":"ab2d3a2e38d5","ui_kits/admin/OverviewScreen.jsx":"52c40a063368","ui_kits/app/BrowseScreen.jsx":"67ddd1efaff7","ui_kits/app/DetailScreen.jsx":"7df5751376a4","ui_kits/app/MySpaceScreen.jsx":"edc8101788bb","ui_kits/app/ProfileScreen.jsx":"ec85e9532d57","ui_kits/app/Shell.jsx":"9a6236847e5a","ui_kits/marketing/LandingScreen.jsx":"d28e9924fe4f","ui_kits/marketing/SignInScreen.jsx":"befa08fbab1e","ui_kits/shared/sample-data.js":"4a3e507c50f5"},"inlinedExternals":[],"unexposedExports":[]} */
+/* @ds-bundle: {"format":4,"namespace":"AIForAllNeutralDS_acd6b1","components":[{"name":"Avatar","sourcePath":"components/core/Avatar.jsx"},{"name":"Badge","sourcePath":"components/core/Badge.jsx"},{"name":"Button","sourcePath":"components/core/Button.jsx"},{"name":"ICON_NAMES","sourcePath":"components/core/Icon.jsx"},{"name":"Icon","sourcePath":"components/core/Icon.jsx"},{"name":"Spinner","sourcePath":"components/core/Spinner.jsx"},{"name":"StatusDot","sourcePath":"components/core/StatusDot.jsx"},{"name":"Tag","sourcePath":"components/core/Tag.jsx"},{"name":"Wordmark","sourcePath":"components/core/Wordmark.jsx"},{"name":"ActionCard","sourcePath":"components/data/ActionCard.jsx"},{"name":"Card","sourcePath":"components/data/Card.jsx"},{"name":"DataTable","sourcePath":"components/data/DataTable.jsx"},{"name":"MediaCard","sourcePath":"components/data/MediaCard.jsx"},{"name":"RankedList","sourcePath":"components/data/RankedList.jsx"},{"name":"ResultSummary","sourcePath":"components/data/ResultSummary.jsx"},{"name":"SortableList","sourcePath":"components/data/SortableList.jsx"},{"name":"StatCard","sourcePath":"components/data/StatCard.jsx"},{"name":"TrendChart","sourcePath":"components/data/TrendChart.jsx"},{"name":"Alert","sourcePath":"components/feedback/Alert.jsx"},{"name":"ConfirmDialog","sourcePath":"components/feedback/ConfirmDialog.jsx"},{"name":"Dialog","sourcePath":"components/feedback/Dialog.jsx"},{"name":"EmptyState","sourcePath":"components/feedback/EmptyState.jsx"},{"name":"ErrorState","sourcePath":"components/feedback/ErrorState.jsx"},{"name":"InlineBanner","sourcePath":"components/feedback/InlineBanner.jsx"},{"name":"ProgressBar","sourcePath":"components/feedback/ProgressBar.jsx"},{"name":"SegmentedProgress","sourcePath":"components/feedback/SegmentedProgress.jsx"},{"name":"Toast","sourcePath":"components/feedback/Toast.jsx"},{"name":"ToastStack","sourcePath":"components/feedback/Toast.jsx"},{"name":"Checkbox","sourcePath":"components/forms/Checkbox.jsx"},{"name":"ChoiceGroup","sourcePath":"components/forms/ChoiceGroup.jsx"},{"name":"FilterChips","sourcePath":"components/forms/FilterChips.jsx"},{"name":"FilterGroup","sourcePath":"components/forms/FilterGroup.jsx"},{"name":"FormField","sourcePath":"components/forms/FormField.jsx"},{"name":"Input","sourcePath":"components/forms/Input.jsx"},{"name":"Radio","sourcePath":"components/forms/Radio.jsx"},{"name":"SearchInput","sourcePath":"components/forms/SearchInput.jsx"},{"name":"SegmentedControl","sourcePath":"components/forms/SegmentedControl.jsx"},{"name":"Select","sourcePath":"components/forms/Select.jsx"},{"name":"Slider","sourcePath":"components/forms/Slider.jsx"},{"name":"Textarea","sourcePath":"components/forms/Textarea.jsx"},{"name":"AuthCard","sourcePath":"components/marketing/AuthCard.jsx"},{"name":"FeatureCard","sourcePath":"components/marketing/FeatureCard.jsx"},{"name":"Section","sourcePath":"components/marketing/Section.jsx"},{"name":"SiteFooter","sourcePath":"components/marketing/SiteFooter.jsx"},{"name":"StepItem","sourcePath":"components/marketing/StepItem.jsx"},{"name":"VideoFrame","sourcePath":"components/marketing/VideoFrame.jsx"},{"name":"ImageCropper","sourcePath":"components/media/ImageCropper.jsx"},{"name":"BackLink","sourcePath":"components/navigation/BackLink.jsx"},{"name":"MobileMenu","sourcePath":"components/navigation/MobileMenu.jsx"},{"name":"PageHeader","sourcePath":"components/navigation/PageHeader.jsx"},{"name":"Pagination","sourcePath":"components/navigation/Pagination.jsx"},{"name":"Tabs","sourcePath":"components/navigation/Tabs.jsx"},{"name":"TopNav","sourcePath":"components/navigation/TopNav.jsx"},{"name":"UserMenu","sourcePath":"components/navigation/UserMenu.jsx"}],"sourceHashes":{"components/core/Avatar.jsx":"f843e324827b","components/core/Badge.jsx":"d164d4c27c2a","components/core/Button.jsx":"aad0d06cba77","components/core/Icon.jsx":"0507d592051d","components/core/Spinner.jsx":"493378a6ba17","components/core/StatusDot.jsx":"63694066f32a","components/core/Tag.jsx":"f0239af31b7e","components/core/Wordmark.jsx":"4a4c01313269","components/data/ActionCard.jsx":"ce92e68e2378","components/data/Card.jsx":"fb6d30cac967","components/data/DataTable.jsx":"65b099f3fa6a","components/data/MediaCard.jsx":"66741a8ade2b","components/data/RankedList.jsx":"85ee63e53fff","components/data/ResultSummary.jsx":"d1cd553c9444","components/data/SortableList.jsx":"93474cb4809b","components/data/StatCard.jsx":"f24bfc769e30","components/data/TrendChart.jsx":"7f7d5242e741","components/feedback/Alert.jsx":"12bb42cdc1bf","components/feedback/ConfirmDialog.jsx":"94b7342a16d4","components/feedback/Dialog.jsx":"6c922b72852d","components/feedback/EmptyState.jsx":"3f42898a3820","components/feedback/ErrorState.jsx":"70fba774e9bb","components/feedback/InlineBanner.jsx":"a7b7768d13ca","components/feedback/ProgressBar.jsx":"e35dd9b895b0","components/feedback/SegmentedProgress.jsx":"41417d8a5cbc","components/feedback/Toast.jsx":"74fafe452071","components/forms/Checkbox.jsx":"592a6f9cf1af","components/forms/ChoiceGroup.jsx":"0b095fe0c0a0","components/forms/FilterChips.jsx":"7acbfc4c2ae0","components/forms/FilterGroup.jsx":"5de2948cc779","components/forms/FormField.jsx":"6fdffb2c95bc","components/forms/Input.jsx":"dcac9acef42d","components/forms/Radio.jsx":"03da3f173e45","components/forms/SearchInput.jsx":"87b49d208bfd","components/forms/SegmentedControl.jsx":"6409fbac9577","components/forms/Select.jsx":"0fdb233959d3","components/forms/Slider.jsx":"b2159fd518e1","components/forms/Textarea.jsx":"1114291a2122","components/marketing/AuthCard.jsx":"45a944a9bdb7","components/marketing/FeatureCard.jsx":"399cb95daeef","components/marketing/Section.jsx":"9c157ac9bcff","components/marketing/SiteFooter.jsx":"1a156ce65b6a","components/marketing/StepItem.jsx":"2d6f4f442bf2","components/marketing/VideoFrame.jsx":"bd9a8a3a1ab2","components/media/ImageCropper.jsx":"b36c760e2bdf","components/navigation/BackLink.jsx":"201ddb8db54c","components/navigation/MobileMenu.jsx":"2d6ba878ae9f","components/navigation/PageHeader.jsx":"94867470bdb5","components/navigation/Pagination.jsx":"b226422e1acd","components/navigation/Tabs.jsx":"62a4e9a9d08d","components/navigation/TopNav.jsx":"2e7e9cf232fd","components/navigation/UserMenu.jsx":"c1adb5995fab"},"inlinedExternals":[],"unexposedExports":[]} */
 
 (() => {
 
@@ -74,6 +74,7 @@ Object.assign(__ds_scope, { Badge });
 try { (() => {
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 // Glyph data copied programmatically from lucide-static@0.562.0 (the source app uses lucide-react). 24×24, stroke 2, round caps/joins.
+// 'bar-chart-3' is the legacy alias of 'chart-column'.
 const GLYPHS = {
   "menu": "<path d=\"M4 5h16\" /><path d=\"M4 12h16\" /><path d=\"M4 19h16\" />",
   "x": "<path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" />",
@@ -118,7 +119,23 @@ const GLYPHS = {
   "bot": "<path d=\"M12 8V4H8\" /><rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\" /><path d=\"M2 14h2\" /><path d=\"M20 14h2\" /><path d=\"M15 13v2\" /><path d=\"M9 13v2\" />",
   "brain": "<path d=\"M12 18V5\" /><path d=\"M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4\" /><path d=\"M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5\" /><path d=\"M17.997 5.125a4 4 0 0 1 2.526 5.77\" /><path d=\"M18 18a4 4 0 0 0 2-7.464\" /><path d=\"M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517\" /><path d=\"M6 18a4 4 0 0 1-2-7.464\" /><path d=\"M6.003 5.125a4 4 0 0 0-2.526 5.77\" />",
   "code": "<path d=\"m16 18 6-6-6-6\" /><path d=\"m8 6-6 6 6 6\" />",
-  "image": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\" /><circle cx=\"9\" cy=\"9\" r=\"2\" /><path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\" />"
+  "image": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\" /><circle cx=\"9\" cy=\"9\" r=\"2\" /><path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\" />",
+  "chevron-left": "<path d=\"m15 18-6-6 6-6\" />",
+  "archive-restore": "<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\" /><path d=\"M4 8v11a2 2 0 0 0 2 2h2\" /><path d=\"M20 8v11a2 2 0 0 1-2 2h-2\" /><path d=\"m9 15 3-3 3 3\" /><path d=\"M12 12v9\" />",
+  "palette": "<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\" /><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\" />",
+  "bar-chart-3": "<path d=\"M3 3v16a2 2 0 0 0 2 2h16\" /><path d=\"M18 17V9\" /><path d=\"M13 17V5\" /><path d=\"M8 17v-3\" />",
+  "image-plus": "<path d=\"M16 5h6\" /><path d=\"M19 2v6\" /><path d=\"M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5\" /><path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\" /><circle cx=\"9\" cy=\"9\" r=\"2\" />",
+  "crop": "<path d=\"M6 2v14a2 2 0 0 0 2 2h14\" /><path d=\"M18 22V8a2 2 0 0 0-2-2H2\" />",
+  "zoom-in": "<circle cx=\"11\" cy=\"11\" r=\"8\" /><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\" /><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\" /><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\" />",
+  "minus": "<path d=\"M5 12h14\" />",
+  "zoom-out": "<circle cx=\"11\" cy=\"11\" r=\"8\" /><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\" /><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\" />",
+  "trending-down": "<path d=\"M16 17h6v-6\" /><path d=\"m22 17-8.5-8.5-5 5L2 7\" />",
+  "terminal": "<path d=\"M12 19h8\" /><path d=\"m4 17 6-6-6-6\" />",
+  "trending-up": "<path d=\"M16 7h6v6\" /><path d=\"m22 7-8.5 8.5-5-5L2 17\" />",
+  "archive": "<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\" /><path d=\"M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8\" /><path d=\"M10 12h4\" />",
+  "pen-tool": "<path d=\"M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z\" /><path d=\"m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18\" /><path d=\"m2.3 2.3 7.286 7.286\" /><circle cx=\"11\" cy=\"11\" r=\"2\" />",
+  "chevron-right": "<path d=\"m9 18 6-6-6-6\" />",
+  "presentation": "<path d=\"M2 3h20\" /><path d=\"M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3\" /><path d=\"m7 21 5-5 5 5\" />"
 };
 const ICON_NAMES = Object.keys(GLYPHS);
 function Icon({
@@ -340,6 +357,7 @@ function Button({
   loading = false,
   disabled = false,
   fullWidth = false,
+  badge,
   type = 'button',
   children,
   style,
@@ -408,7 +426,19 @@ function Button({
       ...v,
       ...style
     }
-  }, rest), lead, iconOnly ? children || null : children, trail);
+  }, rest), lead, iconOnly ? children || null : children, trail, badge ? /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      padding: '1px 6px',
+      borderRadius: 'var(--radius-full)',
+      fontSize: 'var(--fs-2xs)',
+      lineHeight: '16px',
+      fontWeight: 'var(--fw-medium)',
+      background: variant === 'primary' || variant === 'danger' ? 'rgb(255 255 255 / 0.25)' : 'var(--surface-muted)',
+      color: variant === 'primary' || variant === 'danger' ? 'var(--white)' : 'var(--text-muted)'
+    }
+  }, badge) : null);
 }
 Object.assign(__ds_scope, { Button });
 })(); } catch (e) { __ds_ns.__errors.push({ path: "components/core/Button.jsx", error: String((e && e.message) || e) }); }
@@ -429,7 +459,7 @@ function Spinner({
   });
   return /*#__PURE__*/React.createElement("span", {
     role: "status",
-    "aria-label": "Loading",
+    "aria-label": "\u8F09\u5165\u4E2D",
     style: {
       display: 'inline-block',
       width: size,
@@ -560,8 +590,8 @@ Object.assign(__ds_scope, { Tag });
 // components/core/Wordmark.jsx
 try { (() => {
 function Wordmark({
-  accent = 'Your',
-  text = 'Product',
+  accent = '你的',
+  text = '產品',
   size = 20,
   tone = 'logo',
   inverse = false,
@@ -571,13 +601,14 @@ function Wordmark({
 }) {
   const accentColor = tone === 'strong' ? 'var(--accent)' : 'var(--accent-logo)';
   const Tag = href ? 'a' : 'span';
+  const cjk = /[\u3400-\u9fff]/.test(String(accent) + String(text));
   return /*#__PURE__*/React.createElement(Tag, {
     href: href,
     onClick: onClick,
     style: {
       display: 'inline-flex',
       alignItems: 'baseline',
-      gap: '0.2em',
+      gap: cjk ? 0 : '0.2em',
       fontFamily: 'var(--font-heading)',
       fontSize: size,
       fontWeight: 'var(--fw-bold)',
@@ -595,7 +626,7 @@ function Wordmark({
     style: {
       color: inverse ? 'var(--text-inverse)' : 'var(--text-strong)'
     }
-  }, inverse ? [accent, text].filter(Boolean).join(' ') : text));
+  }, inverse ? [accent, text].filter(Boolean).join(cjk ? '' : ' ') : text));
 }
 Object.assign(__ds_scope, { Wordmark });
 })(); } catch (e) { __ds_ns.__errors.push({ path: "components/core/Wordmark.jsx", error: String((e && e.message) || e) }); }
@@ -797,15 +828,76 @@ Object.assign(__ds_scope, { Card });
 
 // components/data/DataTable.jsx
 try { (() => {
+function Row({
+  r,
+  i,
+  last,
+  columns,
+  tpl,
+  expandable,
+  expanded,
+  onRowClick,
+  renderExpanded
+}) {
+  const [h, setH] = React.useState(false);
+  const clickable = !!onRowClick;
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      borderBottom: last ? 'none' : '1px solid var(--border-subtle)'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    onClick: clickable ? () => onRowClick(r) : undefined,
+    onMouseEnter: () => setH(true),
+    onMouseLeave: () => setH(false),
+    "aria-expanded": expandable ? expanded : undefined,
+    style: {
+      display: 'grid',
+      gridTemplateColumns: tpl,
+      gap: 16,
+      alignItems: 'center',
+      padding: '16px 20px',
+      fontSize: 'var(--fs-sm)',
+      color: 'var(--text-secondary)',
+      cursor: clickable ? 'pointer' : 'default',
+      background: expanded ? 'var(--surface-subtle)' : clickable && h ? 'var(--surface-subtle)' : 'transparent',
+      transition: 'var(--transition-colors)'
+    }
+  }, columns.map(c => /*#__PURE__*/React.createElement("div", {
+    key: c.key,
+    style: {
+      minWidth: 0,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
+    }
+  }, c.render ? c.render(r) : r[c.key])), expandable ? /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+      color: 'var(--text-subtle)'
+    }
+  }, /*#__PURE__*/React.createElement(__ds_scope.Icon, {
+    name: expanded ? 'chevron-up' : 'chevron-down',
+    size: 16
+  })) : null), expanded && renderExpanded ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '4px 20px 20px',
+      background: 'var(--surface-subtle)'
+    }
+  }, renderExpanded(r)) : null);
+}
 function DataTable({
   columns = [],
   rows = [],
   rowKey = 'id',
-  emptyTitle = 'No results found',
-  emptyText = 'Try adjusting your search or filters',
+  renderExpanded,
+  expandedId,
+  onRowClick,
+  emptyTitle = '找不到結果',
+  emptyText = '試著調整搜尋或篩選條件',
   style
 }) {
-  const tpl = columns.map(c => c.width || '1fr').join(' ');
+  const expandable = typeof renderExpanded === 'function';
+  const tpl = columns.map(c => c.width || '1fr').join(' ') + (expandable ? ' 24px' : '');
   if (!rows.length) {
     return /*#__PURE__*/React.createElement("div", {
       style: {
@@ -857,26 +949,18 @@ function DataTable({
     }
   }, columns.map(c => /*#__PURE__*/React.createElement("span", {
     key: c.key
-  }, c.header))), rows.map((r, i) => /*#__PURE__*/React.createElement("div", {
+  }, c.header)), expandable ? /*#__PURE__*/React.createElement("span", null) : null), rows.map((r, i) => /*#__PURE__*/React.createElement(Row, {
     key: r[rowKey] ?? i,
-    style: {
-      display: 'grid',
-      gridTemplateColumns: tpl,
-      gap: 16,
-      alignItems: 'center',
-      padding: '16px 20px',
-      borderBottom: i < rows.length - 1 ? '1px solid var(--border-subtle)' : 'none',
-      fontSize: 'var(--fs-sm)',
-      color: 'var(--text-secondary)'
-    }
-  }, columns.map(c => /*#__PURE__*/React.createElement("div", {
-    key: c.key,
-    style: {
-      minWidth: 0,
-      overflow: 'hidden',
-      textOverflow: 'ellipsis'
-    }
-  }, c.render ? c.render(r) : r[c.key])))));
+    r: r,
+    i: i,
+    last: i === rows.length - 1,
+    columns: columns,
+    tpl: tpl,
+    expandable: expandable,
+    expanded: expandable && expandedId != null && r[rowKey] === expandedId,
+    onRowClick: onRowClick,
+    renderExpanded: renderExpanded
+  })));
 }
 Object.assign(__ds_scope, { DataTable });
 })(); } catch (e) { __ds_ns.__errors.push({ path: "components/data/DataTable.jsx", error: String((e && e.message) || e) }); }
@@ -945,7 +1029,7 @@ function RankedList({
   title,
   items = [],
   metaIcon = 'trophy',
-  emptyText = 'No data available yet.',
+  emptyText = '還沒有資料',
   style
 }) {
   return /*#__PURE__*/React.createElement("div", {
@@ -999,7 +1083,7 @@ function autoTone(v) {
 }
 function ResultSummary({
   icon,
-  title = 'All done!',
+  title = '完成了！',
   message,
   value,
   valueSuffix = '%',
@@ -1110,7 +1194,7 @@ function EditRow({
   }, /*#__PURE__*/React.createElement("input", {
     value: icon,
     onChange: e => setIcon(e.target.value),
-    placeholder: "Icon name",
+    placeholder: "\u5716\u793A\u540D\u7A31",
     style: {
       ...smallInput,
       width: 96,
@@ -1119,7 +1203,7 @@ function EditRow({
   }), /*#__PURE__*/React.createElement("input", {
     value: name,
     onChange: e => setName(e.target.value),
-    placeholder: "Name",
+    placeholder: "\u540D\u7A31",
     style: {
       ...smallInput,
       flex: 1,
@@ -1127,6 +1211,7 @@ function EditRow({
     }
   }), /*#__PURE__*/React.createElement("button", {
     type: "button",
+    "aria-label": "\u5132\u5B58",
     disabled: !name.trim(),
     onClick: () => onSave({
       icon: icon.trim() || 'circle',
@@ -1143,6 +1228,7 @@ function EditRow({
     size: 16
   })), /*#__PURE__*/React.createElement("button", {
     type: "button",
+    "aria-label": "\u53D6\u6D88",
     onClick: onCancel,
     style: {
       ...iconBtn('var(--text-subtle)'),
@@ -1158,8 +1244,8 @@ function SortableList({
   title,
   items: initial = [],
   tone = 'accent',
-  addLabel = 'Add item',
-  emptyText = 'Nothing here yet',
+  addLabel = '新增項目',
+  emptyText = '還沒有項目',
   onChange,
   onDelete,
   style
@@ -1270,7 +1356,8 @@ function SortableList({
     }
   }, it.name), /*#__PURE__*/React.createElement("button", {
     type: "button",
-    title: "Edit",
+    title: "\u7DE8\u8F2F",
+    "aria-label": "\u7DE8\u8F2F",
     onClick: () => {
       setEditing(it.id);
       setAdding(false);
@@ -1281,7 +1368,8 @@ function SortableList({
     size: 14
   })), /*#__PURE__*/React.createElement("button", {
     type: "button",
-    title: "Delete",
+    title: "\u522A\u9664",
+    "aria-label": "\u522A\u9664",
     onClick: () => {
       if (onDelete) onDelete(it.id);else commit(items.filter(x => x.id !== it.id));
     },
@@ -1390,12 +1478,47 @@ const TONES = {
     fgStrong: 'var(--neutral-600)'
   }
 };
+const TREND = {
+  up: ['var(--success-strong)', 'trending-up', '+'],
+  down: ['var(--danger)', 'trending-down', '−'],
+  flat: ['var(--text-muted)', 'minus', '']
+};
+function Trend({
+  trend
+}) {
+  const dir = trend.direction || (trend.value > 0 ? 'up' : trend.value < 0 ? 'down' : 'flat');
+  const [color, icon, sign] = TREND[dir] || TREND.flat;
+  const v = Math.abs(Number(trend.value) || 0);
+  return /*#__PURE__*/React.createElement("p", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 4,
+      margin: '2px 0 0',
+      fontSize: 'var(--fs-xs)',
+      lineHeight: '16px',
+      color
+    }
+  }, /*#__PURE__*/React.createElement(__ds_scope.Icon, {
+    name: icon,
+    size: 14
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 'var(--fw-medium)'
+    }
+  }, sign, v, "%"), trend.label ? /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'var(--text-muted)'
+    }
+  }, trend.label) : null);
+}
 function StatCard({
   icon = 'activity',
   label,
   value,
   tone = 'accent',
   variant = 'round',
+  trend,
   style
 }) {
   const t = TONES[tone] || TONES.accent;
@@ -1419,12 +1542,15 @@ function StatCard({
       color: 'var(--text-strong)'
     }
   }, value);
+  const trendEl = trend ? /*#__PURE__*/React.createElement(Trend, {
+    trend: trend
+  }) : null;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       alignItems: 'center',
       gap: compact ? 12 : 16,
-      height: tile ? 90 : undefined,
+      minHeight: tile ? 90 : undefined,
       padding: compact ? 16 : 20,
       boxSizing: 'border-box',
       borderRadius: 'var(--radius-xl)',
@@ -1448,7 +1574,11 @@ function StatCard({
     name: icon,
     size: compact ? 18 : 20,
     color: tile ? t.fg : t.fgStrong
-  }) : icon), /*#__PURE__*/React.createElement("div", null, tile ? /*#__PURE__*/React.createElement(React.Fragment, null, valueEl, labelEl) : /*#__PURE__*/React.createElement(React.Fragment, null, labelEl, valueEl)));
+  }) : icon), /*#__PURE__*/React.createElement("div", {
+    style: {
+      minWidth: 0
+    }
+  }, tile ? /*#__PURE__*/React.createElement(React.Fragment, null, valueEl, trendEl, labelEl) : /*#__PURE__*/React.createElement(React.Fragment, null, labelEl, valueEl, trendEl)));
 }
 Object.assign(__ds_scope, { StatCard });
 })(); } catch (e) { __ds_ns.__errors.push({ path: "components/data/StatCard.jsx", error: String((e && e.message) || e) }); }
@@ -1482,11 +1612,11 @@ function TrendChart({
   data = [],
   series = [{
     key: 'a',
-    label: 'Series A',
+    label: '系列 A',
     color: 'var(--chart-1)'
   }, {
     key: 'b',
-    label: 'Series B',
+    label: '系列 B',
     color: 'var(--chart-2)'
   }],
   xKey = 'x',
@@ -1740,10 +1870,10 @@ function ConfirmDialog({
   open = true,
   onClose,
   onConfirm,
-  title = 'Are you sure?',
+  title = '確定要執行嗎？',
   description,
-  confirmLabel = 'Delete',
-  cancelLabel = 'Cancel',
+  confirmLabel = '刪除',
+  cancelLabel = '取消',
   loading = false,
   inline = false
 }) {
@@ -1890,7 +2020,7 @@ function Dialog({
     }
   }, title), onClose ? /*#__PURE__*/React.createElement("button", {
     type: "button",
-    "aria-label": "Close",
+    "aria-label": "\u95DC\u9589",
     onClick: onClose,
     style: {
       border: 0,
@@ -1995,9 +2125,9 @@ Object.assign(__ds_scope, { EmptyState });
 // components/feedback/ErrorState.jsx
 try { (() => {
 function ErrorState({
-  title = 'Something went wrong',
-  description = "We couldn't load the data. Please check your connection and try again.",
-  retryLabel = 'Try Again',
+  title = '發生錯誤',
+  description = '無法載入資料，請檢查網路連線後再試一次。',
+  retryLabel = '重試',
   onRetry,
   icon = 'wifi-off',
   style
@@ -2186,9 +2316,16 @@ function MediaCard({
   overlayActions = [],
   interactive = true,
   onClick,
+  unavailable = false,
+  unavailableLabel = '無法觀看',
   style
 }) {
   const [hover, setHover] = React.useState(false);
+  const live = !unavailable;
+  const dim = unavailable ? {
+    opacity: 0.5,
+    filter: 'grayscale(0.6)'
+  } : null;
   const tagRow = tags.length ? /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
@@ -2201,7 +2338,8 @@ function MediaCard({
     strong: t.strong
   }, t.label))) : null;
   return /*#__PURE__*/React.createElement("div", {
-    onClick: onClick,
+    onClick: live ? onClick : undefined,
+    "aria-disabled": unavailable || undefined,
     onMouseEnter: () => setHover(true),
     onMouseLeave: () => setHover(false),
     style: {
@@ -2209,9 +2347,9 @@ function MediaCard({
       borderRadius: 'var(--radius-xl)',
       border: '1px solid var(--border-default)',
       background: 'var(--surface-card)',
-      boxShadow: interactive && hover ? 'var(--shadow-md)' : 'none',
+      boxShadow: live && interactive && hover ? 'var(--shadow-md)' : 'none',
       transition: 'var(--transition-shadow)',
-      cursor: onClick ? 'pointer' : 'default',
+      cursor: unavailable ? 'not-allowed' : onClick ? 'pointer' : 'default',
       fontFamily: 'var(--font-sans)',
       display: 'flex',
       flexDirection: 'column',
@@ -2223,6 +2361,11 @@ function MediaCard({
       height: mediaHeight,
       background: 'var(--surface-media)',
       flexShrink: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: '100%',
+      ...dim
     }
   }, image ? /*#__PURE__*/React.createElement("img", {
     src: image,
@@ -2243,7 +2386,20 @@ function MediaCard({
       fontSize: 36,
       color: 'var(--text-subtle)'
     }
-  }, "\u25B6"), overlayActions.length ? /*#__PURE__*/React.createElement("div", {
+  }, "\u25B6")), unavailable && unavailableLabel ? /*#__PURE__*/React.createElement("span", {
+    style: {
+      position: 'absolute',
+      top: 8,
+      left: 8,
+      padding: '2px 8px',
+      borderRadius: 'var(--radius-full)',
+      background: 'rgb(24 24 27 / 0.8)',
+      color: 'var(--white)',
+      fontSize: 'var(--fs-xs)',
+      lineHeight: '16px',
+      fontWeight: 'var(--fw-medium)'
+    }
+  }, unavailableLabel) : null, overlayActions.length ? /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
       top: 8,
@@ -2264,7 +2420,8 @@ function MediaCard({
       display: 'flex',
       flexDirection: 'column',
       gap: 10,
-      padding: 16
+      padding: 16,
+      ...dim
     }
   }, tagsFirst ? tagRow : null, /*#__PURE__*/React.createElement("h3", {
     style: {
@@ -2386,7 +2543,7 @@ function Toast({
     }
   }, message), onDismiss ? /*#__PURE__*/React.createElement("button", {
     type: "button",
-    "aria-label": "Dismiss",
+    "aria-label": "\u95DC\u9589",
     onClick: onDismiss,
     style: {
       border: 0,
@@ -2841,7 +2998,7 @@ function SearchInput({
   value,
   defaultValue = '',
   onChange,
-  placeholder = 'Search...',
+  placeholder = '搜尋…',
   debounce = 0,
   style
 }) {
@@ -2901,7 +3058,7 @@ function SearchInput({
     }
   }), inner ? /*#__PURE__*/React.createElement("button", {
     type: "button",
-    "aria-label": "Clear",
+    "aria-label": "\u6E05\u9664",
     onClick: () => set(''),
     style: {
       position: 'absolute',
@@ -3055,6 +3212,69 @@ function Select({
 Object.assign(__ds_scope, { Select });
 })(); } catch (e) { __ds_ns.__errors.push({ path: "components/forms/Select.jsx", error: String((e && e.message) || e) }); }
 
+// components/forms/Slider.jsx
+try { (() => {
+function Slider({
+  value,
+  defaultValue,
+  min = 0,
+  max = 100,
+  step = 1,
+  onChange,
+  leadingIcon,
+  trailingIcon,
+  disabled = false,
+  label,
+  style
+}) {
+  const controlled = value !== undefined;
+  const [inner, setInner] = React.useState(controlled ? value : defaultValue ?? min);
+  const v = controlled ? value : inner;
+  const pct = (v - min) / (max - min) * 100;
+  const ic = n => n ? typeof n === 'string' ? /*#__PURE__*/React.createElement(__ds_scope.Icon, {
+    name: n,
+    size: 16,
+    color: "var(--text-subtle)"
+  }) : n : null;
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+      width: '100%',
+      opacity: disabled ? 0.5 : 1,
+      ...style
+    }
+  }, ic(leadingIcon), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    "aria-label": label,
+    min: min,
+    max: max,
+    step: step,
+    value: v,
+    disabled: disabled,
+    onChange: e => {
+      const n = Number(e.target.value);
+      if (!controlled) setInner(n);
+      onChange && onChange(n);
+    },
+    style: {
+      flex: 1,
+      height: 6,
+      margin: 0,
+      borderRadius: 'var(--radius-full)',
+      appearance: 'none',
+      WebkitAppearance: 'none',
+      background: 'linear-gradient(to right, var(--accent) ' + pct + '%, var(--surface-sunken) ' + pct + '%)',
+      accentColor: 'var(--accent)',
+      cursor: disabled ? 'not-allowed' : 'pointer',
+      outline: 'none'
+    }
+  }), ic(trailingIcon));
+}
+Object.assign(__ds_scope, { Slider });
+})(); } catch (e) { __ds_ns.__errors.push({ path: "components/forms/Slider.jsx", error: String((e && e.message) || e) }); }
+
 // components/forms/Textarea.jsx
 try { (() => {
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
@@ -3112,7 +3332,7 @@ Object.assign(__ds_scope, { Textarea });
 try { (() => {
 function AuthCard({
   brand,
-  title = 'Welcome back',
+  title = '歡迎回來',
   subtitle,
   children,
   footer,
@@ -3145,7 +3365,7 @@ function AuthCard({
     style: {
       margin: 0,
       fontSize: 'var(--fs-page-title)',
-      lineHeight: 1.3,
+      lineHeight: 'var(--lh-heading)',
       fontWeight: 'var(--fw-bold)',
       color: 'var(--text-strong)'
     }
@@ -3279,7 +3499,7 @@ function Section({
     style: {
       margin: 0,
       fontSize: 'var(--fs-section)',
-      lineHeight: 1.25,
+      lineHeight: 'var(--lh-heading)',
       fontWeight: 'var(--fw-bold)',
       color: 'var(--text-strong)',
       maxWidth: 900,
@@ -3310,7 +3530,7 @@ Object.assign(__ds_scope, { Section });
 // components/marketing/SiteFooter.jsx
 try { (() => {
 function SiteFooter({
-  brand = 'Your Product',
+  brand = '你的產品',
   tagline,
   links = [],
   style
@@ -3421,7 +3641,7 @@ try { (() => {
 function VideoFrame({
   src,
   poster,
-  title = 'Video player',
+  title = '影片播放器',
   placeholder,
   tone = 'dark',
   style
@@ -3493,10 +3713,176 @@ function VideoFrame({
 Object.assign(__ds_scope, { VideoFrame });
 })(); } catch (e) { __ds_ns.__errors.push({ path: "components/marketing/VideoFrame.jsx", error: String((e && e.message) || e) }); }
 
+// components/media/ImageCropper.jsx
+try { (() => {
+function ImageCropper({
+  src,
+  shape = 'circle',
+  size = 280,
+  minZoom = 1,
+  maxZoom = 3,
+  onChange,
+  emptyLabel = '選擇圖片',
+  onPick,
+  zoomLabel = '縮放',
+  style
+}) {
+  const [nat, setNat] = React.useState(null);
+  const [zoom, setZoom] = React.useState(minZoom);
+  const [off, setOff] = React.useState({
+    x: 0,
+    y: 0
+  });
+  const drag = React.useRef(null);
+  React.useEffect(() => {
+    setNat(null);
+    setZoom(minZoom);
+    setOff({
+      x: 0,
+      y: 0
+    });
+  }, [src]);
+  const base = nat ? size / Math.min(nat.w, nat.h) : 1;
+  const dw = nat ? nat.w * base * zoom : size,
+    dh = nat ? nat.h * base * zoom : size;
+  const clamp = (o, z) => {
+    const w = nat ? nat.w * base * z : size,
+      h = nat ? nat.h * base * z : size;
+    const mx = Math.max(0, (w - size) / 2),
+      my = Math.max(0, (h - size) / 2);
+    return {
+      x: Math.max(-mx, Math.min(mx, o.x)),
+      y: Math.max(-my, Math.min(my, o.y))
+    };
+  };
+  React.useEffect(() => {
+    if (!nat || !onChange) return;
+    const s = base * zoom;
+    onChange({
+      x: (dw / 2 - off.x - size / 2) / s,
+      y: (dh / 2 - off.y - size / 2) / s,
+      width: size / s,
+      height: size / s,
+      zoom
+    });
+  }, [nat, zoom, off.x, off.y]);
+  const down = e => {
+    if (!nat) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    drag.current = {
+      sx: e.clientX,
+      sy: e.clientY,
+      o: off
+    };
+  };
+  const move = e => {
+    const d = drag.current;
+    if (!d) return;
+    setOff(clamp({
+      x: d.o.x + e.clientX - d.sx,
+      y: d.o.y + e.clientY - d.sy
+    }, zoom));
+  };
+  const up = () => {
+    drag.current = null;
+  };
+  const setZ = z => {
+    setZoom(z);
+    setOff(o => clamp(o, z));
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 16,
+      width: size,
+      fontFamily: 'var(--font-sans)',
+      ...style
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    onPointerDown: down,
+    onPointerMove: move,
+    onPointerUp: up,
+    onPointerCancel: up,
+    style: {
+      position: 'relative',
+      width: size,
+      height: size,
+      overflow: 'hidden',
+      borderRadius: 'var(--radius-xl)',
+      background: 'var(--surface-muted)',
+      cursor: nat ? drag.current ? 'grabbing' : 'grab' : 'default',
+      touchAction: 'none',
+      userSelect: 'none'
+    }
+  }, src ? /*#__PURE__*/React.createElement("img", {
+    src: src,
+    alt: "",
+    draggable: false,
+    onLoad: e => setNat({
+      w: e.currentTarget.naturalWidth,
+      h: e.currentTarget.naturalHeight
+    }),
+    style: {
+      position: 'absolute',
+      left: size / 2 - dw / 2 + off.x,
+      top: size / 2 - dh / 2 + off.y,
+      width: dw,
+      height: dh,
+      maxWidth: 'none',
+      pointerEvents: 'none',
+      visibility: nat ? 'visible' : 'hidden'
+    }
+  }) : /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: onPick,
+    style: {
+      position: 'absolute',
+      inset: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      border: 0,
+      background: 'none',
+      cursor: onPick ? 'pointer' : 'default',
+      color: 'var(--text-subtle)',
+      fontFamily: 'inherit',
+      fontSize: 'var(--fs-sm)'
+    }
+  }, /*#__PURE__*/React.createElement(__ds_scope.Icon, {
+    name: "image-plus",
+    size: 28
+  }), emptyLabel), src ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'absolute',
+      inset: 0,
+      borderRadius: shape === 'circle' ? '50%' : 0,
+      boxShadow: '0 0 0 9999px rgb(0 0 0 / 0.5)',
+      outline: '2px solid rgb(255 255 255 / 0.9)',
+      outlineOffset: -2,
+      pointerEvents: 'none'
+    }
+  }) : null), /*#__PURE__*/React.createElement(__ds_scope.Slider, {
+    label: zoomLabel,
+    min: minZoom,
+    max: maxZoom,
+    step: 0.01,
+    value: zoom,
+    onChange: setZ,
+    leadingIcon: "zoom-out",
+    trailingIcon: "zoom-in",
+    disabled: !nat
+  }));
+}
+Object.assign(__ds_scope, { ImageCropper });
+})(); } catch (e) { __ds_ns.__errors.push({ path: "components/media/ImageCropper.jsx", error: String((e && e.message) || e) }); }
+
 // components/navigation/BackLink.jsx
 try { (() => {
 function BackLink({
-  children = 'Back',
+  children = '返回',
   href = '#',
   onClick,
   tone = 'muted',
@@ -3546,8 +3932,8 @@ function MobileMenu({
   user,
   onSignIn,
   onSignOut,
-  signInLabel = 'Log In',
-  signOutLabel = 'Log Out',
+  signInLabel = '登入',
+  signOutLabel = '登出',
   inline = false,
   style
 }) {
@@ -3580,7 +3966,7 @@ function MobileMenu({
     }
   }, brand, /*#__PURE__*/React.createElement("button", {
     type: "button",
-    "aria-label": "close",
+    "aria-label": "\u95DC\u9589",
     onClick: onClose,
     style: {
       border: 0,
@@ -3718,6 +4104,124 @@ function PageHeader({
 }
 Object.assign(__ds_scope, { PageHeader });
 })(); } catch (e) { __ds_ns.__errors.push({ path: "components/navigation/PageHeader.jsx", error: String((e && e.message) || e) }); }
+
+// components/navigation/Pagination.jsx
+try { (() => {
+function range(page, count, siblings) {
+  const total = siblings * 2 + 5;
+  if (count <= total) return Array.from({
+    length: count
+  }, (_, i) => i + 1);
+  const left = Math.max(page - siblings, 2);
+  const right = Math.min(page + siblings, count - 1);
+  const out = [1];
+  if (left > 2) out.push('l');else for (let i = 2; i < left; i++) out.push(i);
+  for (let i = left; i <= right; i++) out.push(i);
+  if (right < count - 1) out.push('r');else for (let i = right + 1; i < count; i++) out.push(i);
+  out.push(count);
+  return out;
+}
+function PageBtn({
+  active,
+  disabled,
+  onClick,
+  label,
+  children
+}) {
+  const [h, setH] = React.useState(false);
+  return /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    "aria-label": label,
+    "aria-current": active ? 'page' : undefined,
+    disabled: disabled,
+    onClick: onClick,
+    onMouseEnter: () => setH(true),
+    onMouseLeave: () => setH(false),
+    style: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: 36,
+      height: 36,
+      padding: '0 10px',
+      boxSizing: 'border-box',
+      borderRadius: 'var(--radius-lg)',
+      border: '1px solid ' + (active ? 'transparent' : 'var(--border-default)'),
+      background: active ? h ? 'var(--accent-hover)' : 'var(--accent)' : h && !disabled ? 'var(--surface-subtle)' : 'var(--surface-card)',
+      color: active ? 'var(--text-on-accent)' : 'var(--text-secondary)',
+      fontFamily: 'var(--font-sans)',
+      fontSize: 'var(--fs-sm)',
+      fontWeight: 'var(--fw-medium)',
+      fontVariantNumeric: 'tabular-nums',
+      cursor: disabled ? 'not-allowed' : 'pointer',
+      opacity: disabled ? 0.5 : 1,
+      transition: 'var(--transition-colors)'
+    }
+  }, children);
+}
+function Pagination({
+  page = 1,
+  pageCount = 1,
+  onChange,
+  siblingCount = 1,
+  prevLabel = '上一頁',
+  nextLabel = '下一頁',
+  showLabels = false,
+  style
+}) {
+  if (pageCount < 1) return null;
+  const go = p => {
+    if (p >= 1 && p <= pageCount && p !== page && onChange) onChange(p);
+  };
+  return /*#__PURE__*/React.createElement("nav", {
+    "aria-label": "\u5206\u9801",
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 6,
+      ...style
+    }
+  }, /*#__PURE__*/React.createElement(PageBtn, {
+    label: prevLabel,
+    disabled: page <= 1,
+    onClick: () => go(page - 1)
+  }, /*#__PURE__*/React.createElement(__ds_scope.Icon, {
+    name: "chevron-left",
+    size: 16
+  }), showLabels ? /*#__PURE__*/React.createElement("span", {
+    style: {
+      marginLeft: 4
+    }
+  }, prevLabel) : null), range(page, pageCount, siblingCount).map(p => typeof p === 'number' ? /*#__PURE__*/React.createElement(PageBtn, {
+    key: p,
+    active: p === page,
+    label: '第 ' + p + ' 頁',
+    onClick: () => go(p)
+  }, p) : /*#__PURE__*/React.createElement("span", {
+    key: p,
+    "aria-hidden": "true",
+    style: {
+      minWidth: 24,
+      textAlign: 'center',
+      color: 'var(--text-subtle)',
+      fontSize: 'var(--fs-sm)'
+    }
+  }, "\u2026")), /*#__PURE__*/React.createElement(PageBtn, {
+    label: nextLabel,
+    disabled: page >= pageCount,
+    onClick: () => go(page + 1)
+  }, showLabels ? /*#__PURE__*/React.createElement("span", {
+    style: {
+      marginRight: 4
+    }
+  }, nextLabel) : null, /*#__PURE__*/React.createElement(__ds_scope.Icon, {
+    name: "chevron-right",
+    size: 16
+  })));
+}
+Object.assign(__ds_scope, { Pagination });
+})(); } catch (e) { __ds_ns.__errors.push({ path: "components/navigation/Pagination.jsx", error: String((e && e.message) || e) }); }
 
 // components/navigation/Tabs.jsx
 try { (() => {
@@ -3875,7 +4379,7 @@ function TopNav({
     onNavigate: onNavigate
   }))) : null, mobile ? /*#__PURE__*/React.createElement("button", {
     type: "button",
-    "aria-label": "menu",
+    "aria-label": "\u9078\u55AE",
     onClick: onMenu,
     style: {
       marginLeft: 'auto',
@@ -3935,12 +4439,12 @@ function Item({
   }) : null, children);
 }
 function UserMenu({
-  name = 'User',
+  name = '使用者',
   email,
   avatarSrc,
   avatarColor = 'var(--primary-300)',
   items = [],
-  signOutLabel = 'Log Out',
+  signOutLabel = '登出',
   onSignOut,
   defaultOpen = false,
   style
@@ -4055,2240 +4559,6 @@ function UserMenu({
 Object.assign(__ds_scope, { UserMenu });
 })(); } catch (e) { __ds_ns.__errors.push({ path: "components/navigation/UserMenu.jsx", error: String((e && e.message) || e) }); }
 
-// ui_kits/admin/AdminShell.jsx
-try { (() => {
-(() => {
-  const {
-    TopNav,
-    Wordmark,
-    UserMenu,
-    ToastStack
-  } = window.AIForAllNeutralDS_acd6b1;
-  function AdminShell({
-    route,
-    go,
-    toasts,
-    dismiss,
-    children
-  }) {
-    const active = route.name === 'editor' ? 'content' : route.name;
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        minHeight: '100vh',
-        background: 'var(--surface-page)'
-      }
-    }, /*#__PURE__*/React.createElement(TopNav, {
-      brand: /*#__PURE__*/React.createElement(Wordmark, {
-        accent: "Acme",
-        text: "Studio",
-        onClick: () => go({
-          name: 'overview'
-        })
-      }),
-      links: [{
-        id: 'overview',
-        label: 'Overview'
-      }, {
-        id: 'content',
-        label: 'Content'
-      }, {
-        id: 'members',
-        label: 'Members'
-      }, {
-        id: 'categories',
-        label: 'Categories'
-      }],
-      activeId: active,
-      onNavigate: id => go({
-        name: id
-      }),
-      right: /*#__PURE__*/React.createElement(UserMenu, {
-        name: "Admin",
-        email: "admin@example.com",
-        items: [{
-          label: 'Overview',
-          onClick: () => go({
-            name: 'overview'
-          })
-        }]
-      })
-    }), /*#__PURE__*/React.createElement("main", null, children), /*#__PURE__*/React.createElement(ToastStack, {
-      toasts: toasts,
-      onDismiss: dismiss
-    }));
-  }
-  const page = {
-    maxWidth: 'var(--container-wide)',
-    margin: '0 auto',
-    padding: '32px 24px'
-  };
-  Object.assign(window, {
-    AdminShell,
-    adminPage: page
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/admin/AdminShell.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/admin/CategoriesScreen.jsx
-try { (() => {
-(() => {
-  const {
-    PageHeader,
-    StatCard,
-    SortableList,
-    InlineBanner
-  } = window.AIForAllNeutralDS_acd6b1;
-  function CategoriesScreen() {
-    const S = window.SAMPLE;
-    const [cats, setCats] = React.useState(S.categories);
-    const [tops, setTops] = React.useState(S.topics);
-    return /*#__PURE__*/React.createElement("div", {
-      style: adminPage
-    }, /*#__PURE__*/React.createElement(PageHeader, {
-      title: "Category Management",
-      subtitle: "Manage categories and topics, drag to reorder",
-      style: {
-        marginBottom: 32
-      }
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-        gap: 16,
-        marginBottom: 32
-      }
-    }, /*#__PURE__*/React.createElement(StatCard, {
-      variant: "compact",
-      icon: "wrench",
-      label: "Categories",
-      value: cats.length
-    }), /*#__PURE__*/React.createElement(StatCard, {
-      variant: "compact",
-      icon: "lightbulb",
-      tone: "highlight",
-      label: "Topics",
-      value: tops.length
-    })), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-        gap: 24,
-        marginBottom: 32,
-        alignItems: 'start'
-      }
-    }, /*#__PURE__*/React.createElement(SortableList, {
-      title: "Categories",
-      tone: "accent",
-      items: S.categories,
-      onChange: setCats,
-      addLabel: "Add Category"
-    }), /*#__PURE__*/React.createElement(SortableList, {
-      title: "Topics",
-      tone: "highlight",
-      items: S.topics,
-      onChange: setTops,
-      addLabel: "Add Topic"
-    })), /*#__PURE__*/React.createElement(InlineBanner, {
-      variant: "note",
-      title: "Tips"
-    }, /*#__PURE__*/React.createElement("ul", {
-      style: {
-        margin: 0,
-        paddingLeft: 18,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 6
-      }
-    }, /*#__PURE__*/React.createElement("li", null, "Drag rows to reorder. The order determines how they appear across the product."), /*#__PURE__*/React.createElement("li", null, "Icon names use Lucide format (e.g. \\u201ccode\\u201d, \\u201cimage\\u201d, \\u201cbrain\\u201d)."), /*#__PURE__*/React.createElement("li", null, "Deleting a category won\\u2019t remove items assigned to it, but they will need to be reassigned."))));
-  }
-  Object.assign(window, {
-    CategoriesScreen
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/admin/CategoriesScreen.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/admin/ContentScreen.jsx
-try { (() => {
-(() => {
-  const {
-    PageHeader,
-    StatCard,
-    SearchInput,
-    Select,
-    MediaCard,
-    StatusDot,
-    ConfirmDialog,
-    Button
-  } = window.AIForAllNeutralDS_acd6b1;
-  function ContentScreen({
-    go,
-    toast
-  }) {
-    const S = window.SAMPLE;
-    const [items, setItems] = React.useState(S.items);
-    const [q, setQ] = React.useState('');
-    const [status, setStatus] = React.useState('');
-    const [level, setLevel] = React.useState('');
-    const [cat, setCat] = React.useState('');
-    const [topic, setTopic] = React.useState('');
-    const [del, setDel] = React.useState(null);
-    const [busy, setBusy] = React.useState(false);
-    const list = items.filter(i => !q || i.title.toLowerCase().includes(q.toLowerCase())).filter(i => !status || i.status === status).filter(i => !level || i.level === level).filter(i => !cat || i.category === cat).filter(i => !topic || i.topic === topic);
-    const toggle = it => {
-      setItems(items.map(x => x.id === it.id ? {
-        ...x,
-        status: x.status === 'published' ? 'draft' : 'published'
-      } : x));
-      toast('success', it.status === 'published' ? 'Item moved to drafts' : 'Item published');
-    };
-    return /*#__PURE__*/React.createElement("div", {
-      style: adminPage
-    }, /*#__PURE__*/React.createElement(PageHeader, {
-      title: "Content Management",
-      subtitle: "Add, edit, and manage platform content",
-      actions: /*#__PURE__*/React.createElement(Button, {
-        leadingIcon: "plus",
-        style: {
-          padding: '10px 16px'
-        },
-        onClick: () => go({
-          name: 'editor'
-        })
-      }, "Add Item"),
-      style: {
-        marginBottom: 32
-      }
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-        gap: 16,
-        marginBottom: 32
-      }
-    }, /*#__PURE__*/React.createElement(StatCard, {
-      variant: "compact",
-      icon: "book-open",
-      label: "Total Items",
-      value: items.length
-    }), /*#__PURE__*/React.createElement(StatCard, {
-      variant: "compact",
-      icon: "circle-check-big",
-      tone: "success",
-      label: "Published",
-      value: items.filter(i => i.status === 'published').length
-    }), /*#__PURE__*/React.createElement(StatCard, {
-      variant: "compact",
-      icon: "file-text",
-      tone: "highlight",
-      label: "Drafts",
-      value: items.filter(i => i.status === 'draft').length
-    }), /*#__PURE__*/React.createElement(StatCard, {
-      variant: "compact",
-      icon: "circle-help",
-      tone: "violet",
-      label: "Total Entries",
-      value: items.reduce((s, i) => s + i.entries, 0)
-    })), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        gap: 12,
-        alignItems: 'center',
-        marginBottom: 24
-      }
-    }, /*#__PURE__*/React.createElement(SearchInput, {
-      placeholder: "Search items...",
-      onChange: setQ,
-      style: {
-        flex: 1
-      }
-    }), /*#__PURE__*/React.createElement(Select, {
-      variant: "toolbar",
-      value: status,
-      onChange: setStatus,
-      placeholder: "All Statuses",
-      options: [{
-        value: 'published',
-        label: 'Published'
-      }, {
-        value: 'draft',
-        label: 'Draft'
-      }]
-    }), /*#__PURE__*/React.createElement(Select, {
-      variant: "toolbar",
-      value: level,
-      onChange: setLevel,
-      placeholder: "All Levels",
-      options: S.levels.map(l => ({
-        value: l.id,
-        label: l.name
-      }))
-    }), /*#__PURE__*/React.createElement(Select, {
-      variant: "toolbar",
-      value: cat,
-      onChange: setCat,
-      placeholder: "All Categories",
-      options: S.categories.map(c => ({
-        value: c.id,
-        label: c.name
-      }))
-    }), /*#__PURE__*/React.createElement(Select, {
-      variant: "toolbar",
-      value: topic,
-      onChange: setTopic,
-      placeholder: "All Topics",
-      options: S.topics.map(c => ({
-        value: c.id,
-        label: c.name
-      }))
-    })), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-        gap: 20
-      }
-    }, list.map(i => /*#__PURE__*/React.createElement(MediaCard, {
-      key: i.id,
-      title: i.title,
-      description: i.description,
-      descriptionLines: 1,
-      tags: itemTagsAdmin(i),
-      onClick: () => go({
-        name: 'editor',
-        id: i.id
-      }),
-      meta: {
-        left: /*#__PURE__*/React.createElement(StatusDot, {
-          tone: i.status === 'published' ? 'success' : 'warning',
-          label: i.status === 'published' ? 'Published' : 'Draft'
-        }),
-        right: i.entries + ' entries'
-      },
-      overlayActions: [{
-        icon: i.status === 'published' ? 'eye-off' : 'eye',
-        label: i.status === 'published' ? 'Unpublish' : 'Publish',
-        onClick: () => toggle(i)
-      }, {
-        icon: 'pencil',
-        label: 'Edit',
-        onClick: () => go({
-          name: 'editor',
-          id: i.id
-        })
-      }, {
-        icon: 'trash-2',
-        label: 'Delete',
-        danger: true,
-        onClick: () => setDel(i)
-      }]
-    }))), /*#__PURE__*/React.createElement(ConfirmDialog, {
-      open: !!del,
-      title: "Delete Item",
-      description: del ? 'Are you sure you want to delete "' + del.title + '"? This action cannot be undone.' : '',
-      loading: busy,
-      onClose: () => setDel(null),
-      onConfirm: () => {
-        setBusy(true);
-        setTimeout(() => {
-          setItems(items.filter(x => x.id !== del.id));
-          setBusy(false);
-          setDel(null);
-          toast('success', 'Item deleted');
-        }, 500);
-      }
-    }));
-  }
-  function itemTagsAdmin(i) {
-    const S = window.SAMPLE;
-    const lv = S.level[i.level];
-    return [{
-      label: S.cat[i.category].name
-    }, {
-      label: S.topic[i.topic].name,
-      tone: 'violet'
-    }, {
-      label: lv.name,
-      tone: lv.tone,
-      strong: true
-    }];
-  }
-  Object.assign(window, {
-    ContentScreen
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/admin/ContentScreen.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/admin/EditorScreen.jsx
-try { (() => {
-(() => {
-  const {
-    BackLink,
-    PageHeader,
-    Button,
-    Card,
-    FormField,
-    Input,
-    Textarea,
-    Select,
-    VideoFrame,
-    Tag,
-    Icon,
-    Dialog,
-    SegmentedControl,
-    Radio
-  } = window.AIForAllNeutralDS_acd6b1;
-  function EntryDialog({
-    open,
-    onClose,
-    onSave
-  }) {
-    const [type, setType] = React.useState('choice');
-    const [text, setText] = React.useState('');
-    const [opts, setOpts] = React.useState(['', '', '', '']);
-    const [correct, setCorrect] = React.useState(-1);
-    const [err, setErr] = React.useState(null);
-    const save = () => {
-      if (!text.trim()) return setErr('Question text is required');
-      if (type === 'choice' && opts.some(o => !o.trim())) return setErr('All options are required');
-      if (type === 'choice' && correct < 0) return setErr('Select the correct answer');
-      onSave({
-        type,
-        text,
-        opts,
-        correct
-      });
-      setText('');
-      setOpts(['', '', '', '']);
-      setCorrect(-1);
-      setErr(null);
-    };
-    return /*#__PURE__*/React.createElement(Dialog, {
-      open: open,
-      onClose: onClose,
-      title: "Add Entry",
-      footer: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Button, {
-        variant: "outline",
-        onClick: onClose
-      }, "Cancel"), /*#__PURE__*/React.createElement(Button, {
-        onClick: save
-      }, "Save Entry"))
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 24
-      }
-    }, /*#__PURE__*/React.createElement(FormField, {
-      label: "Entry Type",
-      size: "sm"
-    }, /*#__PURE__*/React.createElement(SegmentedControl, {
-      value: type,
-      onChange: setType,
-      options: [{
-        value: 'choice',
-        label: 'Multiple choice'
-      }, {
-        value: 'text',
-        label: 'Short answer'
-      }]
-    })), /*#__PURE__*/React.createElement(FormField, {
-      label: "Question",
-      size: "sm"
-    }, /*#__PURE__*/React.createElement(Textarea, {
-      variant: "strong",
-      value: text,
-      onChange: e => setText(e.target.value),
-      placeholder: "Enter your question..."
-    })), type === 'choice' ? /*#__PURE__*/React.createElement(FormField, {
-      label: "Options (click radio to mark correct answer)",
-      size: "sm"
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 10
-      }
-    }, opts.map((o, i) => /*#__PURE__*/React.createElement("div", {
-      key: i,
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10
-      }
-    }, /*#__PURE__*/React.createElement(Radio, {
-      checked: correct === i,
-      weight: 1.5,
-      onClick: () => setCorrect(i)
-    }), /*#__PURE__*/React.createElement(Input, {
-      variant: "outline",
-      selected: correct === i,
-      value: o,
-      onChange: e => {
-        const n = [...opts];
-        n[i] = e.target.value;
-        setOpts(n);
-      },
-      placeholder: 'Option ' + String.fromCharCode(65 + i),
-      inputStyle: {
-        height: 42
-      }
-    }))))) : null, /*#__PURE__*/React.createElement(FormField, {
-      label: "Explanation (optional)",
-      size: "sm"
-    }, /*#__PURE__*/React.createElement(Textarea, {
-      variant: "strong",
-      rows: 2,
-      placeholder: "Explain why this is the correct answer..."
-    })), err ? /*#__PURE__*/React.createElement("p", {
-      style: {
-        margin: 0,
-        fontSize: 14,
-        color: 'var(--danger-alt)'
-      }
-    }, err) : null));
-  }
-  function EditorScreen({
-    id,
-    go,
-    toast
-  }) {
-    const S = window.SAMPLE;
-    const item = S.items.find(i => i.id === id);
-    const [entries, setEntries] = React.useState(item ? [{
-      type: 'choice',
-      text: S.questions[0].text,
-      opts: S.questions[0].options.map(o => o.label),
-      correct: 0
-    }, {
-      type: 'text',
-      text: S.questions[2].text
-    }] : []);
-    const [open, setOpen] = React.useState(false);
-    const [saving, setSaving] = React.useState(null);
-    const save = kind => {
-      setSaving(kind);
-      setTimeout(() => {
-        setSaving(null);
-        toast('success', kind === 'draft' ? 'Draft saved' : 'Item published');
-        go({
-          name: 'content'
-        });
-      }, 600);
-    };
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        maxWidth: 1024,
-        margin: '0 auto',
-        padding: '32px 24px'
-      }
-    }, /*#__PURE__*/React.createElement(BackLink, {
-      tone: "accent",
-      onClick: () => go({
-        name: 'content'
-      }),
-      style: {
-        marginBottom: 24
-      }
-    }, "Back to Content Management"), /*#__PURE__*/React.createElement(PageHeader, {
-      title: item ? 'Edit Item' : 'Create New Item',
-      subtitle: "Fill in the details and add entries",
-      style: {
-        marginBottom: 32
-      },
-      actions: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Button, {
-        variant: "outline",
-        loading: saving === 'draft',
-        disabled: !!saving,
-        onClick: () => save('draft'),
-        style: {
-          padding: '10px 16px'
-        }
-      }, "Save Draft"), /*#__PURE__*/React.createElement(Button, {
-        loading: saving === 'pub',
-        disabled: !!saving,
-        onClick: () => save('pub'),
-        style: {
-          padding: '10px 16px'
-        }
-      }, "Publish"))
-    }), /*#__PURE__*/React.createElement(Card, {
-      title: "Details",
-      padding: "lg",
-      style: {
-        marginBottom: 24
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 24
-      }
-    }, /*#__PURE__*/React.createElement(FormField, {
-      label: "Title"
-    }, /*#__PURE__*/React.createElement(Input, {
-      defaultValue: item ? item.title : '',
-      placeholder: "e.g. Getting started: a practical introduction"
-    })), /*#__PURE__*/React.createElement(FormField, {
-      label: "Description"
-    }, /*#__PURE__*/React.createElement(Textarea, {
-      variant: "filled",
-      rows: 4,
-      defaultValue: item ? item.description : '',
-      placeholder: "Describe what people will learn..."
-    })), /*#__PURE__*/React.createElement(FormField, {
-      label: "Video URL"
-    }, /*#__PURE__*/React.createElement(Input, {
-      type: "url",
-      placeholder: "https://example.com/watch?v=..."
-    })), /*#__PURE__*/React.createElement(VideoFrame, {
-      tone: "light",
-      placeholder: "Enter a video URL to preview"
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-        gap: 16
-      }
-    }, /*#__PURE__*/React.createElement(FormField, {
-      label: "Category"
-    }, /*#__PURE__*/React.createElement(Select, {
-      placeholder: "Select category",
-      defaultValue: item ? item.category : '',
-      options: S.categories.map(c => ({
-        value: c.id,
-        label: c.name
-      }))
-    })), /*#__PURE__*/React.createElement(FormField, {
-      label: "Topic"
-    }, /*#__PURE__*/React.createElement(Select, {
-      placeholder: "Select topic",
-      defaultValue: item ? item.topic : '',
-      options: S.topics.map(c => ({
-        value: c.id,
-        label: c.name
-      }))
-    })), /*#__PURE__*/React.createElement(FormField, {
-      label: "Level"
-    }, /*#__PURE__*/React.createElement(Select, {
-      defaultValue: item ? item.level : 'beginner',
-      options: S.levels.map(c => ({
-        value: c.id,
-        label: c.name
-      }))
-    }))))), /*#__PURE__*/React.createElement(Card, {
-      title: "Entries",
-      meta: entries.length + (entries.length === 1 ? ' entry' : ' entries') + ' added',
-      padding: "lg",
-      action: /*#__PURE__*/React.createElement(Button, {
-        variant: "outline",
-        leadingIcon: "plus",
-        style: {
-          padding: '8px 12px'
-        },
-        onClick: () => setOpen(true)
-      }, "Add Entry")
-    }, entries.length === 0 ? /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '48px 0',
-        borderRadius: 10,
-        border: '1px dashed var(--border-default)',
-        textAlign: 'center'
-      }
-    }, /*#__PURE__*/React.createElement("p", {
-      style: {
-        margin: 0,
-        fontSize: 14,
-        fontWeight: 500,
-        color: 'var(--text-muted)'
-      }
-    }, "No entries yet"), /*#__PURE__*/React.createElement("p", {
-      style: {
-        margin: '4px 0 0',
-        fontSize: 12,
-        color: 'var(--text-subtle)'
-      }
-    }, "Click \"Add Entry\" to get started")) : /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 12
-      }
-    }, entries.map((e, i) => /*#__PURE__*/React.createElement(Card, {
-      key: i,
-      tone: "subtle"
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 12
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8
-      }
-    }, /*#__PURE__*/React.createElement(Tag, {
-      size: "md",
-      tone: e.type === 'choice' ? 'accent-strong' : 'highlight'
-    }, e.type === 'choice' ? 'Multiple choice' : 'Short answer'), /*#__PURE__*/React.createElement("span", {
-      style: {
-        fontSize: 14,
-        fontWeight: 500,
-        color: 'var(--text-body)'
-      }
-    }, "Entry ", i + 1)), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        gap: 6
-      }
-    }, /*#__PURE__*/React.createElement("button", {
-      type: "button",
-      style: {
-        border: 0,
-        background: 'none',
-        padding: 6,
-        cursor: 'pointer',
-        color: 'var(--text-subtle)',
-        display: 'flex'
-      }
-    }, /*#__PURE__*/React.createElement(Icon, {
-      name: "pencil",
-      size: 16
-    })), /*#__PURE__*/React.createElement("button", {
-      type: "button",
-      onClick: () => setEntries(entries.filter((_, k) => k !== i)),
-      style: {
-        border: 0,
-        background: 'none',
-        padding: 6,
-        cursor: 'pointer',
-        color: 'var(--text-subtle)',
-        display: 'flex'
-      }
-    }, /*#__PURE__*/React.createElement(Icon, {
-      name: "trash-2",
-      size: 16
-    })))), /*#__PURE__*/React.createElement("p", {
-      style: {
-        margin: '0 0 8px',
-        fontSize: 14,
-        color: 'var(--text-heading)'
-      }
-    }, e.text), e.type === 'choice' ? /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 4
-      }
-    }, e.opts.map((o, k) => /*#__PURE__*/React.createElement("div", {
-      key: k,
-      style: {
-        padding: '6px 12px',
-        borderRadius: 8,
-        fontSize: 12,
-        background: k === e.correct ? 'var(--accent-soft)' : 'transparent',
-        color: k === e.correct ? 'var(--accent-text)' : 'var(--text-muted)',
-        fontWeight: k === e.correct ? 500 : 400
-      }
-    }, String.fromCharCode(65 + k), ". ", o, k === e.correct ? ' \u2713' : ''))) : null)))), /*#__PURE__*/React.createElement(EntryDialog, {
-      open: open,
-      onClose: () => setOpen(false),
-      onSave: e => {
-        setEntries([...entries, e]);
-        setOpen(false);
-      }
-    }));
-  }
-  Object.assign(window, {
-    EditorScreen
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/admin/EditorScreen.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/admin/MembersScreen.jsx
-try { (() => {
-(() => {
-  const {
-    PageHeader,
-    StatCard,
-    SearchInput,
-    FilterChips,
-    DataTable,
-    Avatar,
-    Tag
-  } = window.AIForAllNeutralDS_acd6b1;
-  function MembersScreen() {
-    const S = window.SAMPLE;
-    const [q, setQ] = React.useState('');
-    const [src, setSrc] = React.useState('All');
-    const rows = S.members.filter(m => !q || (m.name + m.email).toLowerCase().includes(q.toLowerCase())).filter(m => src === 'All' || m.provider === src);
-    const cols = [{
-      key: 'name',
-      header: 'Member',
-      width: '2fr',
-      render: r => /*#__PURE__*/React.createElement("div", {
-        style: {
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12
-        }
-      }, /*#__PURE__*/React.createElement(Avatar, {
-        name: r.name,
-        size: 36
-      }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
-        style: {
-          margin: 0,
-          fontSize: 14,
-          fontWeight: 500,
-          color: 'var(--text-strong)'
-        }
-      }, r.name), /*#__PURE__*/React.createElement("p", {
-        style: {
-          margin: 0,
-          fontSize: 12,
-          color: 'var(--text-subtle)'
-        }
-      }, "Joined ", r.joined)))
-    }, {
-      key: 'email',
-      header: 'Email',
-      width: '1.5fr'
-    }, {
-      key: 'provider',
-      header: 'Sign-in method',
-      width: '1fr',
-      render: r => /*#__PURE__*/React.createElement(Tag, {
-        size: "md",
-        tone: r.provider === 'Provider A' ? 'info' : 'indigo'
-      }, r.provider)
-    }, {
-      key: 'done',
-      header: 'Completed',
-      width: '0.8fr',
-      render: r => /*#__PURE__*/React.createElement("span", {
-        style: {
-          fontWeight: 500,
-          color: 'var(--text-strong)'
-        }
-      }, r.done)
-    }, {
-      key: 'last',
-      header: 'Last active',
-      width: '1fr',
-      render: r => /*#__PURE__*/React.createElement("span", {
-        style: {
-          color: 'var(--text-muted)'
-        }
-      }, r.last)
-    }];
-    return /*#__PURE__*/React.createElement("div", {
-      style: adminPage
-    }, /*#__PURE__*/React.createElement(PageHeader, {
-      title: "Member Management",
-      subtitle: "View member profiles and progress",
-      style: {
-        marginBottom: 32
-      }
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-        gap: 16,
-        marginBottom: 32
-      }
-    }, /*#__PURE__*/React.createElement(StatCard, {
-      variant: "compact",
-      icon: "users",
-      label: "Total Members",
-      value: S.members.length
-    }), /*#__PURE__*/React.createElement(StatCard, {
-      variant: "compact",
-      icon: "users",
-      tone: "info",
-      label: "Provider A",
-      value: S.members.filter(m => m.provider === 'Provider A').length
-    }), /*#__PURE__*/React.createElement(StatCard, {
-      variant: "compact",
-      icon: "users",
-      tone: "indigo",
-      label: "Provider B",
-      value: S.members.filter(m => m.provider === 'Provider B').length
-    }), /*#__PURE__*/React.createElement(StatCard, {
-      variant: "compact",
-      icon: "activity",
-      tone: "success",
-      label: "Active Today",
-      value: 1
-    })), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        gap: 12,
-        alignItems: 'center',
-        marginBottom: 24
-      }
-    }, /*#__PURE__*/React.createElement(SearchInput, {
-      placeholder: "Search members...",
-      onChange: setQ,
-      style: {
-        flex: 1
-      }
-    }), /*#__PURE__*/React.createElement(FilterChips, {
-      value: src,
-      onChange: setSrc,
-      options: ['All', 'Provider A', 'Provider B']
-    })), /*#__PURE__*/React.createElement(DataTable, {
-      columns: cols,
-      rows: rows,
-      emptyTitle: "No members found"
-    }));
-  }
-  Object.assign(window, {
-    MembersScreen
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/admin/MembersScreen.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/admin/OverviewScreen.jsx
-try { (() => {
-(() => {
-  const {
-    PageHeader,
-    StatCard,
-    TrendChart,
-    RankedList,
-    ActionCard
-  } = window.AIForAllNeutralDS_acd6b1;
-  function OverviewScreen({
-    go
-  }) {
-    const S = window.SAMPLE;
-    return /*#__PURE__*/React.createElement("div", {
-      style: adminPage
-    }, /*#__PURE__*/React.createElement(PageHeader, {
-      title: "Overview",
-      subtitle: "Platform analytics overview",
-      style: {
-        marginBottom: 32
-      }
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-        gap: 16,
-        marginBottom: 32
-      }
-    }, /*#__PURE__*/React.createElement(StatCard, {
-      icon: "users",
-      label: "Total Members",
-      value: 6
-    }), /*#__PURE__*/React.createElement(StatCard, {
-      icon: "book-open",
-      tone: "highlight",
-      label: "Items",
-      value: 8
-    }), /*#__PURE__*/React.createElement(StatCard, {
-      icon: "circle-check-big",
-      tone: "success",
-      label: "Completions",
-      value: 15
-    }), /*#__PURE__*/React.createElement(StatCard, {
-      icon: "activity",
-      tone: "violet",
-      label: "Active Members",
-      value: 6
-    })), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'minmax(0, 7fr) minmax(0, 3fr)',
-        gap: 24,
-        marginBottom: 32,
-        alignItems: 'start'
-      }
-    }, /*#__PURE__*/React.createElement(TrendChart, {
-      title: "Member Trends",
-      data: S.trend,
-      series: [{
-        key: 'a',
-        label: 'Active Members',
-        color: 'var(--chart-1)'
-      }, {
-        key: 'b',
-        label: 'New Signups',
-        color: 'var(--chart-2)'
-      }],
-      summary: [{
-        label: 'New This Week',
-        value: 3
-      }, {
-        label: 'Avg Active',
-        value: 4
-      }]
-    }), /*#__PURE__*/React.createElement(RankedList, {
-      title: "Most Popular",
-      items: S.items.slice(0, 5).map((i, k) => ({
-        id: i.id,
-        label: i.title,
-        value: [4, 3, 2, 2, 2][k]
-      }))
-    })), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-        gap: 16
-      }
-    }, /*#__PURE__*/React.createElement(ActionCard, {
-      icon: "book-open",
-      title: "Manage Content",
-      description: "Add, edit, or remove items",
-      onClick: () => go({
-        name: 'content'
-      })
-    }), /*#__PURE__*/React.createElement(ActionCard, {
-      icon: "users",
-      tone: "highlight",
-      title: "Manage Members",
-      description: "View and manage member accounts",
-      onClick: () => go({
-        name: 'members'
-      })
-    }), /*#__PURE__*/React.createElement(ActionCard, {
-      icon: "folder-open",
-      tone: "violet",
-      title: "Manage Categories",
-      description: "Organize categories and topics",
-      onClick: () => go({
-        name: 'categories'
-      })
-    })));
-  }
-  Object.assign(window, {
-    OverviewScreen
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/admin/OverviewScreen.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/app/BrowseScreen.jsx
-try { (() => {
-(() => {
-  const {
-    PageHeader,
-    SearchInput,
-    FilterGroup,
-    MediaCard
-  } = window.AIForAllNeutralDS_acd6b1;
-  function BrowseScreen({
-    go
-  }) {
-    const S = window.SAMPLE;
-    const [q, setQ] = React.useState('');
-    const [cat, setCat] = React.useState(null);
-    const [topic, setTopic] = React.useState(null);
-    const [level, setLevel] = React.useState(null);
-    const list = S.items.filter(i => i.status === 'published').filter(i => !q || (i.title + i.description).toLowerCase().includes(q.toLowerCase())).filter(i => !cat || i.category === cat).filter(i => !topic || i.topic === topic).filter(i => !level || i.level === level);
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        padding: '32px 40px'
-      }
-    }, /*#__PURE__*/React.createElement(PageHeader, {
-      title: "Library",
-      subtitle: "Find the right resource for you and pick up where you left off",
-      style: {
-        marginBottom: 24
-      }
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        gap: 32
-      }
-    }, /*#__PURE__*/React.createElement("aside", {
-      style: {
-        width: 'var(--sidebar-width)',
-        flexShrink: 0
-      }
-    }, /*#__PURE__*/React.createElement(SearchInput, {
-      placeholder: "Search items...",
-      onChange: setQ,
-      style: {
-        marginBottom: 24
-      }
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 24
-      }
-    }, /*#__PURE__*/React.createElement(FilterGroup, {
-      title: "Category",
-      options: S.categories,
-      value: cat,
-      onChange: setCat
-    }), /*#__PURE__*/React.createElement(FilterGroup, {
-      title: "Topic",
-      options: S.topics,
-      value: topic,
-      onChange: setTopic
-    }), /*#__PURE__*/React.createElement(FilterGroup, {
-      title: "Level",
-      options: S.levels,
-      value: level,
-      onChange: setLevel
-    }))), /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: 1,
-        minWidth: 0
-      }
-    }, list.length === 0 ? /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '80px 0',
-        textAlign: 'center'
-      }
-    }, /*#__PURE__*/React.createElement("p", {
-      style: {
-        margin: 0,
-        fontSize: 18,
-        fontWeight: 500,
-        color: 'var(--text-muted)'
-      }
-    }, "No items found"), /*#__PURE__*/React.createElement("p", {
-      style: {
-        margin: '4px 0 0',
-        fontSize: 14,
-        color: 'var(--text-subtle)'
-      }
-    }, "Try adjusting your filters or search terms")) : /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-        gap: 20
-      }
-    }, list.map(i => /*#__PURE__*/React.createElement(MediaCard, {
-      key: i.id,
-      title: i.title,
-      description: i.description,
-      tags: itemTags(i),
-      author: S.authors[i.author],
-      onClick: () => go({
-        name: 'detail',
-        id: i.id
-      })
-    }))))));
-  }
-  Object.assign(window, {
-    BrowseScreen
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/app/BrowseScreen.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/app/DetailScreen.jsx
-try { (() => {
-(() => {
-  const {
-    BackLink,
-    VideoFrame,
-    InlineBanner,
-    SegmentedProgress,
-    ChoiceGroup,
-    Textarea,
-    Button,
-    Alert,
-    ResultSummary,
-    Card
-  } = window.AIForAllNeutralDS_acd6b1;
-  function DetailScreen({
-    id,
-    go,
-    signedIn,
-    setSignedIn
-  }) {
-    const S = window.SAMPLE;
-    const item = S.items.find(i => i.id === id) || S.items[0];
-    const qs = S.questions;
-    const [idx, setIdx] = React.useState(0);
-    const [answer, setAnswer] = React.useState('');
-    const [phase, setPhase] = React.useState('answering');
-    const [results, setResults] = React.useState([]);
-    const q = qs[idx];
-    const isLast = idx === qs.length - 1;
-    const submit = () => {
-      const ok = q.type === 'choice' ? answer === q.answer : true;
-      setResults([...results, ok]);
-      setPhase('feedback');
-    };
-    const next = () => {
-      if (isLast) setPhase('done');else {
-        setIdx(idx + 1);
-        setAnswer('');
-        setPhase('answering');
-      }
-    };
-    const correct = results.filter(Boolean).length;
-    const ok = results[results.length - 1];
-    const opt = q.options && q.options.find(o => o.id === q.answer);
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        maxWidth: 'var(--container-detail)',
-        margin: '0 auto',
-        padding: 24
-      }
-    }, /*#__PURE__*/React.createElement(BackLink, {
-      onClick: () => go({
-        name: 'browse'
-      }),
-      style: {
-        marginBottom: 24
-      }
-    }, "Back to list"), /*#__PURE__*/React.createElement(VideoFrame, null), /*#__PURE__*/React.createElement("h1", {
-      style: {
-        margin: 0,
-        padding: '24px 0 16px',
-        fontSize: 'var(--fs-title)',
-        fontWeight: 700,
-        color: 'var(--text-strong)'
-      }
-    }, item.title), !signedIn ? /*#__PURE__*/React.createElement(InlineBanner, {
-      actionLabel: "Sign Up",
-      onAction: () => setSignedIn(true),
-      style: {
-        marginBottom: 16
-      }
-    }, "Sign Up to save your progress and keep your results") : null, phase === 'done' ? /*#__PURE__*/React.createElement(ResultSummary, {
-      title: "All done!",
-      message: correct === qs.length ? 'Perfect!' : correct / qs.length >= 0.6 ? 'Well done!' : 'Keep going!',
-      value: correct / qs.length * 100,
-      detail: correct + ' / ' + qs.length + ' correct',
-      actions: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Button, {
-        weight: "semibold",
-        style: {
-          padding: '10px 24px'
-        },
-        onClick: () => go({
-          name: 'browse'
-        })
-      }, "Explore More"), /*#__PURE__*/React.createElement(Button, {
-        variant: "outline",
-        style: {
-          padding: '10px 24px',
-          color: 'var(--text-secondary)'
-        },
-        onClick: () => go({
-          name: 'mine'
-        })
-      }, "Go to My Space"))
-    }) : /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '16px 0',
-        borderBottom: '1px solid var(--border-default)'
-      }
-    }, /*#__PURE__*/React.createElement("span", {
-      style: {
-        fontSize: 16,
-        fontWeight: 600,
-        color: 'var(--text-body)'
-      }
-    }, "Check"), /*#__PURE__*/React.createElement("span", {
-      style: {
-        fontSize: 14,
-        color: 'var(--text-muted)'
-      }
-    }, "Question ", idx + 1, " / ", qs.length)), /*#__PURE__*/React.createElement("div", {
-      style: {
-        padding: '12px 0'
-      }
-    }, /*#__PURE__*/React.createElement(SegmentedProgress, {
-      current: results.length,
-      total: qs.length
-    })), /*#__PURE__*/React.createElement(Card, {
-      padding: "lg"
-    }, phase === 'answering' ? /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 24
-      }
-    }, /*#__PURE__*/React.createElement("h3", {
-      style: {
-        margin: 0,
-        fontSize: 16,
-        fontWeight: 600,
-        color: 'var(--text-strong)'
-      }
-    }, q.text), q.type === 'choice' ? /*#__PURE__*/React.createElement(ChoiceGroup, {
-      options: q.options,
-      value: answer || null,
-      onChange: setAnswer
-    }) : /*#__PURE__*/React.createElement(Textarea, {
-      value: answer,
-      onChange: e => setAnswer(e.target.value),
-      placeholder: "Type your answer..."
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        justifyContent: q.type === 'choice' ? 'flex-end' : 'flex-start'
-      }
-    }, /*#__PURE__*/React.createElement(Button, {
-      weight: "semibold",
-      disabled: !answer.trim(),
-      onClick: submit,
-      style: {
-        padding: '10px 24px'
-      }
-    }, "Submit Answer"))) : /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Alert, {
-      tone: ok ? 'success' : 'danger',
-      title: ok ? '\u2713 Correct!' : '\u2717 Incorrect',
-      detail: !ok && opt ? 'Correct answer: ' + opt.label : null
-    }, q.explanation), /*#__PURE__*/React.createElement(Button, {
-      weight: "semibold",
-      onClick: next,
-      style: {
-        marginTop: 16,
-        padding: '8px 20px'
-      }
-    }, isLast ? 'View Results' : 'Next \u2192')))));
-  }
-  Object.assign(window, {
-    DetailScreen
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/app/DetailScreen.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/app/MySpaceScreen.jsx
-try { (() => {
-(() => {
-  const {
-    PageHeader,
-    StatCard,
-    Tabs,
-    MediaCard,
-    EmptyState,
-    Button
-  } = window.AIForAllNeutralDS_acd6b1;
-  function MySpaceScreen({
-    go,
-    signedIn,
-    setSignedIn
-  }) {
-    const S = window.SAMPLE;
-    const [tab, setTab] = React.useState('active');
-    if (!signedIn) {
-      return /*#__PURE__*/React.createElement("div", {
-        style: {
-          minHeight: 'calc(100vh - 56px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }
-      }, /*#__PURE__*/React.createElement(EmptyState, {
-        icon: "book-open",
-        title: "Sign in to track your progress",
-        description: "Log In to see your progress, finished items, and achievements.",
-        actionLabel: "Log In",
-        actionVariant: "primary",
-        onAction: () => setSignedIn(true)
-      }));
-    }
-    const active = [{
-      ...S.items[1],
-      progress: 60,
-      q: '3/5',
-      date: 'Apr 2'
-    }, {
-      ...S.items[2],
-      progress: 33,
-      q: '2/6',
-      date: 'Mar 28'
-    }];
-    const done = [{
-      ...S.items[0],
-      score: 100,
-      date: 'Mar 20'
-    }, {
-      ...S.items[4],
-      score: 80,
-      date: 'Mar 14'
-    }, {
-      ...S.items[5],
-      score: 75,
-      date: 'Mar 3'
-    }];
-    const badges = done.slice(0, 2);
-    const tags = i => itemTags(i);
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        padding: '32px 40px'
-      }
-    }, /*#__PURE__*/React.createElement(PageHeader, {
-      title: "My Space",
-      subtitle: "Track your progress and collect achievements",
-      style: {
-        marginBottom: 24
-      }
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-        gap: 16,
-        marginBottom: 32
-      }
-    }, /*#__PURE__*/React.createElement(StatCard, {
-      variant: "tile",
-      icon: "book-open",
-      label: "In Progress",
-      value: active.length
-    }), /*#__PURE__*/React.createElement(StatCard, {
-      variant: "tile",
-      icon: "circle-check-big",
-      tone: "success",
-      label: "Completed",
-      value: done.length
-    }), /*#__PURE__*/React.createElement(StatCard, {
-      variant: "tile",
-      icon: "award",
-      tone: "highlight",
-      label: "Achievements",
-      value: badges.length
-    })), /*#__PURE__*/React.createElement(Tabs, {
-      value: tab,
-      onChange: setTab,
-      tabs: [{
-        value: 'active',
-        label: 'In Progress',
-        count: active.length
-      }, {
-        value: 'done',
-        label: 'Completed',
-        count: done.length
-      }, {
-        value: 'badges',
-        label: 'Achievements',
-        count: badges.length
-      }, {
-        value: 'saved',
-        label: 'Saved',
-        count: 0
-      }],
-      style: {
-        marginBottom: 24
-      }
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-        gap: 24
-      }
-    }, tab === 'active' && active.map(i => /*#__PURE__*/React.createElement(MediaCard, {
-      key: i.id,
-      mediaHeight: 200,
-      interactive: false,
-      progress: {
-        value: i.progress
-      },
-      tagsFirst: false,
-      title: i.title,
-      tags: tags(i),
-      meta: {
-        left: /*#__PURE__*/React.createElement("span", {
-          style: {
-            color: 'var(--accent)',
-            fontWeight: 500
-          }
-        }, i.progress, "% done \xB7 Q ", i.q),
-        right: i.date
-      },
-      footer: /*#__PURE__*/React.createElement(Button, {
-        fullWidth: true,
-        onClick: () => go({
-          name: 'detail',
-          id: i.id
-        })
-      }, "Continue")
-    })), tab === 'done' && done.map(i => /*#__PURE__*/React.createElement(MediaCard, {
-      key: i.id,
-      mediaHeight: 200,
-      progress: {
-        value: 100,
-        tone: 'success'
-      },
-      tagsFirst: false,
-      title: i.title,
-      tags: tags(i),
-      meta: {
-        left: /*#__PURE__*/React.createElement("span", {
-          style: {
-            color: 'var(--success-strong)',
-            fontWeight: 500
-          }
-        }, "Score: ", i.score, "%"),
-        right: i.date
-      },
-      onClick: () => go({
-        name: 'detail',
-        id: i.id
-      })
-    })), tab === 'badges' && badges.map(i => /*#__PURE__*/React.createElement(MediaCard, {
-      key: i.id,
-      mediaHeight: 200,
-      interactive: false,
-      progress: {
-        value: 100,
-        tone: 'highlight'
-      },
-      title: i.title,
-      meta: {
-        left: /*#__PURE__*/React.createElement("span", {
-          style: {
-            color: 'var(--text-subtle)'
-          }
-        }, "Earned ", i.date)
-      }
-    }))), tab === 'saved' ? /*#__PURE__*/React.createElement(EmptyState, {
-      icon: "book-open",
-      title: "Nothing saved yet",
-      description: "Save items from the library to find them here later.",
-      actionLabel: "Browse Library",
-      actionVariant: "primary",
-      onAction: () => go({
-        name: 'browse'
-      }),
-      style: {
-        padding: '80px 0'
-      }
-    }) : null);
-  }
-  Object.assign(window, {
-    MySpaceScreen
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/app/MySpaceScreen.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/app/ProfileScreen.jsx
-try { (() => {
-(() => {
-  const {
-    BackLink,
-    PageHeader,
-    Avatar,
-    FormField,
-    Input,
-    Button,
-    Alert,
-    Icon
-  } = window.AIForAllNeutralDS_acd6b1;
-  function ProfileScreen({
-    go
-  }) {
-    const [name, setName] = React.useState('Jordan Lee');
-    const [msg, setMsg] = React.useState(null);
-    const [saving, setSaving] = React.useState(false);
-    const save = e => {
-      e.preventDefault();
-      setSaving(true);
-      setMsg(null);
-      setTimeout(() => {
-        setSaving(false);
-        setMsg(name.trim() ? {
-          tone: 'success',
-          text: 'Profile updated'
-        } : {
-          tone: 'danger',
-          text: 'Name is required'
-        });
-      }, 600);
-    };
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        maxWidth: 'var(--container-narrow)',
-        margin: '0 auto',
-        padding: '32px 24px'
-      }
-    }, /*#__PURE__*/React.createElement(BackLink, {
-      onClick: () => go({
-        name: 'mine'
-      }),
-      style: {
-        marginBottom: 16
-      }
-    }, "Back"), /*#__PURE__*/React.createElement(PageHeader, {
-      title: "Profile",
-      subtitle: "Manage your account information",
-      style: {
-        marginBottom: 24
-      }
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        overflow: 'hidden',
-        borderRadius: 'var(--radius-2xl)',
-        border: '1px solid var(--border-default)',
-        background: 'var(--surface-card)'
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        height: 120,
-        background: 'var(--gradient-cover)'
-      }
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        position: 'relative',
-        height: 50
-      }
-    }, /*#__PURE__*/React.createElement(Avatar, {
-      size: 80,
-      fallback: "icon",
-      ring: true,
-      style: {
-        position: 'absolute',
-        top: -40,
-        left: 32
-      }
-    }), /*#__PURE__*/React.createElement("button", {
-      type: "button",
-      title: "Change photo",
-      style: {
-        position: 'absolute',
-        top: 16,
-        left: 88,
-        width: 28,
-        height: 28,
-        borderRadius: 999,
-        border: 0,
-        background: 'var(--accent)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer'
-      }
-    }, /*#__PURE__*/React.createElement(Icon, {
-      name: "camera",
-      size: 14,
-      color: "#fff"
-    }))), /*#__PURE__*/React.createElement("form", {
-      onSubmit: save,
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 20,
-        padding: '8px 32px 32px'
-      }
-    }, /*#__PURE__*/React.createElement(FormField, {
-      label: "Name"
-    }, /*#__PURE__*/React.createElement(Input, {
-      variant: "outline",
-      size: "lg",
-      value: name,
-      onChange: e => setName(e.target.value)
-    })), /*#__PURE__*/React.createElement(FormField, {
-      label: "Email",
-      hint: "Signed in via a provider, cannot be changed"
-    }, /*#__PURE__*/React.createElement(Input, {
-      variant: "outline",
-      size: "lg",
-      value: "jordan@example.com",
-      disabled: true,
-      readOnly: true
-    })), msg ? /*#__PURE__*/React.createElement(Alert, {
-      variant: "inline",
-      tone: msg.tone
-    }, msg.text) : null, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        gap: 12
-      }
-    }, /*#__PURE__*/React.createElement(Button, {
-      type: "submit",
-      disabled: !name.trim(),
-      loading: saving,
-      style: {
-        flex: 1
-      }
-    }, saving ? 'Saving...' : 'Save Changes'), /*#__PURE__*/React.createElement(Button, {
-      variant: "outline",
-      onClick: () => go({
-        name: 'mine'
-      }),
-      style: {
-        padding: '10px 24px',
-        color: 'var(--text-secondary)'
-      }
-    }, "Cancel")))), /*#__PURE__*/React.createElement("p", {
-      style: {
-        margin: '16px 0 0',
-        fontSize: 13,
-        color: 'var(--text-subtle)'
-      }
-    }, "Account created on Jan 1, 2026"));
-  }
-  Object.assign(window, {
-    ProfileScreen
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/app/ProfileScreen.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/app/Shell.jsx
-try { (() => {
-(() => {
-  const {
-    TopNav,
-    Wordmark,
-    UserMenu,
-    Button
-  } = window.AIForAllNeutralDS_acd6b1;
-  function itemTags(item) {
-    const S = window.SAMPLE;
-    const lv = S.level[item.level];
-    return [{
-      label: S.cat[item.category].name,
-      tone: 'accent'
-    }, {
-      label: S.topic[item.topic].name,
-      tone: 'violet'
-    }, {
-      label: lv.name,
-      tone: lv.tone,
-      strong: true
-    }];
-  }
-  function AppShell({
-    route,
-    go,
-    signedIn,
-    setSignedIn,
-    children
-  }) {
-    const navId = route.name === 'mine' ? 'mine' : route.name === 'profile' ? null : 'browse';
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        minHeight: '100vh',
-        background: 'var(--surface-page)'
-      }
-    }, /*#__PURE__*/React.createElement(TopNav, {
-      brand: /*#__PURE__*/React.createElement(Wordmark, {
-        accent: "Acme",
-        text: "Studio",
-        onClick: () => go({
-          name: 'browse'
-        })
-      }),
-      links: [{
-        id: 'browse',
-        label: 'Browse'
-      }, {
-        id: 'mine',
-        label: 'My Space'
-      }],
-      activeId: navId,
-      onNavigate: id => go({
-        name: id
-      }),
-      right: signedIn ? /*#__PURE__*/React.createElement(UserMenu, {
-        name: "Jordan",
-        email: "jordan@example.com",
-        items: [{
-          label: 'My Space',
-          onClick: () => go({
-            name: 'mine'
-          })
-        }, {
-          label: 'Profile',
-          onClick: () => go({
-            name: 'profile'
-          })
-        }],
-        onSignOut: () => setSignedIn(false)
-      }) : /*#__PURE__*/React.createElement(Button, {
-        size: "md",
-        style: {
-          padding: '8px 16px'
-        },
-        onClick: () => setSignedIn(true)
-      }, "Log In")
-    }), /*#__PURE__*/React.createElement("main", null, children));
-  }
-  Object.assign(window, {
-    AppShell,
-    itemTags
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/app/Shell.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/marketing/LandingScreen.jsx
-try { (() => {
-(() => {
-  const {
-    TopNav,
-    Wordmark,
-    Button,
-    Tag,
-    Section,
-    FeatureCard,
-    StepItem,
-    SiteFooter
-  } = window.AIForAllNeutralDS_acd6b1;
-  function LandingScreen({
-    go
-  }) {
-    const steps = [{
-      n: 1,
-      t: 'Browse',
-      d: 'Explore the Library and filter by category, topic and level.'
-    }, {
-      n: 2,
-      t: 'Learn',
-      d: 'Work through curated material embedded right in the product.'
-    }, {
-      n: 3,
-      t: 'Check & track',
-      d: 'Answer a few quick questions and watch your progress add up.'
-    }];
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        flexDirection: 'column'
-      }
-    }, /*#__PURE__*/React.createElement(TopNav, {
-      variant: "marketing",
-      brand: /*#__PURE__*/React.createElement(Wordmark, {
-        accent: "Acme",
-        text: "Studio",
-        tone: "strong"
-      }),
-      right: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("a", {
-        href: "#",
-        onClick: e => {
-          e.preventDefault();
-          go('signin');
-        },
-        style: {
-          fontSize: 14,
-          fontWeight: 500,
-          color: 'var(--text-body)',
-          textDecoration: 'none'
-        }
-      }, "Log In"), /*#__PURE__*/React.createElement(Button, {
-        weight: "semibold",
-        onClick: () => go('signin')
-      }, "Get Started"))
-    }), /*#__PURE__*/React.createElement("section", {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '80px 24px',
-        textAlign: 'center',
-        background: 'var(--gradient-hero)'
-      }
-    }, /*#__PURE__*/React.createElement(Tag, {
-      tone: "accent-strong",
-      size: "lg",
-      icon: "sparkles",
-      style: {
-        marginBottom: 32
-      }
-    }, "Free for everyone, forever"), /*#__PURE__*/React.createElement("h1", {
-      style: {
-        margin: 0,
-        maxWidth: 900,
-        fontSize: 'var(--fs-display)',
-        lineHeight: 1.15,
-        fontWeight: 700,
-        color: 'var(--text-strong)',
-        textWrap: 'balance'
-      }
-    }, "Build Practical Skills That Move Your Work Forward"), /*#__PURE__*/React.createElement("p", {
-      style: {
-        margin: '24px 0 0',
-        maxWidth: 700,
-        fontSize: 18,
-        lineHeight: 1.625,
-        color: 'var(--text-muted)',
-        textWrap: 'pretty'
-      }
-    }, "Curated material from people who do the work, with quick checks to make sure it sticks. No cost, no barriers \u2014 just progress."), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: 16,
-        marginTop: 40
-      }
-    }, /*#__PURE__*/React.createElement(Button, {
-      size: "xl",
-      trailingIcon: "arrow-right",
-      onClick: () => go('app')
-    }, "Explore the Library"), /*#__PURE__*/React.createElement(Button, {
-      size: "xl",
-      variant: "outline-strong",
-      weight: "medium",
-      onClick: () => window.scrollTo({
-        top: document.getElementById('how').offsetTop,
-        behavior: 'smooth'
-      })
-    }, "How It Works"))), /*#__PURE__*/React.createElement(Section, {
-      title: "Everything You Need in One Place",
-      subtitle: "A structured, hands-on experience with curated material, quick checks, and progress tracking."
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-        gap: 32,
-        width: '100%'
-      }
-    }, /*#__PURE__*/React.createElement(FeatureCard, {
-      icon: "play",
-      title: "Curated material",
-      description: "Hand-picked resources organized by topic and level so you always know where to start."
-    }), /*#__PURE__*/React.createElement(FeatureCard, {
-      icon: "book-check",
-      tone: "highlight",
-      title: "Quick checks",
-      description: "Multiple-choice and short-answer questions after each item confirm what you learned."
-    }), /*#__PURE__*/React.createElement(FeatureCard, {
-      icon: "chart-column",
-      tone: "neutral",
-      title: "Progress tracking",
-      description: "Pick up where you left off and collect achievements on a personal dashboard."
-    }))), /*#__PURE__*/React.createElement("div", {
-      id: "how"
-    }, /*#__PURE__*/React.createElement(Section, {
-      background: "subtle",
-      title: "How It Works",
-      subtitle: "Get Started in three simple steps"
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-        gap: 32,
-        width: '100%'
-      }
-    }, steps.map(s => /*#__PURE__*/React.createElement(StepItem, {
-      key: s.n,
-      number: s.n,
-      title: s.t,
-      description: s.d
-    }))))), /*#__PURE__*/React.createElement(Section, {
-      background: "cta",
-      title: "Ready to Get Started?",
-      subtitle: "Join the community and start building real skills today \u2014 completely free.",
-      narrow: true
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        marginTop: -16
-      }
-    }, /*#__PURE__*/React.createElement(Button, {
-      size: "xl",
-      trailingIcon: "arrow-right",
-      onClick: () => go('signin')
-    }, "Get Started for Free"))), /*#__PURE__*/React.createElement(SiteFooter, {
-      brand: "Acme Studio",
-      tagline: "\xA9 2026 Acme Studio. One-line mission statement goes here.",
-      links: ['About', 'Contact', 'Privacy', 'Terms']
-    }));
-  }
-  Object.assign(window, {
-    LandingScreen
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/marketing/LandingScreen.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/marketing/SignInScreen.jsx
-try { (() => {
-(() => {
-  const {
-    AuthCard,
-    Wordmark,
-    Button,
-    Icon
-  } = window.AIForAllNeutralDS_acd6b1;
-  function SignInScreen({
-    go
-  }) {
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'var(--gradient-hero)'
-      }
-    }, /*#__PURE__*/React.createElement(AuthCard, {
-      brand: /*#__PURE__*/React.createElement(Wordmark, {
-        accent: "Acme",
-        text: "Studio",
-        tone: "strong",
-        onClick: () => go('landing')
-      }),
-      title: "Welcome Back",
-      subtitle: "Sign in to track your progress and earn achievements",
-      footer: /*#__PURE__*/React.createElement(Button, {
-        variant: "link",
-        onClick: () => go('app')
-      }, "Continue without signing in")
-    }, /*#__PURE__*/React.createElement(Button, {
-      variant: "outline-strong",
-      size: "lg",
-      fullWidth: true,
-      leadingIcon: "user",
-      onClick: () => go('app')
-    }, "Continue with Provider A"), /*#__PURE__*/React.createElement(Button, {
-      size: "lg",
-      fullWidth: true,
-      leadingIcon: "users",
-      onClick: () => go('app'),
-      style: {
-        background: 'var(--neutral-900)'
-      }
-    }, "Continue with Provider B")));
-  }
-  Object.assign(window, {
-    SignInScreen
-  });
-})();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/marketing/SignInScreen.jsx", error: String((e && e.message) || e) }); }
-
-// ui_kits/shared/sample-data.js
-try { (() => {
-// Neutral sample content for UI kits — deliberately product-agnostic. Replace freely.
-window.SAMPLE = function () {
-  const categories = [{
-    id: 'design',
-    name: 'Design',
-    icon: 'image'
-  }, {
-    id: 'eng',
-    name: 'Engineering',
-    icon: 'code'
-  }, {
-    id: 'writing',
-    name: 'Writing',
-    icon: 'file-text'
-  }, {
-    id: 'research',
-    name: 'Research',
-    icon: 'brain'
-  }, {
-    id: 'ops',
-    name: 'Operations',
-    icon: 'wrench'
-  }];
-  const topics = [{
-    id: 'basics',
-    name: 'Fundamentals',
-    icon: 'lightbulb'
-  }, {
-    id: 'workflow',
-    name: 'Workflow',
-    icon: 'activity'
-  }, {
-    id: 'viz',
-    name: 'Visualization',
-    icon: 'chart-column'
-  }, {
-    id: 'auto',
-    name: 'Automation',
-    icon: 'bot'
-  }];
-  const levels = [{
-    id: 'beginner',
-    name: 'Beginner',
-    tone: 'success'
-  }, {
-    id: 'intermediate',
-    name: 'Intermediate',
-    tone: 'highlight'
-  }, {
-    id: 'advanced',
-    name: 'Advanced',
-    tone: 'danger'
-  }];
-  const authors = {
-    a1: {
-      name: 'Studio Team',
-      color: 'var(--violet-500)'
-    },
-    a2: {
-      name: 'Alex Chen',
-      color: 'var(--blue-500)'
-    },
-    a3: {
-      name: 'Data Lab',
-      color: 'var(--primary-500)'
-    }
-  };
-  const items = [{
-    id: 'i1',
-    title: 'Getting Started: A Practical Introduction',
-    description: 'Learn the core concepts step by step, set up your workspace, and finish your first small project in under an hour.',
-    category: 'design',
-    topic: 'basics',
-    level: 'beginner',
-    author: 'a1',
-    status: 'published',
-    entries: 5
-  }, {
-    id: 'i2',
-    title: 'Building Your First Repeatable Workflow',
-    description: 'Turn a manual routine into a reliable checklist, then refine it with templates and shortcuts.',
-    category: 'ops',
-    topic: 'workflow',
-    level: 'intermediate',
-    author: 'a2',
-    status: 'published',
-    entries: 4
-  }, {
-    id: 'i3',
-    title: 'Data Visualization Basics',
-    description: 'Choose the right chart, label it clearly, and avoid the most common mistakes when presenting numbers.',
-    category: 'research',
-    topic: 'viz',
-    level: 'beginner',
-    author: 'a3',
-    status: 'published',
-    entries: 6
-  }, {
-    id: 'i4',
-    title: 'Advanced Automation Patterns',
-    description: 'Chain small tasks into larger pipelines, handle failures gracefully, and keep everything observable.',
-    category: 'eng',
-    topic: 'auto',
-    level: 'advanced',
-    author: 'a2',
-    status: 'draft',
-    entries: 3
-  }, {
-    id: 'i5',
-    title: 'Writing Clear Documentation',
-    description: 'Structure guides people can scan, write instructions that work the first time, and keep docs up to date.',
-    category: 'writing',
-    topic: 'basics',
-    level: 'intermediate',
-    author: 'a1',
-    status: 'published',
-    entries: 5
-  }, {
-    id: 'i6',
-    title: 'Running Lightweight Research Sessions',
-    description: 'Plan short interviews, capture notes consistently, and turn observations into decisions.',
-    category: 'research',
-    topic: 'workflow',
-    level: 'advanced',
-    author: 'a3',
-    status: 'published',
-    entries: 4
-  }];
-  const questions = [{
-    id: 'q1',
-    type: 'choice',
-    text: 'Which step should come first when starting a new project?',
-    options: [{
-      id: 'a',
-      label: 'Define the goal and success criteria'
-    }, {
-      id: 'b',
-      label: 'Pick the tools'
-    }, {
-      id: 'c',
-      label: 'Write the final summary'
-    }, {
-      id: 'd',
-      label: 'Share it with everyone'
-    }],
-    answer: 'a',
-    explanation: 'A clear goal makes every later decision easier to evaluate.'
-  }, {
-    id: 'q2',
-    type: 'choice',
-    text: 'What makes a checklist reusable?',
-    options: [{
-      id: 'a',
-      label: 'It lists every possible edge case'
-    }, {
-      id: 'b',
-      label: 'Each step is small, ordered and verifiable'
-    }, {
-      id: 'c',
-      label: 'It is stored in one person\u2019s head'
-    }, {
-      id: 'd',
-      label: 'It changes every time'
-    }],
-    answer: 'b',
-    explanation: 'Small, verifiable steps can be followed by anyone, every time.'
-  }, {
-    id: 'q3',
-    type: 'text',
-    text: 'In one sentence, describe how you would apply this to your own work.',
-    explanation: 'Any thoughtful answer counts — the goal is reflection.'
-  }];
-  const members = [{
-    id: 'm1',
-    name: 'Jordan Lee',
-    email: 'jordan@example.com',
-    provider: 'Provider A',
-    joined: 'Mar 1, 2026',
-    done: 4,
-    last: 'Today'
-  }, {
-    id: 'm2',
-    name: 'Sam Park',
-    email: 'sam.park@example.com',
-    provider: 'Provider B',
-    joined: 'Feb 18, 2026',
-    done: 2,
-    last: 'Yesterday'
-  }, {
-    id: 'm3',
-    name: 'Riley Gomez',
-    email: 'riley@example.com',
-    provider: 'Provider A',
-    joined: 'Feb 2, 2026',
-    done: 7,
-    last: '3 days ago'
-  }, {
-    id: 'm4',
-    name: 'Morgan Wu',
-    email: 'morgan.wu@example.com',
-    provider: 'Provider A',
-    joined: 'Jan 21, 2026',
-    done: 1,
-    last: 'Mar 12, 2026'
-  }, {
-    id: 'm5',
-    name: 'Casey Ito',
-    email: 'casey@example.com',
-    provider: 'Provider B',
-    joined: 'Jan 9, 2026',
-    done: 0,
-    last: 'Feb 27, 2026'
-  }];
-  const trend = [3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6].map((a, i) => ({
-    x: i < 26 ? '3/' + (i + 6) : '4/' + (i - 25),
-    a,
-    b: [9, 21, 29].includes(i) ? 1 : 0
-  }));
-  const byId = arr => Object.fromEntries(arr.map(x => [x.id, x]));
-  return {
-    categories,
-    topics,
-    levels,
-    authors,
-    items,
-    questions,
-    members,
-    trend,
-    cat: byId(categories),
-    topic: byId(topics),
-    level: byId(levels)
-  };
-}();
-})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/shared/sample-data.js", error: String((e && e.message) || e) }); }
-
 __ds_ns.Avatar = __ds_scope.Avatar;
 
 __ds_ns.Badge = __ds_scope.Badge;
@@ -6365,6 +4635,8 @@ __ds_ns.SegmentedControl = __ds_scope.SegmentedControl;
 
 __ds_ns.Select = __ds_scope.Select;
 
+__ds_ns.Slider = __ds_scope.Slider;
+
 __ds_ns.Textarea = __ds_scope.Textarea;
 
 __ds_ns.AuthCard = __ds_scope.AuthCard;
@@ -6379,11 +4651,15 @@ __ds_ns.StepItem = __ds_scope.StepItem;
 
 __ds_ns.VideoFrame = __ds_scope.VideoFrame;
 
+__ds_ns.ImageCropper = __ds_scope.ImageCropper;
+
 __ds_ns.BackLink = __ds_scope.BackLink;
 
 __ds_ns.MobileMenu = __ds_scope.MobileMenu;
 
 __ds_ns.PageHeader = __ds_scope.PageHeader;
+
+__ds_ns.Pagination = __ds_scope.Pagination;
 
 __ds_ns.Tabs = __ds_scope.Tabs;
 
