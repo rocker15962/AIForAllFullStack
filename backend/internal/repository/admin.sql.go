@@ -196,6 +196,7 @@ func (q *Queries) AdminGetCourseStatus(ctx context.Context, id uuid.UUID) (Cours
 
 const adminGetUserProgress = `-- name: AdminGetUserProgress :many
 SELECT p.course_id, p.status, p.score, p.completed_at, p.current_question, p.last_accessed_at,
+       p.latest_round_passed,
        c.title AS course_title, c.status AS course_status,
        (SELECT COUNT(*) FROM questions q WHERE q.course_id = c.id)::int AS total_questions,
        (SELECT COUNT(DISTINCT a->>'questionId') FROM jsonb_array_elements(p.answers) a
@@ -207,16 +208,17 @@ ORDER BY p.last_accessed_at DESC
 `
 
 type AdminGetUserProgressRow struct {
-	CourseID        uuid.UUID          `json:"course_id"`
-	Status          ProgressStatus     `json:"status"`
-	Score           pgtype.Numeric     `json:"score"`
-	CompletedAt     pgtype.Timestamptz `json:"completed_at"`
-	CurrentQuestion pgtype.Int4        `json:"current_question"`
-	LastAccessedAt  time.Time          `json:"last_accessed_at"`
-	CourseTitle     string             `json:"course_title"`
-	CourseStatus    CourseStatus       `json:"course_status"`
-	TotalQuestions  int32              `json:"total_questions"`
-	AnsweredCount   int32              `json:"answered_count"`
+	CourseID          uuid.UUID          `json:"course_id"`
+	Status            ProgressStatus     `json:"status"`
+	Score             pgtype.Numeric     `json:"score"`
+	CompletedAt       pgtype.Timestamptz `json:"completed_at"`
+	CurrentQuestion   pgtype.Int4        `json:"current_question"`
+	LastAccessedAt    time.Time          `json:"last_accessed_at"`
+	LatestRoundPassed pgtype.Bool        `json:"latest_round_passed"`
+	CourseTitle       string             `json:"course_title"`
+	CourseStatus      CourseStatus       `json:"course_status"`
+	TotalQuestions    int32              `json:"total_questions"`
+	AnsweredCount     int32              `json:"answered_count"`
 }
 
 func (q *Queries) AdminGetUserProgress(ctx context.Context, userID uuid.UUID) ([]AdminGetUserProgressRow, error) {
@@ -235,6 +237,7 @@ func (q *Queries) AdminGetUserProgress(ctx context.Context, userID uuid.UUID) ([
 			&i.CompletedAt,
 			&i.CurrentQuestion,
 			&i.LastAccessedAt,
+			&i.LatestRoundPassed,
 			&i.CourseTitle,
 			&i.CourseStatus,
 			&i.TotalQuestions,
@@ -692,15 +695,18 @@ func (q *Queries) GetPopularCourses(ctx context.Context) ([]GetPopularCoursesRow
 const getUserTrend = `-- name: GetUserTrend :many
 SELECT date::date,
   (SELECT COUNT(*) FROM users WHERE created_at::date <= date)::int AS total_users,
-  (SELECT COUNT(*) FROM users WHERE created_at::date = date)::int AS new_users
+  (SELECT COUNT(*) FROM users WHERE created_at::date = date)::int AS new_users,
+  -- BR-39: distinct users active on that day
+  (SELECT COUNT(*) FROM user_activity_days a WHERE a.day = date)::int AS active_users
 FROM generate_series(CURRENT_DATE - 29, CURRENT_DATE, '1 day') AS date
 ORDER BY date
 `
 
 type GetUserTrendRow struct {
-	Date       pgtype.Date `json:"date"`
-	TotalUsers int32       `json:"total_users"`
-	NewUsers   int32       `json:"new_users"`
+	Date        pgtype.Date `json:"date"`
+	TotalUsers  int32       `json:"total_users"`
+	NewUsers    int32       `json:"new_users"`
+	ActiveUsers int32       `json:"active_users"`
 }
 
 func (q *Queries) GetUserTrend(ctx context.Context) ([]GetUserTrendRow, error) {
@@ -712,7 +718,12 @@ func (q *Queries) GetUserTrend(ctx context.Context) ([]GetUserTrendRow, error) {
 	items := []GetUserTrendRow{}
 	for rows.Next() {
 		var i GetUserTrendRow
-		if err := rows.Scan(&i.Date, &i.TotalUsers, &i.NewUsers); err != nil {
+		if err := rows.Scan(
+			&i.Date,
+			&i.TotalUsers,
+			&i.NewUsers,
+			&i.ActiveUsers,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

@@ -58,6 +58,8 @@ func (h *AdminHandler) Dashboard(c *gin.Context) {
 			"date":       dateStr,
 			"totalUsers": t.TotalUsers,
 			"newUsers":   t.NewUsers,
+			// BR-39: distinct users active that day
+			"activeUsers": t.ActiveUsers,
 		}
 	}
 
@@ -596,16 +598,18 @@ func (h *AdminHandler) GetUserProgress(c *gin.Context) {
 		}
 
 		items[i] = gin.H{
-			"courseId":        r.CourseID.String(),
-			"courseTitle":     r.CourseTitle,
-			"courseStatus":    string(r.CourseStatus),
-			"status":          string(r.Status),
-			"score":           score,
-			"completedAt":     completedAt,
-			"lastAccessedAt":  r.LastAccessedAt.Format(time.RFC3339),
-			"currentQuestion": currentQuestion,
-			"answeredCount":   r.AnsweredCount,
-			"totalQuestions":  r.TotalQuestions,
+			"courseId":     r.CourseID.String(),
+			"courseTitle":  r.CourseTitle,
+			"courseStatus": string(r.CourseStatus),
+			// BR-36: false when the latest scored round was below 60%; nil if never scored
+			"latestRoundPassed": boolPtr(r.LatestRoundPassed),
+			"status":            string(r.Status),
+			"score":             score,
+			"completedAt":       completedAt,
+			"lastAccessedAt":    r.LastAccessedAt.Format(time.RFC3339),
+			"currentQuestion":   currentQuestion,
+			"answeredCount":     r.AnsweredCount,
+			"totalQuestions":    r.TotalQuestions,
 		}
 	}
 

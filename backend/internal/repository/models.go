@@ -252,17 +252,19 @@ type Creator struct {
 }
 
 type Progress struct {
-	ID              uuid.UUID          `json:"id"`
-	UserID          uuid.UUID          `json:"user_id"`
-	CourseID        uuid.UUID          `json:"course_id"`
-	Status          ProgressStatus     `json:"status"`
-	CurrentQuestion pgtype.Int4        `json:"current_question"`
-	Score           pgtype.Numeric     `json:"score"`
-	Answers         json.RawMessage    `json:"answers"`
-	StartedAt       time.Time          `json:"started_at"`
-	CompletedAt     pgtype.Timestamptz `json:"completed_at"`
-	LastAccessedAt  time.Time          `json:"last_accessed_at"`
-	BadgeEarnedAt   pgtype.Timestamptz `json:"badge_earned_at"`
+	ID                uuid.UUID          `json:"id"`
+	UserID            uuid.UUID          `json:"user_id"`
+	CourseID          uuid.UUID          `json:"course_id"`
+	Status            ProgressStatus     `json:"status"`
+	CurrentQuestion   pgtype.Int4        `json:"current_question"`
+	Score             pgtype.Numeric     `json:"score"`
+	Answers           json.RawMessage    `json:"answers"`
+	StartedAt         time.Time          `json:"started_at"`
+	CompletedAt       pgtype.Timestamptz `json:"completed_at"`
+	LastAccessedAt    time.Time          `json:"last_accessed_at"`
+	BadgeEarnedAt     pgtype.Timestamptz `json:"badge_earned_at"`
+	LatestRoundPassed pgtype.Bool        `json:"latest_round_passed"`
+	RoundFinished     bool               `json:"round_finished"`
 }
 
 type Question struct {
@@ -303,4 +305,9 @@ type User struct {
 	IsAdmin      bool         `json:"is_admin"`
 	CreatedAt    time.Time    `json:"created_at"`
 	LastActiveAt time.Time    `json:"last_active_at"`
+}
+
+type UserActivityDay struct {
+	UserID uuid.UUID   `json:"user_id"`
+	Day    pgtype.Date `json:"day"`
 }

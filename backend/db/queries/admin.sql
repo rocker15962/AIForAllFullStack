@@ -9,7 +9,9 @@ SELECT
 -- name: GetUserTrend :many
 SELECT date::date,
   (SELECT COUNT(*) FROM users WHERE created_at::date <= date)::int AS total_users,
-  (SELECT COUNT(*) FROM users WHERE created_at::date = date)::int AS new_users
+  (SELECT COUNT(*) FROM users WHERE created_at::date = date)::int AS new_users,
+  -- BR-39: distinct users active on that day
+  (SELECT COUNT(*) FROM user_activity_days a WHERE a.day = date)::int AS active_users
 FROM generate_series(CURRENT_DATE - 29, CURRENT_DATE, '1 day') AS date
 ORDER BY date;
 
@@ -86,6 +88,7 @@ ORDER BY created_at DESC;
 
 -- name: AdminGetUserProgress :many
 SELECT p.course_id, p.status, p.score, p.completed_at, p.current_question, p.last_accessed_at,
+       p.latest_round_passed,
        c.title AS course_title, c.status AS course_status,
        (SELECT COUNT(*) FROM questions q WHERE q.course_id = c.id)::int AS total_questions,
        (SELECT COUNT(DISTINCT a->>'questionId') FROM jsonb_array_elements(p.answers) a

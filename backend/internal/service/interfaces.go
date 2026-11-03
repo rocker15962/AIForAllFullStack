@@ -13,6 +13,7 @@ type UserRepository interface {
 	CreateUser(ctx context.Context, arg repository.CreateUserParams) (repository.User, error)
 	UpdateUser(ctx context.Context, arg repository.UpdateUserParams) (repository.User, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (repository.User, error)
+	RecordUserActivity(ctx context.Context, id uuid.UUID) error
 }
 
 type CourseRepository interface {

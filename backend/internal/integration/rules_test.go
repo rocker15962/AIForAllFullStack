@@ -157,11 +157,15 @@ func TestFinishAttemptKeepsBadge(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if failed.Status != repository.ProgressStatusInProgress || !failed.BadgeEarnedAt.Valid {
+	// BR-36: a course passed before stays completed after a failed retake.
+	if failed.Status != repository.ProgressStatusCompleted || !failed.BadgeEarnedAt.Valid {
 		t.Errorf("after failing retake: status=%s badge=%v", failed.Status, failed.BadgeEarnedAt.Valid)
 	}
-	if !failed.BadgeEarnedAt.Time.Equal(passed.BadgeEarnedAt.Time) {
-		t.Error("badge time must not change")
+	if !failed.BadgeEarnedAt.Time.Equal(passed.BadgeEarnedAt.Time) || !failed.CompletedAt.Time.Equal(passed.CompletedAt.Time) {
+		t.Error("badge and completion time must not change")
+	}
+	if !failed.LatestRoundPassed.Valid || failed.LatestRoundPassed.Bool || !failed.RoundFinished {
+		t.Errorf("latest round flags: passed=%v finished=%v", failed.LatestRoundPassed, failed.RoundFinished)
 	}
 
 	badges, _ := testQueries.GetUserBadges(ctx, userID)
@@ -169,8 +173,64 @@ func TestFinishAttemptKeepsBadge(t *testing.T) {
 		t.Errorf("got %d badges, want 1", len(badges))
 	}
 	counts, _ := testQueries.CountUserProgress(ctx, userID)
-	if counts.BadgeCount != 1 || counts.CompletedCount != 0 {
+	if counts.BadgeCount != 1 || counts.CompletedCount != 1 {
 		t.Errorf("counts = %+v", counts)
+	}
+	completed, _ := testQueries.GetUserCompleted(ctx, userID)
+	if len(completed) != 1 || !completed[0].LatestRoundPassed.Valid || completed[0].LatestRoundPassed.Bool {
+		t.Errorf("completed list should flag the failed latest round: %+v", completed)
+	}
+}
+
+// BR-36: a retake on a passed course keeps it completed while the new round is answered.
+func TestRetakeKeepsPassedCourseCompleted(t *testing.T) {
+	ctx := context.Background()
+	toolID, skillID, creatorID := createCoursePrereqs(t, ctx)
+	course := createPublishedCourse(t, ctx, toolID, skillID, creatorID)
+	userID := createTestUser(t, ctx)
+	_ = testQueries.StartProgress(ctx, repository.StartProgressParams{UserID: userID, CourseID: course.ID})
+	score := pgtype.Numeric{}
+	_ = score.Scan("100.00")
+	_, _ = testQueries.FinishAttempt(ctx, repository.FinishAttemptParams{Passed: true, Score: score, UserID: userID, CourseID: course.ID})
+
+	p, err := testQueries.RetakeProgress(ctx, repository.RetakeProgressParams{UserID: userID, CourseID: course.ID})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p.Status != repository.ProgressStatusCompleted || p.RoundFinished || string(p.Answers) != "[]" || !p.Score.Valid {
+		t.Errorf("after retake: status=%s finished=%v answers=%s score=%v", p.Status, p.RoundFinished, p.Answers, p.Score.Valid)
+	}
+
+	// A course never passed goes back to in progress on retake.
+	other := createPublishedCourse(t, ctx, toolID, skillID, creatorID)
+	_ = testQueries.StartProgress(ctx, repository.StartProgressParams{UserID: userID, CourseID: other.ID})
+	low := pgtype.Numeric{}
+	_ = low.Scan("20.00")
+	failed, _ := testQueries.FinishAttempt(ctx, repository.FinishAttemptParams{Passed: false, Score: low, UserID: userID, CourseID: other.ID})
+	if failed.Status != repository.ProgressStatusInProgress || failed.CompletedAt.Valid {
+		t.Errorf("never-passed course after failing: status=%s", failed.Status)
+	}
+}
+
+// BR-39: activity is recorded once per user per day and feeds the trend.
+func TestRecordUserActivityAndTrend(t *testing.T) {
+	ctx := context.Background()
+	userID := createTestUser(t, ctx)
+	before, _ := testQueries.GetUserTrend(ctx)
+	if err := testQueries.RecordUserActivity(ctx, userID); err != nil {
+		t.Fatal(err)
+	}
+	if err := testQueries.RecordUserActivity(ctx, userID); err != nil {
+		t.Fatal("recording twice in a day must not fail:", err)
+	}
+	after, err := testQueries.GetUserTrend(ctx)
+	if err != nil || len(after) != 30 {
+		t.Fatalf("trend rows=%d err=%v", len(after), err)
+	}
+	today := after[len(after)-1].ActiveUsers - before[len(before)-1].ActiveUsers
+	// createTestUser does not record activity, so today's count grows by exactly one.
+	if today != 1 {
+		t.Errorf("today's active users grew by %d, want 1", today)
 	}
 }
 

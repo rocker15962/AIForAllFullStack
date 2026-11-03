@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -479,13 +480,26 @@ type AnsweredQuestion struct {
 
 // MyCourseProgress is the signed-in learner's state for one course, used to resume (BR-19).
 type MyCourseProgress struct {
-	// Status is "not_started", "in_progress" or "completed".
+	// Status is "not_started", "in_progress" or "completed". A course that was passed stays
+	// "completed" while a retake round is being answered (BR-36).
 	Status string `json:"status"`
 	// Answers holds the current round, limited to questions that still exist, in answer order.
 	Answers []AnsweredQuestion `json:"answers"`
-	// Score is the latest finished attempt, nil while a round is in progress.
+	// Score is the current round's score once it is scored; nil while it is being answered.
 	Score       *float64 `json:"score"`
 	BadgeEarned bool     `json:"badgeEarned"`
+	// BadgeEarnedAt is when the badge was first earned (RFC3339), nil without a badge.
+	BadgeEarnedAt *string `json:"badgeEarnedAt"`
+	// LatestRoundPassed is the result of the most recently scored round; nil if never scored.
+	LatestRoundPassed *bool `json:"latestRoundPassed"`
+}
+
+func formatTimestamptz(t pgtype.Timestamptz) *string {
+	if !t.Valid {
+		return nil
+	}
+	s := t.Time.UTC().Format(time.RFC3339)
+	return &s
 }
 
 // GetMyProgress returns the learner's current round for a course.
@@ -515,13 +529,18 @@ func (s *CourseService) GetMyProgress(ctx context.Context, userID, courseID uuid
 		}
 	}
 	result.Status = string(prog.Status)
-	if prog.Score.Valid {
+	if prog.RoundFinished && prog.Score.Valid {
 		if f, err := prog.Score.Float64Value(); err == nil && f.Valid {
 			score := f.Float64
 			result.Score = &score
 		}
 	}
 	result.BadgeEarned = prog.BadgeEarnedAt.Valid
+	result.BadgeEarnedAt = formatTimestamptz(prog.BadgeEarnedAt)
+	if prog.LatestRoundPassed.Valid {
+		passed := prog.LatestRoundPassed.Bool
+		result.LatestRoundPassed = &passed
+	}
 	return result, nil
 }
 
@@ -535,6 +554,8 @@ type CompleteResult struct {
 	// BadgeEarned is true when the learner holds this course's badge, from this or an earlier
 	// attempt. Badges are never taken back (BR-16).
 	BadgeEarned bool `json:"badgeEarned"`
+	// BadgeEarnedAt is when the badge was first earned (RFC3339), nil without a badge.
+	BadgeEarnedAt *string `json:"badgeEarnedAt"`
 }
 
 // CompleteCourse scores the current round once every question is answered (BR-12, BR-13).
@@ -602,6 +623,7 @@ func (s *CourseService) CompleteCourse(ctx context.Context, userID, courseID uui
 		Passed:         passed,
 		PassingScore:   PassingScore,
 		BadgeEarned:    updated.BadgeEarnedAt.Valid,
+		BadgeEarnedAt:  formatTimestamptz(updated.BadgeEarnedAt),
 	}, nil
 }
 

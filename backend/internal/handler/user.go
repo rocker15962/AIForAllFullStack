@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/middleware"
 	"github.com/rocker15962/AIForAllFullStack/backend/internal/repository"
 )
@@ -81,6 +82,9 @@ func (h *UserHandler) GetProgress(c *gin.Context) {
 			"lastAccessedAt":  r.LastAccessedAt.Format(time.RFC3339),
 			// BR-31: archived (or unpublished) courses stay listed but can no longer be opened.
 			"courseStatus": string(r.CourseStatus),
+			// Latest scored round (a failed first round); nil when never scored.
+			"score":             numericPtr(r.Score),
+			"latestRoundPassed": boolPtr(r.LatestRoundPassed),
 		}
 	}
 
@@ -129,6 +133,9 @@ func (h *UserHandler) GetCompleted(c *gin.Context) {
 			"totalQuestions":  r.TotalQuestions,
 			"completedAt":     completedAt,
 			"courseStatus":    string(r.CourseStatus),
+			// BR-36: false when a retake after passing scored below 60% (the badge is kept).
+			"latestRoundPassed": !r.LatestRoundPassed.Valid || r.LatestRoundPassed.Bool,
+			"badgeEarnedAt":     timestamptzPtr(r.BadgeEarnedAt),
 		}
 	}
 
@@ -338,4 +345,30 @@ func (h *UserHandler) UploadAvatar(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"avatarUrl": user.AvatarUrl,
 	})
+}
+
+func numericPtr(n pgtype.Numeric) *float64 {
+	if !n.Valid {
+		return nil
+	}
+	f, err := n.Float64Value()
+	if err != nil || !f.Valid {
+		return nil
+	}
+	return &f.Float64
+}
+
+func boolPtr(b pgtype.Bool) *bool {
+	if !b.Valid {
+		return nil
+	}
+	return &b.Bool
+}
+
+func timestamptzPtr(t pgtype.Timestamptz) *string {
+	if !t.Valid {
+		return nil
+	}
+	s := t.Time.UTC().Format(time.RFC3339)
+	return &s
 }

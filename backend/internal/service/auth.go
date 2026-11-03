@@ -220,3 +220,9 @@ func (s *AuthService) ValidateRefreshToken(tokenStr string) (uuid.UUID, error) {
 func (s *AuthService) GetUserByID(ctx context.Context, id uuid.UUID) (repository.User, error) {
 	return s.userRepo.GetUserByID(ctx, id)
 }
+
+// RecordActivity marks the user active today: it bumps last_active_at and records the day for
+// the daily-active-users metric (BR-39). Called on login and on session refresh.
+func (s *AuthService) RecordActivity(ctx context.Context, userID uuid.UUID) error {
+	return s.userRepo.RecordUserActivity(ctx, userID)
+}

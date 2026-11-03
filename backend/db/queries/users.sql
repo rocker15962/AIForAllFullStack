@@ -14,3 +14,12 @@ RETURNING *;
 
 -- name: GetUserByID :one
 SELECT * FROM users WHERE id = $1;
+
+-- BR-39: mark the user active today (login and session refresh).
+-- name: RecordUserActivity :exec
+WITH touched AS (
+    UPDATE users SET last_active_at = NOW() WHERE id = $1 RETURNING id
+)
+INSERT INTO user_activity_days (user_id, day)
+SELECT id, CURRENT_DATE FROM touched
+ON CONFLICT DO NOTHING;

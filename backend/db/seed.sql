@@ -420,3 +420,19 @@ WHERE type = 'short_answer' AND sample_answer = '';
 -- BR-12: seeded completions hold their badge.
 UPDATE progress SET badge_earned_at = COALESCE(completed_at, last_accessed_at)
 WHERE status = 'completed' AND badge_earned_at IS NULL;
+
+-- BR-36: seeded rounds are scored; completions passed their latest round.
+UPDATE progress SET
+    round_finished = (score IS NOT NULL),
+    latest_round_passed = CASE WHEN status = 'completed' THEN true WHEN score IS NOT NULL THEN false END;
+
+-- BR-39: daily activity history derived from the seeded timestamps.
+INSERT INTO user_activity_days (user_id, day)
+SELECT user_id, day FROM (
+    SELECT id AS user_id, created_at::date AS day FROM users
+    UNION SELECT id, last_active_at::date FROM users
+    UNION SELECT user_id, started_at::date FROM progress
+    UNION SELECT user_id, last_accessed_at::date FROM progress
+    UNION SELECT user_id, completed_at::date FROM progress WHERE completed_at IS NOT NULL
+) d
+ON CONFLICT DO NOTHING;
