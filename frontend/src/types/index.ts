@@ -145,11 +145,15 @@ export interface InProgressCourse {
   currentQuestion: number
   totalQuestions: number
   lastAccessedAt: string
-  /** Archived or unpublished courses stay listed but can't be opened (BR-31). */
+  /** Score of the latest scored round (a failed first attempt), else null. */
+  score?: number | null
+  /** False when the latest finished round scored below 60%; null if never scored (BR-36). */
+  latestRoundPassed?: boolean | null
+  /** Archived (BR-31) or unpublished (BR-37) courses stay listed but can't be opened. */
   courseStatus?: CourseStatus
 }
 
-/** Completed course for My Learning */
+/** Completed course for My Learning: passed at least once, so it holds the badge. */
 export interface CompletedCourse {
   id: string
   courseId: string
@@ -158,9 +162,13 @@ export interface CompletedCourse {
   toolName: string
   skillName: string
   difficulty: Difficulty
+  /** Score of the latest scored round; may be below 60 after a failed retake (BR-36). */
   score: number
   totalQuestions: number
   completedAt: string
+  /** False when a retake scored below 60%: the course stays completed, the badge is kept (BR-36). */
+  latestRoundPassed?: boolean
+  badgeEarnedAt?: string | null
   courseStatus?: CourseStatus
 }
 
@@ -174,16 +182,15 @@ export interface Badge {
   courseStatus?: CourseStatus
 }
 
-/** A course a learner has history with can still be opened only while it is published (BR-31). */
+/** A course the learner has history with can be opened only while published (BR-31, BR-37). */
 export function isCourseAvailable(status?: CourseStatus): boolean {
   return !status || status === 'published'
 }
 
-/** Recommended course (after completion) */
+/** Recommended course on the result screen — GET /courses/:id/recommended (BR-15) */
 export interface RecommendedCourse {
   id: string
   title: string
-  description: string
   thumbnailUrl: string
   difficulty: Difficulty
   toolName: string

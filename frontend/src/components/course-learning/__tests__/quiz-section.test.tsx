@@ -59,11 +59,52 @@ describe('QuizSection — guests (BR-11)', () => {
     await user.click(screen.getByText('Bravo'))
     await user.click(screen.getByRole('button', { name: '送出答案' }))
 
-    expect(screen.getByText('已送出答案')).toBeInTheDocument()
-    expect(screen.getByText('登入即可查看對錯與詳細解說。')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '答案已送出' })).toBeInTheDocument()
+    expect(
+      screen.getByText('登入後就能看到每題的對錯和解說，學習進度也會保存下來。'),
+    ).toBeInTheDocument()
     expect(screen.queryByText(/答對了/)).not.toBeInTheDocument()
     expect(screen.queryByText(/答錯了/)).not.toBeInTheDocument()
     expect(fetchMock).not.toHaveBeenCalled()
+
+    await user.click(screen.getByRole('button', { name: '登入查看對錯' }))
+    expect(login).toHaveBeenCalledWith('/courses/c1')
+  })
+
+  it('moves on with 下一題 and finishes without a score', async () => {
+    const user = userEvent.setup()
+    render(<QuizSection courseId="c1" questions={questions} />)
+
+    await user.click(screen.getByText('Bravo'))
+    await user.click(screen.getByRole('button', { name: '送出答案' }))
+    await user.click(screen.getByRole('button', { name: '下一題 →' }))
+    expect(screen.getByText('Second?')).toBeInTheDocument()
+
+    await user.click(screen.getByText('Alpha'))
+    await user.click(screen.getByRole('button', { name: '送出答案' }))
+    await user.click(screen.getByRole('button', { name: '下一題 →' }))
+
+    await user.type(screen.getByPlaceholderText('輸入你的答案…'), 'because')
+    await user.click(screen.getByRole('button', { name: '送出答案' }))
+    await user.click(screen.getByRole('button', { name: '查看結果' }))
+
+    expect(screen.getByRole('heading', { name: '3 題都做完了' })).toBeInTheDocument()
+    expect(screen.queryByText(/%/)).not.toBeInTheDocument()
+    expect(screen.queryByText('接下來可以學')).not.toBeInTheDocument()
+    // Nothing is graded, saved or recommended for guests
+    expect(fetchMock).not.toHaveBeenCalled()
+
+    await user.click(screen.getByRole('button', { name: '登入查看結果' }))
+    expect(login).toHaveBeenCalledWith('/courses/c1')
+  })
+
+  it('keeps the preview link when a guest signs in from a preview', async () => {
+    const user = userEvent.setup()
+    render(<QuizSection courseId="c1" questions={questions} isPreview previewToken="tok" />)
+    await user.click(screen.getByText('Bravo'))
+    await user.click(screen.getByRole('button', { name: '送出答案' }))
+    await user.click(screen.getByRole('button', { name: '登入查看對錯' }))
+    expect(login).toHaveBeenCalledWith('/courses/c1?preview=tok')
   })
 })
 
@@ -187,6 +228,136 @@ describe('QuizSection — signed in', () => {
     expect(await screen.findByText('恭喜完成！')).toBeInTheDocument()
     expect(screen.getByText('滿分！')).toBeInTheDocument()
     expect(screen.getByText('你獲得了這堂課的徽章。')).toBeInTheDocument()
+    const completeCalls = fetchMock.mock.calls.filter(([url]) => String(url).endsWith('/complete'))
+    expect(completeCalls).toHaveLength(1)
+  })
+
+  it('answers a retake in progress even though the course stays completed (BR-36)', () => {
+    const progress: MyCourseProgress = {
+      status: 'completed',
+      answers: [{ questionId: 'q1', correct: false }],
+      score: null,
+      badgeEarned: true,
+      badgeEarnedAt: '2026-09-23T10:00:00Z',
+      latestRoundPassed: false,
+    }
+    render(<QuizSection courseId="c1" questions={questions} initialProgress={progress} />)
+    expect(screen.getByText('第 2 題 / 共 3 題')).toBeInTheDocument()
+    expect(screen.getByText('Second?')).toBeInTheDocument()
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('shows a failed retake with the kept badge and recommendations (BR-12, BR-15, BR-36)', async () => {
+    const progress: MyCourseProgress = {
+      status: 'completed',
+      answers: [
+        { questionId: 'q1', correct: true },
+        { questionId: 'q2', correct: false },
+        { questionId: 'q3', correct: false },
+      ],
+      score: 33.33,
+      badgeEarned: true,
+      badgeEarnedAt: '2026-09-23T10:00:00Z',
+      latestRoundPassed: false,
+    }
+    fetchMock.mockImplementation((url: string) =>
+      url.endsWith('/recommended')
+        ? jsonResponse({
+            courses: [
+              {
+                id: 'r1',
+                title: 'Next course',
+                thumbnailUrl: '',
+                difficulty: 'intermediate',
+                toolName: 'ChatGPT',
+                skillName: 'Writing',
+              },
+            ],
+          })
+        : jsonResponse({}),
+    )
+    render(<QuizSection courseId="c1" questions={questions} initialProgress={progress} />)
+
+    expect(screen.getByRole('heading', { name: '繼續加油！' })).toBeInTheDocument()
+    expect(screen.getByText('33%')).toBeInTheDocument()
+    expect(screen.getByText('你仍保留之前拿到的徽章（9月23日取得）')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: '接下來可以學' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Next course/ })).toHaveAttribute('href', '/courses/r1')
+  })
+
+  it('starts a new round right away when opened from My Learning (BR-36)', async () => {
+    const progress: MyCourseProgress = {
+      status: 'completed',
+      answers: [
+        { questionId: 'q1', correct: true },
+        { questionId: 'q2', correct: false },
+        { questionId: 'q3', correct: false },
+      ],
+      score: 33.33,
+      badgeEarned: true,
+      badgeEarnedAt: '2026-09-23T10:00:00Z',
+      latestRoundPassed: false,
+    }
+    fetchMock.mockImplementation(() => jsonResponse({ retake: true }))
+    render(
+      <QuizSection courseId="c1" questions={questions} initialProgress={progress} startRetake />,
+    )
+
+    expect(await screen.findByText('第 1 題 / 共 3 題')).toBeInTheDocument()
+    expect(screen.getByText('First?')).toBeInTheDocument()
+    expect(screen.queryByText('繼續加油！')).not.toBeInTheDocument()
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://localhost:8080/api/v1/courses/c1/retake',
+      expect.objectContaining({ method: 'POST' }),
+    )
+  })
+
+  it('does not start another round when a retake is already being answered', () => {
+    const progress: MyCourseProgress = {
+      status: 'completed',
+      answers: [{ questionId: 'q1', correct: true }],
+      score: null,
+      badgeEarned: true,
+      badgeEarnedAt: null,
+      latestRoundPassed: false,
+    }
+    render(
+      <QuizSection courseId="c1" questions={questions} initialProgress={progress} startRetake />,
+    )
+    expect(screen.getByText('第 2 題 / 共 3 題')).toBeInTheDocument()
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('scores a fully answered saved round once', async () => {
+    const progress: MyCourseProgress = {
+      status: 'in_progress',
+      answers: [
+        { questionId: 'q1', correct: true },
+        { questionId: 'q2', correct: true },
+        { questionId: 'q3', correct: false },
+      ],
+      score: null,
+      badgeEarned: false,
+    }
+    fetchMock.mockImplementation((url: string) =>
+      url.endsWith('/complete')
+        ? jsonResponse({
+            score: 66.67,
+            totalQuestions: 3,
+            correctAnswers: 2,
+            passed: true,
+            badgeEarned: true,
+            badgeEarnedAt: '2026-11-03T00:00:00Z',
+            passingScore: 60,
+          })
+        : jsonResponse({ courses: [] }),
+    )
+    render(<QuizSection courseId="c1" questions={questions} initialProgress={progress} />)
+
+    expect(await screen.findByText('恭喜完成！')).toBeInTheDocument()
+    const completeCalls = fetchMock.mock.calls.filter(([url]) => String(url).endsWith('/complete'))
+    expect(completeCalls).toHaveLength(1)
   })
 
   it('grades previews without saving (BR-05)', async () => {
@@ -201,5 +372,21 @@ describe('QuizSection — signed in', () => {
     expect(fetchMock.mock.calls[0][0]).toBe(
       'http://localhost:8080/api/v1/courses/c1/submit?preview=tok%20en',
     )
+  })
+
+  it('shows no recommendations for previews (BR-05, BR-15)', async () => {
+    const user = userEvent.setup()
+    fetchMock.mockImplementation(() =>
+      jsonResponse({ correct: true, correctAnswer: 'b', explanation: '' }),
+    )
+    const one = [questions[0]]
+    render(<QuizSection courseId="c1" questions={one} isPreview previewToken="tok" />)
+    await user.click(screen.getByText('Bravo'))
+    await user.click(screen.getByRole('button', { name: '送出答案' }))
+    await user.click(await screen.findByRole('button', { name: '查看結果' }))
+
+    expect(screen.getByText('恭喜完成！')).toBeInTheDocument()
+    expect(fetchMock.mock.calls.some(([url]) => String(url).includes('/recommended'))).toBe(false)
+    expect(fetchMock.mock.calls.some(([url]) => String(url).includes('/complete'))).toBe(false)
   })
 })

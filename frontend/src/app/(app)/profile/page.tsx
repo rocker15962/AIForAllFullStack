@@ -6,8 +6,9 @@ import Link from 'next/link'
 import { useAuth } from '@/contexts/auth-context'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { AvatarCropDialog } from '@/components/profile'
 import { profileFormSchema } from '@/lib/schemas'
-import { cropToSquare, validateAvatarFile } from '@/lib/avatar'
+import { validateAvatarFile } from '@/lib/avatar'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
@@ -28,25 +29,38 @@ export default function ProfilePage() {
   const [avatarPreview, setAvatarPreview] = useState<string>('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+  // BR-25: the picked image waits in the crop dialog; only 「套用」 uploads it.
+  const [cropSrc, setCropSrc] = useState<string | null>(null)
+
+  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     e.target.value = '' // allow choosing the same file again
     if (!file || !accessToken || !user) return
 
-    // BR-25: images up to 5MB, cropped to a centered square before upload.
+    // Not an image, or over 5MB: say so without opening the dialog.
     const invalid = validateAvatarFile(file)
     if (invalid) {
       setMessage({ type: 'error', text: invalid })
       return
     }
+    setMessage(null)
+    setCropSrc(URL.createObjectURL(file))
+  }
 
-    let square: Blob
-    try {
-      square = await cropToSquare(file)
-    } catch {
-      setMessage({ type: 'error', text: '無法讀取這張圖片，請換一張試試。' })
-      return
-    }
+  function closeCrop() {
+    if (cropSrc) URL.revokeObjectURL(cropSrc)
+    setCropSrc(null)
+  }
+
+  function handleCropError() {
+    closeCrop()
+    setMessage({ type: 'error', text: '無法讀取這張圖片，請換一張試試。' })
+  }
+
+  async function handleCropApply(square: Blob) {
+    closeCrop()
+    if (!accessToken || !user) return
+
     const previousPreview = avatarPreview
     setAvatarPreview(URL.createObjectURL(square))
 
@@ -221,7 +235,8 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            aria-label="更換大頭貼（圖片 5MB 以內，會裁成正方形）"
+            aria-label="更換大頭貼"
+            title="更換大頭貼"
             className="absolute top-4 left-[88px] flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-cyan-500 transition-colors hover:bg-cyan-600"
           >
             <Camera className="h-3.5 w-3.5 text-white" />
@@ -293,6 +308,13 @@ export default function ProfilePage() {
 
       {/* Account created */}
       {createdDate && <p className="mt-4 text-[13px] text-zinc-400">帳號建立於 {createdDate}</p>}
+
+      <AvatarCropDialog
+        src={cropSrc}
+        onCancel={closeCrop}
+        onApply={(square) => void handleCropApply(square)}
+        onError={handleCropError}
+      />
     </div>
   )
 }
