@@ -44,6 +44,8 @@ interface QuestionFormData {
   question: string
   options: string[]
   correctAnswer: number
+  /** Short answer only: the AI grades learners' answers against it (BR-09, BR-29). */
+  sampleAnswer: string
   explanation: string
 }
 
@@ -52,6 +54,7 @@ const emptyForm: QuestionFormData = {
   question: '',
   options: ['', '', '', ''],
   correctAnswer: -1,
+  sampleAnswer: '',
   explanation: '',
 }
 
@@ -89,6 +92,7 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
       question: q.question,
       options: opts,
       correctAnswer: correctIdx,
+      sampleAnswer: isMC ? '' : q.sampleAnswer || '',
       explanation: q.explanation || '',
     })
     setFormError(null)
@@ -116,6 +120,10 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
         return
       }
     }
+    if (form.type === 'short_answer' && !form.sampleAnswer.trim()) {
+      setFormError('Sample answer is required')
+      return
+    }
 
     const optionIds = ['a', 'b', 'c', 'd']
     const newQuestion: Question = {
@@ -128,6 +136,7 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
           ? form.options.map((text, i) => ({ id: optionIds[i], text }))
           : undefined,
       correctAnswer: form.type === 'multiple_choice' ? optionIds[form.correctAnswer] : undefined,
+      sampleAnswer: form.type === 'short_answer' ? form.sampleAnswer.trim() : undefined,
       explanation: form.explanation || undefined,
       order: editingIndex !== null ? questions[editingIndex].order : questions.length + 1,
     }
@@ -240,7 +249,7 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
 
                 {!isMC && question.sampleAnswer && (
                   <div className="mt-2 rounded-md bg-zinc-100 px-3 py-2 dark:bg-zinc-800">
-                    <p className="text-xs font-medium text-zinc-500">Sample Answer:</p>
+                    <p className="text-xs font-medium text-zinc-500">Sample answer:</p>
                     <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-300">
                       {question.sampleAnswer}
                     </p>
@@ -360,6 +369,33 @@ export function QuestionEditor({ questions, onQuestionsChange }: QuestionEditorP
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* SA: Sample answer (BR-29) */}
+            {form.type === 'short_answer' && (
+              <div className="mb-6">
+                <label
+                  htmlFor="sample-answer"
+                  className="mb-2 block text-[13px] font-medium text-zinc-700 dark:text-zinc-300"
+                >
+                  Sample answer
+                </label>
+                <textarea
+                  id="sample-answer"
+                  value={form.sampleAnswer}
+                  onChange={(e) => setForm((f) => ({ ...f, sampleAnswer: e.target.value }))}
+                  placeholder="Write a model answer…"
+                  rows={2}
+                  aria-describedby="sample-answer-hint"
+                  className="w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-3 text-sm text-zinc-900 transition-colors outline-none focus:border-cyan-500 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
+                />
+                <p
+                  id="sample-answer-hint"
+                  className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400"
+                >
+                  AI grades learners&rsquo; answers against this sample answer.
+                </p>
               </div>
             )}
 

@@ -112,7 +112,7 @@ export default function CategoryManagementPage() {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${accessToken}` },
     })
-    if (!res.ok) throw new Error(`Failed to delete tool (${res.status})`)
+    if (!res.ok) throw new Error(`Failed to archive tool (${res.status})`)
     await fetchCategories()
   }
 
@@ -165,7 +165,7 @@ export default function CategoryManagementPage() {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${accessToken}` },
     })
-    if (!res.ok) throw new Error(`Failed to delete skill (${res.status})`)
+    if (!res.ok) throw new Error(`Failed to archive skill (${res.status})`)
     await fetchCategories()
   }
 
@@ -304,8 +304,7 @@ export default function CategoryManagementPage() {
             <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Tips</h3>
             <ul className="mt-2 space-y-1.5 text-sm text-zinc-500 dark:text-zinc-400">
               <li>
-                Use the up/down arrows to reorder categories. The order determines how they appear
-                on the platform.
+                Drag to reorder categories. The order determines how they appear on the platform.
               </li>
               <li>
                 Icon names use lucide-react format (e.g. &ldquo;bot&rdquo;, &ldquo;brain&rdquo;,

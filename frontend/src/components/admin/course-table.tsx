@@ -1,6 +1,6 @@
 'use client'
 
-import { Eye, EyeOff, Pencil, Trash2 } from 'lucide-react'
+import { Archive, Eye, EyeOff, Link2, Pencil, RotateCcw } from 'lucide-react'
 import type { CourseStatus } from '@/types'
 
 interface CourseCardItem {
@@ -25,9 +25,23 @@ interface CourseTableProps {
   toolNames: NameMap
   skillNames: NameMap
   onEdit: (course: CourseCardItem) => void
+  /** Archives the course (BR-31). Learners keep their progress and badges. */
   onDelete: (course: CourseCardItem) => void
   onTogglePublish: (course: CourseCardItem) => void
+  /** Moves an archived course back to draft. */
+  onRestore?: (course: CourseCardItem) => void
+  /** Copies a shareable preview link for a draft course (BR-05). */
+  onCopyPreviewLink?: (course: CourseCardItem) => void
 }
+
+const statusStyles: Record<CourseStatus, { dot: string; label: string }> = {
+  published: { dot: 'bg-green-500', label: 'Published' },
+  draft: { dot: 'bg-amber-400', label: 'Draft' },
+  archived: { dot: 'bg-zinc-400', label: 'Archived' },
+}
+
+const actionButtonClasses =
+  'rounded-lg bg-white/90 p-1.5 text-zinc-600 shadow-sm hover:bg-white dark:bg-zinc-800/90 dark:text-zinc-300 dark:hover:bg-zinc-800'
 
 const difficultyStyles: Record<string, { classes: string; label: string }> = {
   beginner: { classes: 'bg-green-100 text-green-700', label: 'Beginner' },
@@ -44,6 +58,8 @@ export function CourseTable({
   onEdit,
   onDelete,
   onTogglePublish,
+  onRestore,
+  onCopyPreviewLink,
 }: CourseTableProps) {
   if (courses.length === 0) {
     return (
@@ -61,6 +77,8 @@ export function CourseTable({
       {courses.map((course) => {
         const difficulty = difficultyStyles[course.difficulty] || difficultyStyles.beginner
         const isPublished = course.status === 'published'
+        const isArchived = course.status === 'archived'
+        const status = statusStyles[course.status] ?? statusStyles.draft
 
         return (
           <div
@@ -83,37 +101,69 @@ export function CourseTable({
               )}
 
               {/* Action buttons overlay on hover */}
-              <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onTogglePublish(course)
-                  }}
-                  title={isPublished ? 'Unpublish' : 'Publish'}
-                  className="rounded-lg bg-white/90 p-1.5 text-zinc-600 shadow-sm hover:bg-white dark:bg-zinc-800/90 dark:text-zinc-300 dark:hover:bg-zinc-800"
-                >
-                  {isPublished ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onEdit(course)
-                  }}
-                  title="Edit"
-                  className="rounded-lg bg-white/90 p-1.5 text-zinc-600 shadow-sm hover:bg-white dark:bg-zinc-800/90 dark:text-zinc-300 dark:hover:bg-zinc-800"
-                >
-                  <Pencil className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onDelete(course)
-                  }}
-                  title="Delete"
-                  className="rounded-lg bg-white/90 p-1.5 text-rose-500 shadow-sm hover:bg-white dark:bg-zinc-800/90 dark:text-rose-400 dark:hover:bg-zinc-800"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+              <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+                {isArchived ? (
+                  onRestore && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onRestore(course)
+                      }}
+                      title="Restore"
+                      aria-label={`Restore ${course.title}`}
+                      className={actionButtonClasses}
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                    </button>
+                  )
+                ) : (
+                  <>
+                    {course.status === 'draft' && onCopyPreviewLink && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onCopyPreviewLink(course)
+                        }}
+                        title="Copy preview link"
+                        aria-label={`Copy preview link for ${course.title}`}
+                        className={actionButtonClasses}
+                      >
+                        <Link2 className="h-4 w-4" />
+                      </button>
+                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onTogglePublish(course)
+                      }}
+                      title={isPublished ? 'Unpublish' : 'Publish'}
+                      className={actionButtonClasses}
+                    >
+                      {isPublished ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onEdit(course)
+                      }}
+                      title="Edit"
+                      className={actionButtonClasses}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onDelete(course)
+                      }}
+                      title="Archive"
+                      aria-label={`Archive ${course.title}`}
+                      className="rounded-lg bg-white/90 p-1.5 text-rose-500 shadow-sm hover:bg-white dark:bg-zinc-800/90 dark:text-rose-400 dark:hover:bg-zinc-800"
+                    >
+                      <Archive className="h-4 w-4" />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 
@@ -153,12 +203,8 @@ export function CourseTable({
               {/* Footer — status dot + question count */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
-                  <span
-                    className={`h-2 w-2 rounded-full ${isPublished ? 'bg-green-500' : 'bg-amber-400'}`}
-                  />
-                  <span className="text-xs text-zinc-500">
-                    {isPublished ? 'Published' : 'Draft'}
-                  </span>
+                  <span className={`h-2 w-2 rounded-full ${status.dot}`} />
+                  <span className="text-xs text-zinc-500">{status.label}</span>
                 </div>
                 <span className="text-xs text-zinc-400">
                   {course.questionCount} {course.questionCount === 1 ? 'question' : 'questions'}

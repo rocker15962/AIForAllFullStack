@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Users, Search, X, Loader2, ShieldAlert, Activity } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
-import { UserTable } from '@/components/admin'
-import type { UserRow } from '@/components/admin'
+import { UserTable, UserProgressPanel } from '@/components/admin'
+import type { UserRow, UserProgressRow } from '@/components/admin'
 import type { AuthProvider } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
@@ -118,6 +118,44 @@ export default function UserManagementPage() {
     }
     fetchUsers()
   }, [fetchUsers, authLoading, accessToken, user?.isAdmin])
+
+  // Learning progress panel (BR-34) — one user expanded at a time
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null)
+  const [progressRows, setProgressRows] = useState<UserProgressRow[]>([])
+  const [progressLoading, setProgressLoading] = useState(false)
+  const [progressError, setProgressError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!expandedUserId || !accessToken) return
+    let cancelled = false
+    async function loadProgress(userId: string, token: string) {
+      setProgressLoading(true)
+      setProgressError(null)
+      setProgressRows([])
+      try {
+        const res = await fetch(`${API_URL}/api/v1/admin/users/${userId}/progress`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        if (!res.ok) throw new Error(`Failed to load progress (${res.status})`)
+        const data = (await res.json()) as { progress: UserProgressRow[] }
+        if (!cancelled) setProgressRows(data.progress || [])
+      } catch (err) {
+        if (!cancelled) {
+          setProgressError(err instanceof Error ? err.message : 'Failed to load progress')
+        }
+      } finally {
+        if (!cancelled) setProgressLoading(false)
+      }
+    }
+    loadProgress(expandedUserId, accessToken)
+    return () => {
+      cancelled = true
+    }
+  }, [expandedUserId, accessToken])
+
+  function toggleProgress(userId: string) {
+    setExpandedUserId((current) => (current === userId ? null : userId))
+  }
 
   // Apply client-side provider filter
   const filteredUsers =
@@ -270,7 +308,19 @@ export default function UserManagementPage() {
           <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
         </div>
       ) : (
-        <UserTable users={tableRows} />
+        <UserTable
+          users={tableRows}
+          expandedUserId={expandedUserId}
+          onToggleProgress={toggleProgress}
+          progressPanel={
+            <UserProgressPanel
+              userName={users.find((u) => u.id === expandedUserId)?.name ?? ''}
+              rows={progressRows}
+              isLoading={progressLoading}
+              error={progressError}
+            />
+          }
+        />
       )}
     </div>
   )

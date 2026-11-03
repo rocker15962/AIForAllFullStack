@@ -15,7 +15,7 @@ import {
   X,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
-import { ConfirmDialog } from '@/components/shared'
+import { ConfirmDialog, useToast } from '@/components/shared'
 import { CourseTable } from '@/components/admin'
 import type { CourseCardItem } from '@/components/admin'
 import type { CourseStatus } from '@/types'
@@ -103,7 +103,9 @@ export default function CourseManagementPage() {
   const [toolFilter, setToolFilter] = useState<string>('')
   const [skillFilter, setSkillFilter] = useState<string>('')
 
-  // Delete confirmation
+  const { showToast } = useToast()
+
+  // Archive confirmation (BR-31: "delete" archives the course)
   const [deletingCourse, setDeletingCourse] = useState<CourseCardItem | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
@@ -145,7 +147,7 @@ export default function CourseManagementPage() {
     try {
       const params = new URLSearchParams()
       if (search) params.set('search', search)
-      if (statusFilter) params.set('status_filter', statusFilter)
+      if (statusFilter) params.set('status', statusFilter)
 
       const res = await fetch(`${API_URL}/api/v1/admin/courses?${params.toString()}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -228,14 +230,47 @@ export default function CourseManagementPage() {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       if (!res.ok) {
-        throw new Error(`Failed to delete course (${res.status})`)
+        throw new Error(`Failed to archive course (${res.status})`)
       }
       setDeletingCourse(null)
+      showToast('success', 'Course archived')
       await fetchCourses()
     } catch {
-      // Keep dialog open on error
+      showToast('error', 'Could not archive the course. Please try again.')
     } finally {
       setIsDeleting(false)
+    }
+  }
+
+  async function handleRestore(card: CourseCardItem) {
+    if (!accessToken) return
+    try {
+      const res = await fetch(`${API_URL}/api/v1/admin/courses/${card.id}/restore`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      if (!res.ok) throw new Error(`Failed to restore course (${res.status})`)
+      showToast('success', 'Course restored as a draft')
+      await fetchCourses()
+    } catch {
+      showToast('error', 'Could not restore the course. Please try again.')
+    }
+  }
+
+  // BR-05: shareable link that opens the draft until it is published
+  async function handleCopyPreviewLink(card: CourseCardItem) {
+    if (!accessToken) return
+    try {
+      const res = await fetch(`${API_URL}/api/v1/admin/courses/${card.id}/preview-link`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      if (!res.ok) throw new Error(`Failed to create preview link (${res.status})`)
+      const data = (await res.json()) as { path: string }
+      await navigator.clipboard.writeText(`${window.location.origin}${data.path}`)
+      showToast('success', 'Preview link copied. It works until the course is published.')
+    } catch {
+      showToast('error', 'Could not create a preview link. Please try again.')
     }
   }
 
@@ -374,6 +409,7 @@ export default function CourseManagementPage() {
           <option value="">All Statuses</option>
           <option value="published">Published</option>
           <option value="draft">Draft</option>
+          <option value="archived">Archived</option>
         </select>
 
         {/* Level filter */}
@@ -430,6 +466,8 @@ export default function CourseManagementPage() {
           onEdit={handleEdit}
           onDelete={handleDeleteRequest}
           onTogglePublish={handleTogglePublish}
+          onRestore={handleRestore}
+          onCopyPreviewLink={handleCopyPreviewLink}
         />
       )}
 
@@ -438,9 +476,9 @@ export default function CourseManagementPage() {
         isOpen={!!deletingCourse}
         onClose={() => setDeletingCourse(null)}
         onConfirm={handleDeleteConfirm}
-        title="Delete Course"
-        description={`Are you sure you want to delete "${deletingCourse?.title ?? ''}"? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title="Archive Course"
+        description={`"${deletingCourse?.title ?? ''}" will be hidden from learners. Their progress and badges are kept, and you can restore the course from the Archived filter.`}
+        confirmLabel="Archive"
         isLoading={isDeleting}
       />
     </div>

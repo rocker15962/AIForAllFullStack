@@ -36,6 +36,17 @@ describe('TrendChart', () => {
     expect(screen.getByText('290')).toBeInTheDocument()
   })
 
+  it('counts new users from the last 7 days only (BR-35)', () => {
+    const tenDays = Array.from({ length: 10 }, (_, i) => ({
+      date: `2026-03-${String(i + 1).padStart(2, '0')}`,
+      totalUsers: 100 + i,
+      // first 3 days: 100 each (must be ignored); last 7 days: 1 each
+      newUsers: i < 3 ? 100 : 1,
+    }))
+    render(<TrendChart data={tenDays} />)
+    expect(screen.getByText('7')).toBeInTheDocument()
+  })
+
   it('handles empty data', () => {
     render(<TrendChart data={[]} />)
     expect(screen.getByText('User Trends')).toBeInTheDocument()

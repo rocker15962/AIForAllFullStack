@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { GripVertical, Pencil, Trash2, Plus, X, Check, Loader2 } from 'lucide-react'
+import { Archive, GripVertical, Pencil, Plus, X, Check, Loader2 } from 'lucide-react'
 import { ConfirmDialog } from '@/components/shared'
 import * as LucideIcons from 'lucide-react'
 
@@ -235,12 +235,12 @@ export function CategoryList({
                   onClick={() => setConfirmDeleteId(item.id)}
                   disabled={deletingId === item.id}
                   className="rounded p-1 text-red-400 transition-colors hover:text-red-600 disabled:opacity-50 dark:text-red-400 dark:hover:text-red-300"
-                  title="Delete"
+                  title="Archive"
                 >
                   {deletingId === item.id ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
                   ) : (
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Archive className="h-3.5 w-3.5" />
                   )}
                 </button>
               </>
@@ -316,9 +316,9 @@ export function CategoryList({
             setConfirmDeleteId(null)
           }
         }}
-        title={`Delete ${title.replace(' Categories', '')}?`}
-        description="This action cannot be undone. Courses using this category will need to be updated."
-        confirmLabel="Delete"
+        title={`Archive ${title.replace(' Categories', '')}?`}
+        description="It will be hidden from course filters and can no longer be assigned. Courses already using it keep it."
+        confirmLabel="Archive"
         isLoading={!!deletingId}
       />
     </div>

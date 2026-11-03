@@ -105,4 +105,31 @@ describe('CourseTable', () => {
     await user.click(screen.getByText('Intro to ChatGPT'))
     expect(onEdit).toHaveBeenCalledWith(mockCourses[0])
   })
+
+  it('offers restore instead of publish/archive for archived courses (BR-31)', async () => {
+    const user = userEvent.setup()
+    const onRestore = vi.fn()
+    const archived: CourseCardItem[] = [{ ...mockCourses[0], status: 'archived' }]
+    render(<CourseTable {...defaultProps} courses={archived} onRestore={onRestore} />)
+
+    expect(screen.getByText('Archived')).toBeInTheDocument()
+    expect(screen.queryByTitle('Publish')).not.toBeInTheDocument()
+    expect(screen.queryByTitle('Archive')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Restore Intro to ChatGPT' }))
+    expect(onRestore).toHaveBeenCalledWith(archived[0])
+  })
+
+  it('offers a preview link only for drafts (BR-05)', async () => {
+    const user = userEvent.setup()
+    const onCopyPreviewLink = vi.fn()
+    render(<CourseTable {...defaultProps} onCopyPreviewLink={onCopyPreviewLink} />)
+
+    expect(
+      screen.queryByRole('button', { name: 'Copy preview link for Intro to ChatGPT' }),
+    ).not.toBeInTheDocument()
+    await user.click(
+      screen.getByRole('button', { name: 'Copy preview link for Advanced Prompting' }),
+    )
+    expect(onCopyPreviewLink).toHaveBeenCalledWith(mockCourses[1])
+  })
 })
