@@ -516,7 +516,7 @@ User ─────────< Progress >───────── Course
 
 **Analytics Dashboard** (`/admin`):
 - [x] 4 stat cards (total users, total courses, total completions, active users)
-- [x] Trend indicator on each stat (up/down arrow with percentage)
+- [x] Trend indicator on each stat (up/down arrow with percentage vs. last week; the course count has none because courses have no publish date)
 - [x] Trend chart (line chart: new users vs. daily active users over time; average daily active users — BR-39)
 - [x] Popular courses ranking list
 

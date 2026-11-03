@@ -34,7 +34,7 @@ export default function LandingPage() {
           </span>
         </div>
 
-        <h1 className="max-w-[900px] text-4xl leading-[1.15] font-bold text-zinc-900 sm:text-[56px] dark:text-zinc-100">
+        <h1 className="leading-heading max-w-[900px] text-4xl font-bold text-zinc-900 sm:text-[56px] dark:text-zinc-100">
           學會改變職涯的 AI 技能
         </h1>
 
@@ -62,7 +62,7 @@ export default function LandingPage() {
 
       {/* Features */}
       <section className="flex flex-col items-center bg-white px-8 py-20 sm:px-[120px] dark:bg-zinc-900">
-        <h2 className="text-center text-[36px] font-bold text-zinc-900 dark:text-zinc-100">
+        <h2 className="leading-heading text-center text-[36px] font-bold text-zinc-900 dark:text-zinc-100">
           學 AI 需要的，這裡都有
         </h2>
         <p className="mt-4 max-w-[650px] text-center text-base leading-relaxed text-zinc-500">
@@ -110,7 +110,7 @@ export default function LandingPage() {
         id="how-it-works"
         className="flex flex-col items-center bg-zinc-50 px-8 py-20 sm:px-[120px] dark:bg-zinc-800/50"
       >
-        <h2 className="text-center text-[36px] font-bold text-zinc-900 dark:text-zinc-100">
+        <h2 className="leading-heading text-center text-[36px] font-bold text-zinc-900 dark:text-zinc-100">
           如何運作
         </h2>
         <p className="mt-4 text-center text-base text-zinc-500">三個步驟就能開始</p>
@@ -148,7 +148,7 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="flex flex-col items-center bg-gradient-to-b from-cyan-50 to-cyan-100 px-8 py-20 text-center dark:from-zinc-900 dark:to-zinc-800">
-        <h2 className="text-[36px] font-bold text-zinc-900 dark:text-zinc-100">
+        <h2 className="leading-heading text-[36px] font-bold text-zinc-900 dark:text-zinc-100">
           準備好開始學習了嗎？
         </h2>
         <p className="mt-4 max-w-[600px] text-base leading-relaxed text-zinc-600 dark:text-zinc-400">

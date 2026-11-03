@@ -85,6 +85,12 @@ func (h *AdminHandler) Dashboard(c *gin.Context) {
 			"totalCompletions": stats.TotalCompletions,
 			"activeUsers":      stats.ActiveUsers,
 		},
+		// Week-over-week trend baseline; no course count (courses have no publish date)
+		"statsLastWeek": gin.H{
+			"totalUsers":       stats.TotalUsersLastWeek,
+			"totalCompletions": stats.TotalCompletionsLastWeek,
+			"activeUsers":      stats.ActiveUsersLastWeek,
+		},
 		"userTrend":      trendItems,
 		"popularCourses": popularItems,
 	})

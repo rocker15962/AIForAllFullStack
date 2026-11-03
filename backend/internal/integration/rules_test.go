@@ -323,3 +323,37 @@ func TestAdminGetUserProgressAnsweredCount(t *testing.T) {
 		t.Errorf("got %+v", rows[0])
 	}
 }
+
+// Dashboard week-over-week trend: last week's numbers only count what existed a week ago.
+func TestDashboardStatsLastWeek(t *testing.T) {
+	ctx := context.Background()
+	before, err := testQueries.GetDashboardStats(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	oldUser := createTestUser(t, ctx)
+	createTestUser(t, ctx) // joined today: counts now, not last week
+	if _, err := testPool.Exec(ctx,
+		`UPDATE users SET created_at = NOW() - INTERVAL '8 days' WHERE id = $1`, oldUser); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := testPool.Exec(ctx,
+		`INSERT INTO user_activity_days (user_id, day) VALUES ($1, CURRENT_DATE - 10)`, oldUser); err != nil {
+		t.Fatal(err)
+	}
+
+	after, err := testQueries.GetDashboardStats(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := after.TotalUsers - before.TotalUsers; got != 2 {
+		t.Errorf("total users grew by %d, want 2", got)
+	}
+	if got := after.TotalUsersLastWeek - before.TotalUsersLastWeek; got != 1 {
+		t.Errorf("last week's users grew by %d, want 1", got)
+	}
+	if got := after.ActiveUsersLastWeek - before.ActiveUsersLastWeek; got != 1 {
+		t.Errorf("last week's active users grew by %d, want 1", got)
+	}
+}

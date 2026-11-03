@@ -8,4 +8,7 @@ body{margin:0;background:var(--surface-page);color:var(--text-strong);line-heigh
 h1,h2,h3,h4,h5,h6{font-family:var(--font-heading)}
 code,pre,kbd{font-family:var(--font-mono)}
 a{color:var(--accent-link);text-decoration:none}
+
+:lang(zh-Hant){text-wrap:pretty}
+p:lang(zh-Hant),li:lang(zh-Hant){line-height:var(--lh-relaxed)}
 a:hover{color:var(--primary-700);text-decoration:underline;text-underline-offset:4px}

@@ -17,6 +17,7 @@ interface PopularCourse {
 
 interface DashboardData {
   stats: DashboardStats
+  statsLastWeek?: Partial<DashboardStats>
   userTrend: TrendDataPoint[]
   popularCourses: PopularCourse[]
 }
@@ -142,7 +143,7 @@ export default function AdminDashboardPage() {
 
       {/* Stats Cards */}
       <div className="mb-8">
-        <DashboardStatsCards stats={data.stats} />
+        <DashboardStatsCards stats={data.stats} lastWeek={data.statsLastWeek} />
       </div>
 
       {/* Trend Chart + Popular Courses */}
