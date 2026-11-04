@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
 <link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
 <script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<script src="covers.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
 <style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
 </helmet>
@@ -66,7 +67,7 @@ class Component extends DCLogic {
     { title: 'ChatGPT 文案寫作入門：從零開始學 AI 寫作', tool: 'ChatGPT', skill: '文案寫作', level: 'beginner', score: 100, date: '9月23日', seed: 'chatgpt-writing' },
   ];
   state = { tab: this.mp().tab || 'in-progress' };
-  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1 && window.AIFA_COVER) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
   componentDidUpdate() { const v = this.mp().tab; if (v !== this._tab) { const first = this._tab === undefined; this._tab = v; if (!first && v) this.setState({ tab: v }); } }
   componentWillUnmount() { clearInterval(this._t); }
   renderVals() {
@@ -78,7 +79,7 @@ class Component extends DCLogic {
     const signedIn = p.signedIn ?? true;
     const tab = this.state.tab;
     const LV = { beginner: ['入門', 'success'], intermediate: ['中級', 'highlight'], advanced: ['進階', 'danger'] };
-    const img = (c) => (p.showThumbnails ? 'https://picsum.photos/seed/' + c.seed + '/640/360' : undefined);
+    const img = (c) => ((window.AIFA_COVER ? window.AIFA_COVER(c.seed) : undefined));
     const tags = (c) => [{ label: c.tool, tone: 'accent' }, { label: c.skill, tone: 'violet' }, { label: LV[c.level][0], tone: LV[c.level][1], strong: true }];
     const gone = (c) => ({
       image: img(c), mediaHeight: 200, interactive: false, tagsFirst: false, title: c.title, tags: tags(c),

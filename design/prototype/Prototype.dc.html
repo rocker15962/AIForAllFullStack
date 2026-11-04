@@ -314,16 +314,6 @@
           <span style="font-size:12px;font-weight:500;color:var(--text-muted)">身分（示範）</span>
           <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SegmentedControl" size="sm" options="{{ roleOpts }}" value="{{ role }}" on-change="{{ setRole }}" hint-size="100%,34px"></x-import>
         </div>
-        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
-          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-            <span style="font-size:12px;font-weight:500;color:var(--text-muted)">外觀</span>
-            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SegmentedControl" size="sm" options="{{ themeOpts }}" value="{{ theme }}" on-change="{{ setTheme }}" hint-size="100%,34px"></x-import>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-            <span style="font-size:12px;font-weight:500;color:var(--text-muted)">縮圖</span>
-            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SegmentedControl" size="sm" options="{{ thumbOpts }}" value="{{ thumbs }}" on-change="{{ setThumbs }}" hint-size="100%,34px"></x-import>
-          </div>
-        </div>
         <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
           <span style="font-size:12px;font-weight:500;color:var(--text-muted)">寬度</span>
           <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SegmentedControl" size="sm" options="{{ resOpts }}" value="{{ res }}" on-change="{{ setRes }}" hint-size="100%,34px"></x-import>
@@ -515,8 +505,8 @@ class Component extends DCLogic {
     { code: 'A04', file: 'Profile', title: '個人資料', route: '/profile', group: '學員', demos: [['儲存成功', 'message=success'], ['儲存失敗', 'message=error'], ['裁切視窗', 'showCrop=1']] },
     { code: 'B01', file: 'AdminDashboard', title: '後台總覽', route: '/admin', group: '後台' },
     { code: 'B02', file: 'AdminCourses', title: '課程管理', route: '/admin/courses', group: '後台', admin: true, demos: [['封存確認', 'showDeleteDialog=1']] },
-    { code: 'B03', file: 'AdminCourseEditor', title: '課程編輯', route: '/admin/courses/[id]/edit', group: '後台', admin: true, demos: [['編輯課程', 'mode=edit'], ['新增課程', 'mode=new'], ['題目視窗', 'showQuestionDialog=1']] },
-    { code: 'B04', file: 'AdminUsers', title: '用戶管理', route: '/admin/users', group: '後台', admin: true },
+    { code: 'B03', file: 'AdminCourseEditor', title: '課程編輯', route: '/admin/courses/[id]/edit', group: '後台', admin: true, demos: [['編輯課程', 'mode=edit'], ['新增課程', 'mode=new'], ['題目視窗', 'showQuestionDialog=1'], ['簡答題視窗', 'showQuestionDialog=1&dialogQuestion=2']] },
+    { code: 'B04', file: 'AdminUsers', title: '用戶管理', route: '/admin/users', group: '後台', admin: true, demos: [['展開學習進度', 'openUser=u1']] },
     { code: 'B05', file: 'AdminCategories', title: '分類管理', route: '/admin/categories', group: '後台', admin: true },
   ];
   ROLE = { guest: '訪客', learner: '學員', admin: '管理員' };

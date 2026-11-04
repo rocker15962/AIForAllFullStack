@@ -35,17 +35,16 @@
         <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SearchInput" placeholder="搜尋用戶…" on-change="{{ setSearch }}" hint-size="100%,42px"></x-import>
       </div>
     </div>
-    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.DataTable" columns="{{ columns }}" rows="{{ rows }}" empty-title="找不到用戶" empty-text="試著調整搜尋或篩選條件" hint-size="100%,380px"></x-import>
-    <sc-if value="{{ hasOpen }}" hint-placeholder-val="{{ false }}">
-      <div style="margin-top:16px">
-        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Card" title="{{ openTitle }}" meta="{{ openMeta }}" action="{{ closeAction }}" padding="lg" hint-size="100%,300px">
-          <sc-if value="{{ noProgress }}" hint-placeholder-val="{{ false }}">
-            <p style="margin:0;padding:24px 0;text-align:center;font-size:14px;color:var(--text-muted)">還沒有學習紀錄</p>
-          </sc-if>
+    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.DataTable" columns="{{ columns }}" rows="{{ rows }}" empty-title="找不到用戶" empty-text="試著調整搜尋或篩選條件" render-expanded="{{ renderExpanded }}" expanded-id="{{ expandedId }}" hint-size="100%,380px"></x-import>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px">
+      <span style="font-size:13px;color:var(--text-muted)">{{ pageText }}</span>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Pagination" page="{{ upage }}" page-count="{{ 257 }}" on-change="{{ setUpage }}" hint-size="320px,36px"></x-import>
+    </div>
+
           <sc-if value="{{ hasProgress }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;flex-direction:column">
               <sc-for list="{{ openRows }}" as="p" hint-placeholder-count="3">
-                <div style="display:grid;grid-template-columns:minmax(0,1fr) 180px 160px;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border-subtle)">
+                <div style="display:grid;grid-template-columns:minmax(0,1fr) 180px 160px;gap:16px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border-subtle)">
                   <span style="font-size:14px;line-height:20px;color:var(--text-strong)">{{ p.title }}</span>
                   <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.ProgressBar" value="{{ p.value }}" tone="{{ p.tone }}" hint-size="180px,6px"></x-import>
                   <span style="font-size:13px;text-align:right;white-space:nowrap;color:var(--text-muted)">{{ p.label }}</span>
@@ -70,7 +69,7 @@ class Component extends DCLogic {
     { id: 'u4', name: '劉家豪', email: 'dave@example.com', provider: 'Google', joined: '2026年10月25日', done: 0, last: '今天', today: true },
     { id: 'u5', name: '系統管理員', email: 'admin@example.com', provider: 'Google', joined: '2026年8月3日', done: 3, last: '今天', today: true },
   ];
-  state = { q: '', provider: '全部', open: null };
+  state = { q: '', provider: '全部', open: this.mp().openUser || null, upage: 1 };
   titles = ['ChatGPT 文案寫作入門：從零開始學 AI 寫作', 'Midjourney 繪圖技巧：創作你的 AI 藝術作品', 'Cursor AI 開發：用 AI 加速寫程式', 'ChatGPT 進階：打造自動化工作流程', 'AI 資料分析：用 Claude 處理資料', 'Stable Diffusion 本機安裝指南', 'AI 簡報：10 分鐘做出專業投影片', 'Cursor 進階：TDD 與 AI 結對程式設計'];
   progress = {
     u1: [[6, 'prog', 67], [5, 'prog', 33], [4, 'done', 100], [3, 'fail', 40], [2, 'done', 100], [1, 'done', 67], [0, 'done', 100]],
@@ -92,6 +91,8 @@ class Component extends DCLogic {
     const q = s.q.trim().toLowerCase();
     const openUser = this.users.find((x) => x.id === s.open);
     const openRows = openUser ? (this.progress[openUser.id] || []).map(([i, st, v]) => ({ title: this.titles[i], done: st !== 'prog', value: st === 'done' ? 100 : v, tone: st === 'done' ? 'success' : st === 'fail' ? 'highlight' : undefined, label: st === 'done' ? '已完成 · ' + v + '%' : st === 'fail' ? '最新一輪未通過 · ' + v + '%' : '進行中 · ' + v + '%' })) : [];
+    const openTitle = openUser ? openUser.name + ' 的學習進度' : '';
+    const openMeta = openUser ? '已完成 ' + openRows.filter((x) => x.done).length + ' 堂 · 進行中 ' + openRows.filter((x) => !x.done).length + ' 堂' : '';
     const rows = this.users
       .filter((u) => !q || (u.name + ' ' + u.email).toLowerCase().includes(q))
       .filter((u) => s.provider === '全部' || u.provider === s.provider);
@@ -101,20 +102,32 @@ class Component extends DCLogic {
       navLinks: [{ id: 'dashboard', label: '儀表板' }, { id: 'courses', label: '課程' }, { id: 'users', label: '用戶' }, { id: 'categories', label: '分類' }],
       onNav: (id) => { window.location.href = routes[id] + this.qs(); },
       navRight: E('UserMenu', { name: '系統管理員', email: 'admin@example.com', items: [{ label: '我的學習', onClick: go('MyLearning.dc.html') }, { label: '個人資料', onClick: go('Profile.dc.html') }], onSignOut: go('Login.dc.html'), signOutLabel: '登出' }),
-      nTotal: this.users.length,
-      nGoogle: this.users.filter((u) => u.provider === 'Google').length,
+      nTotal: '1,284',
+      nGoogle: '1,284',
       nFacebook: this.users.filter((u) => u.provider === 'Facebook').length,
-      nToday: this.users.filter((u) => u.today).length,
+      nToday: '186',
       chips: ['全部', 'Google', 'Facebook'],
       provider: s.provider,
       setProvider: (v) => this.setState({ provider: v }),
       setSearch: (v) => this.setState({ q: v || '' }),
       rows,
       hasOpen: !!openUser, noProgress: openRows.length === 0, hasProgress: openRows.length > 0,
+      openTitleX: null,
       openTitle: openUser ? openUser.name + ' 的學習進度' : '',
       openMeta: openUser ? '已完成 ' + openRows.filter((x) => x.done).length + ' 堂 · 進行中 ' + openRows.filter((x) => !x.done).length + ' 堂' : '',
       openRows,
       closeAction: E('Button', { size: 'sm', variant: 'outline', onClick: () => this.setState({ open: null }) }, '收合'),
+      expandedId: s.open,
+      upage: s.upage, setUpage: (n) => this.setState({ upage: n }),
+      pageText: '共 1,284 位 · 第 ' + ((s.upage - 1) * 5 + 1) + '–' + s.upage * 5 + ' 位',
+      renderExpanded: (r) => (r.id !== s.open ? null : h('div', { style: { padding: '12px 20px 16px 68px', background: 'var(--surface-subtle)', borderTop: '1px solid var(--border-subtle)' } },
+        h('div', { style: { display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 6 } },
+          h('b', { style: { fontSize: 14, color: 'var(--text-strong)' } }, openTitle),
+          h('span', { style: { fontSize: 12, color: 'var(--text-muted)' } }, openMeta)),
+        ...openRows.map((p) => h('div', { key: p.title, style: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 180px 160px', gap: 16, alignItems: 'center', padding: '6px 0', borderTop: '1px solid var(--border-subtle)' } },
+          h('span', { style: { fontSize: 13, color: 'var(--text-strong)' } }, p.title),
+          E('ProgressBar', { value: p.value, tone: p.tone }),
+          h('span', { style: { fontSize: 12, textAlign: 'right', whiteSpace: 'nowrap', color: 'var(--text-muted)' } }, p.label))))),
       columns: [
         { key: 'name', header: '用戶', width: '2fr', render: (r) => h('div', { style: { display: 'flex', alignItems: 'center', gap: 12 } },
           E('Avatar', { name: r.name, size: 36 }),
