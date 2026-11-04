@@ -246,9 +246,9 @@ The Go backend follows 3-Layer Clean Architecture: Handler (HTTP parsing) → Se
 
 ## Language
 
-- UI text is in English (Explore, My Learning, etc.)
+- UI text is in Traditional Chinese (正體中文) only — no i18n layer
 - Code identifiers, comments, and docs use English
-- Key docs have paired `.zh-TW.md` versions — **always update both** when making changes
+- `README.md` is Chinese-first with an English `README.en.md`; other key docs have paired `.zh-TW.md` versions — **always update both** when making changes
 
 ## Gotchas
 
