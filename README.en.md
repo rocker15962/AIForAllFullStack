@@ -132,16 +132,17 @@ The backend uses a three-layer architecture: Handler → Service → Repository.
 ### Architecture
 
 ```
-┌────────────────────────────────────────────────┐
-│                 Docker Compose                  │
-│                                                 │
-│  Next.js frontend (3000) ──▶ Go API (8080, Gin + sqlc) │
-│                             │          │        │
-│                     PostgreSQL (5432)  Redis (6379)│
-│                                                 │
-│  Optional --profile monitoring: Prometheus (9090) + Grafana (3001) │
-└────────────────────────────────────────────────┘
+Next.js frontend (:3000)
+  └─▶ Go API (:8080, Gin + sqlc)
+        ├─▶ PostgreSQL (:5432)
+        ├─▶ Redis (:6379, rate limiting)
+        └─▶ Claude API (short-answer grading, external)
+
+Optional, --profile monitoring:
+  Prometheus (:9090) scrapes the Go API's /metrics ─▶ Grafana (:3001)
 ```
+
+Everything except the Claude API runs in Docker Compose.
 
 ### Engineering highlights
 

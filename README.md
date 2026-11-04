@@ -132,16 +132,17 @@
 ### 架構
 
 ```
-┌────────────────────────────────────────────────┐
-│                 Docker Compose                  │
-│                                                 │
-│  Next.js 前端 (3000) ──▶ Go API (8080, Gin + sqlc) │
-│                             │          │        │
-│                     PostgreSQL (5432)  Redis (6379)│
-│                                                 │
-│  選用 --profile monitoring：Prometheus (9090) ＋ Grafana (3001) │
-└────────────────────────────────────────────────┘
+Next.js 前端（:3000）
+  └─▶ Go API（:8080，Gin ＋ sqlc）
+        ├─▶ PostgreSQL（:5432）
+        ├─▶ Redis（:6379，限流）
+        └─▶ Claude API（簡答題 AI 判定，外部服務）
+
+選用 --profile monitoring：
+  Prometheus（:9090）抓取 Go API 的 /metrics ─▶ Grafana（:3001）
 ```
+
+除了 Claude API，其他服務都由 Docker Compose 啟動。
 
 ### 工程亮點
 
