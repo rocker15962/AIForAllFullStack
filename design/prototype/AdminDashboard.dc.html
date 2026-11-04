@@ -36,10 +36,10 @@
         <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.PageHeader" title="儀表板" subtitle="平台數據總覽" hint-size="100%,68px"></x-import>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:32px">
-        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" icon="users" label="總用戶數" value="5" hint-size="100%,86px"></x-import>
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" icon="users" label="總用戶數" value="1,284" trend="{{ trendUsers }}" hint-size="100%,86px"></x-import>
         <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" icon="book-open" tone="highlight" label="課程數" value="8" hint-size="100%,86px"></x-import>
-        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" icon="circle-check-big" tone="success" label="完課次數" value="15" hint-size="100%,86px"></x-import>
-        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" icon="activity" tone="violet" label="活躍用戶" value="5" hint-size="100%,86px"></x-import>
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" icon="circle-check-big" tone="success" label="完課次數" value="3,412" trend="{{ trendDone }}" hint-size="100%,86px"></x-import>
+        <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.StatCard" icon="activity" tone="violet" label="活躍用戶" value="412" trend="{{ trendActive }}" hint-size="100%,86px"></x-import>
       </div>
       <div style="display:grid;grid-template-columns:minmax(0,7fr) minmax(0,3fr);gap:24px;margin-bottom:32px;align-items:start">
         <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.TrendChart" title="用戶趨勢" data="{{ trend }}" series="{{ series }}" summary="{{ summary }}" hint-size="100%,440px"></x-import>
@@ -63,10 +63,11 @@ class Component extends DCLogic {
   buildTrend() {
     const out = [];
     for (let i = 0; i < 30; i++) {
-      const d = new Date(2026, 9, 3 + i);
-      const m = d.getMonth() + 1, day = d.getDate();
-      const key = m * 100 + day;
-      out.push({ x: m + '/' + day, a: key >= 1025 || m === 11 ? 5 : key >= 1012 ? 4 : 3, b: key === 1012 || key === 1025 ? 1 : 0 });
+      const dt = new Date(2026, 9, 6 + i);
+      const wk = Math.sin(i * 0.9);
+      const a = Math.round((i < 23 ? 250 + i * 8 : (250 + i * 8) * 0.9) + 16 * wk);
+      const b = Math.max(4, Math.round(10 + i * 1.0 + 4 * wk));
+      out.push({ x: (dt.getMonth() + 1) + '/' + dt.getDate(), a, b });
     }
     return out;
   }
@@ -86,6 +87,9 @@ class Component extends DCLogic {
       onNav: (id) => { window.location.href = routes[id] + this.qs(); },
       navRight: E('UserMenu', { name: isAdmin ? '系統管理員' : '陳怡君', email: isAdmin ? 'admin@example.com' : 'alice@example.com', items: [{ label: '我的學習', onClick: go('MyLearning.dc.html') }, { label: '個人資料', onClick: go('Profile.dc.html') }], onSignOut: go('Login.dc.html'), signOutLabel: '登出' }),
       isAdmin, denied: !isAdmin,
+      trendUsers: { value: 25, direction: 'up', label: '比上週' },
+      trendDone: { value: 12, direction: 'up', label: '比上週' },
+      trendActive: { value: 8, direction: 'down', label: '比上週' },
       trend,
       series: [{ key: 'a', label: '活躍用戶', color: 'var(--chart-1)' }, { key: 'b', label: '新註冊', color: 'var(--chart-2)' }],
       summary: [
@@ -93,11 +97,11 @@ class Component extends DCLogic {
         { label: '平均活躍用戶', value: Math.round(trend.reduce((n, d) => n + d.a, 0) / trend.length) },
       ],
       popular: [
-        { id: 'c1', label: 'ChatGPT 文案寫作入門：從零開始學 AI 寫作', value: 4 },
-        { id: 'c3', label: 'Cursor AI 開發：用 AI 加速寫程式', value: 3 },
-        { id: 'c2', label: 'Midjourney 繪圖技巧：創作你的 AI 藝術作品', value: 2 },
-        { id: 'c4', label: 'ChatGPT 進階：打造自動化工作流程', value: 2 },
-        { id: 'c5', label: 'AI 資料分析：用 Claude 處理資料', value: 2 },
+        { id: 'c1', label: 'ChatGPT 文案寫作入門：從零開始學 AI 寫作', value: 812 },
+        { id: 'c3', label: 'Cursor AI 開發：用 AI 加速寫程式', value: 644 },
+        { id: 'c2', label: 'Midjourney 繪圖技巧：創作你的 AI 藝術作品', value: 503 },
+        { id: 'c4', label: 'ChatGPT 進階：打造自動化工作流程', value: 441 },
+        { id: 'c5', label: 'AI 資料分析：用 Claude 處理資料', value: 387 },
       ],
       goCourses: go(routes.courses), goUsers: go(routes.users), goCategories: go(routes.categories),
     };

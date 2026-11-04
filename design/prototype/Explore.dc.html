@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
 <link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
 <script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<script src="covers.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
 <style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
 </helmet>
@@ -70,7 +71,7 @@
 class Component extends DCLogic {
   mp() { const o = {}; const q = this.props || {}; Object.keys(q).forEach((k) => { if (q[k] !== undefined) o[k] = q[k]; }); new URLSearchParams(window.location.search).forEach((v, k) => { o[k] = v === '1' ? true : v === '0' ? false : v; }); return o; }
   qs() { const u = new URLSearchParams(window.location.search); const o = new URLSearchParams(); ['signedIn', 'isAdmin', 'dark', 'showThumbnails'].forEach((k) => { if (u.has(k)) o.set(k, u.get(k)); }); const s = o.toString(); return s ? '?' + s : ''; }
-  state = { q: '', tool: null, skill: null, level: null, page: 1 };
+  state = { q: this.mp().q || '', tool: null, skill: null, level: null, page: 1 };
   tools = [{ id: 't1', name: 'ChatGPT' }, { id: 't2', name: 'Midjourney' }, { id: 't3', name: 'Cursor' }, { id: 't4', name: 'Claude' }, { id: 't5', name: 'Stable Diffusion' }];
   skills = [{ id: 's1', name: '文案寫作' }, { id: 's2', name: '圖像生成' }, { id: 's3', name: '程式開發' }, { id: 's4', name: '資料分析' }, { id: 's5', name: '簡報製作' }];
   levels = [{ id: 'beginner', name: '入門' }, { id: 'intermediate', name: '中級' }, { id: 'advanced', name: '進階' }];
@@ -85,7 +86,7 @@ class Component extends DCLogic {
     { id: 'c7', title: 'AI 簡報：10 分鐘做出專業投影片', desc: '用 ChatGPT + Gamma 快速做出高品質簡報，從產生大綱到版面美化一次搞定。', tool: 't1', skill: 's5', cr: 'cr1', level: 'beginner', seed: 'ai-presentations' },
     { id: 'c8', title: 'Cursor 進階：TDD 與 AI 結對程式設計', desc: '用 Cursor 實踐測試驅動開發，學會讓 AI 撰寫測試、實作與重構，提升程式碼品質。', tool: 't3', skill: 's3', cr: 'cr3', level: 'advanced', seed: 'tdd-programming' },
   ];
-  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1 && window.AIFA_COVER) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
   componentWillUnmount() { clearInterval(this._t); }
   renderVals() {
     const D = window.AIForAllNeutralDS_acd6b1 || {};
@@ -106,7 +107,7 @@ class Component extends DCLogic {
       .filter((c) => !s.level || c.level === s.level)
       .map((c) => ({
         id: c.id, title: c.title, description: c.desc,
-        image: p.showThumbnails ? 'https://picsum.photos/seed/' + c.seed + '/640/360' : undefined,
+        image: (window.AIFA_COVER ? window.AIFA_COVER(c.seed) : undefined),
         tags: [{ label: T[c.tool], tone: 'accent' }, { label: S[c.skill], tone: 'violet' }, { label: LV[c.level][0], tone: LV[c.level][1], strong: true }],
         author: this.creators[c.cr],
         open: go('CourseDetail.dc.html'),

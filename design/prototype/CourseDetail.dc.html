@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
 <link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
 <script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<script src="covers.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
 <style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
 </helmet>
@@ -30,7 +31,14 @@
     <div style="margin-bottom:24px">
       <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.BackLink" on-click="{{ goExplore }}" hint-size="170px,20px">返回課程列表</x-import>
     </div>
-    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.VideoFrame" title="ChatGPT 文案寫作入門" hint-size="100%,557px"></x-import>
+    <div style="position:relative">
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.VideoFrame" title="ChatGPT 文案寫作入門" poster="{{ cover }}" hint-size="100%,557px"></x-import>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none">
+        <span style="width:72px;height:72px;border-radius:9999px;background:rgb(0 0 0 / 0.55);display:flex;align-items:center;justify-content:center;color:#fff">
+          <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Icon" name="play" size="{{ 28 }}" hint-size="28px,28px"></x-import>
+        </span>
+      </div>
+    </div>
     <h1 style="margin:0;padding:24px 0 16px;font-size:var(--fs-title);line-height:1.4;font-weight:700;color:var(--text-strong)">ChatGPT 文案寫作入門：從零開始學 AI 寫作</h1>
 
     <sc-if value="{{ guest }}" hint-placeholder-val="{{ false }}">
@@ -42,38 +50,37 @@
     <sc-if value="{{ inQuiz }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border-default)">
         <span style="font-size:16px;font-weight:600;color:var(--text-body)">課後測驗</span>
-        <span style="font-size:14px;color:var(--text-muted)">第 {{ qNum }} 題 / 共 {{ qTotal }} 題</span>
+        <span style="display:inline-block;min-width:140px;text-align:right;font-size:14px;white-space:nowrap;color:var(--text-muted)">第 {{ qNum }} 題 / 共 {{ qTotal }} 題</span>
       </div>
       <div style="padding:12px 0">
         <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SegmentedProgress" current="{{ answered }}" total="{{ qTotal }}" hint-size="100%,6px"></x-import>
       </div>
       <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Card" padding="lg" hint-size="100%,380px">
-        <sc-if value="{{ answeringMC }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ isMC }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;flex-direction:column;gap:24px">
             <h3 style="margin:0;font-size:16px;line-height:24px;font-weight:600;color:var(--text-strong)">{{ qText }}</h3>
             <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.ChoiceGroup" options="{{ qOptions }}" value="{{ answer }}" on-change="{{ setAnswer }}" hint-size="100%,228px"></x-import>
-            <div style="display:flex;justify-content:flex-end">
-              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" weight="semibold" disabled="{{ cantSubmit }}" on-click="{{ submit }}" hint-size="140px,40px">送出答案</x-import>
-            </div>
           </div>
         </sc-if>
-        <sc-if value="{{ answeringSA }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ isSA }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-direction:column;gap:16px">
-            <h3 style="margin:0;font-size:18px;line-height:28px;font-weight:600;color:var(--text-strong)">{{ qText }}</h3>
+            <h3 style="margin:0;font-size:16px;line-height:24px;font-weight:600;color:var(--text-strong)">{{ qText }}</h3>
             <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Textarea" value="{{ text }}" on-change="{{ onText }}" placeholder="輸入你的答案…" hint-size="100%,88px"></x-import>
-            <div style="display:flex;padding-top:4px">
-              <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" weight="semibold" disabled="{{ cantSubmit }}" on-click="{{ submit }}" hint-size="140px,40px">送出答案</x-import>
-            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ answering }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;justify-content:flex-end;padding-top:24px">
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" weight="semibold" disabled="{{ cantSubmit }}" on-click="{{ submit }}" hint-size="140px,40px">送出答案</x-import>
           </div>
         </sc-if>
         <sc-if value="{{ inFeedbackUser }}" hint-placeholder-val="{{ false }}">
-          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:16px">
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding-top:24px">
             <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Alert" tone="{{ fbTone }}" title="{{ fbTitle }}" detail="{{ fbDetail }}" style="width:100%" hint-size="100%,96px">{{ fbText }}</x-import>
-            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" weight="semibold" on-click="{{ next }}" hint-size="100px,40px">{{ nextLabel }}</x-import>
+            <div style="white-space:nowrap"><x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" weight="semibold" on-click="{{ next }}" dc-props="{{ nextBtn }}" hint-size="100px,40px">{{ nextLabel }}</x-import></div>
           </div>
         </sc-if>
         <sc-if value="{{ inFeedbackGuest }}" hint-placeholder-val="{{ false }}">
-          <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:16px;padding-top:24px">
             <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.InlineBanner" variant="note" icon="info" title="答案已送出" hint-size="100%,88px">登入後就能看到每題的對錯和解說，學習進度也會保存下來。</x-import>
             <div style="display:flex;flex-wrap:wrap;gap:12px">
               <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" weight="semibold" on-click="{{ goLogin }}" hint-size="130px,40px">登入查看對錯</x-import>
@@ -126,7 +133,7 @@ class Component extends DCLogic {
   state = this.initial(this.mp().quizStart);
   componentDidMount() {
     const q0 = this.mp().quizStart; if (q0) this.setState(this.initial(q0));
-    this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60);
+    this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1 && window.AIFA_COVER) { clearInterval(this._t); this.forceUpdate(); } }, 60);
   }
   componentDidUpdate() { const v = this.mp().quizStart; if (v !== this._qs) { const first = this._qs === undefined; this._qs = v; if (!first) this.setState(this.initial(v)); } }
   componentWillUnmount() { clearInterval(this._t); }
@@ -147,7 +154,7 @@ class Component extends DCLogic {
     const right = q.options ? q.options.find((o) => o.id === q.answer) : null;
     const passed = score >= 60;
     const retake = () => this.setState({ idx: 0, answer: '', text: '', phase: 'answering', results: [], retake: true });
-    const recs = this.recCourses.map((c) => ({ image: p.showThumbnails ? 'https://picsum.photos/seed/' + c.seed + '/640/360' : undefined, mediaHeight: 120, title: c.title, tags: [{ label: c.tool, tone: 'accent' }, { label: c.level[0], tone: c.level[1], strong: true }], onClick: go('CourseDetail.dc.html') }));
+    const recs = this.recCourses.map((c) => ({ image: (window.AIFA_COVER ? window.AIFA_COVER(c.seed) : undefined), mediaHeight: 120, title: c.title, tags: [{ label: c.tool, tone: 'accent' }, { label: c.level[0], tone: c.level[1], strong: true }], onClick: go('CourseDetail.dc.html') }));
     const submit = () => {
       const pass = q.type === 'mc' ? s.answer === q.answer : q.keywords.some((k) => s.text.toLowerCase().includes(k));
       this.setState({ results: [...s.results, pass], phase: 'feedback' });
@@ -171,12 +178,13 @@ class Component extends DCLogic {
       completed: s.phase === 'completed',
       qNum: s.idx + 1, qTotal: Q.length, answered: s.results.length,
       qText: q.text, qOptions: q.options || [],
+      isMC: q.type === 'mc', isSA: q.type === 'sa', answering: s.phase === 'answering',
       answeringMC: s.phase === 'answering' && q.type === 'mc',
       answeringSA: s.phase === 'answering' && q.type === 'sa',
       inFeedback: s.phase === 'feedback', inFeedbackUser: s.phase === 'feedback' && signedIn, inFeedbackGuest: s.phase === 'feedback' && !signedIn,
       answer: s.answer || null, text: s.text,
-      setAnswer: (v) => this.setState({ answer: v }),
-      onText: (e) => this.setState({ text: e.target.value }),
+      setAnswer: (v) => { if (this.state.phase === 'answering') this.setState({ answer: v }); },
+      onText: (e) => { if (this.state.phase === 'answering') this.setState({ text: e.target.value }); },
       cantSubmit: q.type === 'mc' ? !s.answer : !s.text.trim(),
       submit, next,
       fbTone: ok ? 'success' : 'danger',
@@ -200,6 +208,8 @@ class Component extends DCLogic {
       showRecs: s.phase === 'completed' && signedIn,
       recs,
       draft: !!p.draft,
+      cover: window.AIFA_COVER ? window.AIFA_COVER('chatgpt-writing') : undefined,
+      nextBtn: { style: { minWidth: 128, whiteSpace: 'nowrap' } },
     };
   }
 }

@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
 <link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
 <script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<script src="covers.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
 <style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
 </helmet>
@@ -35,10 +36,10 @@
       <div style="flex:1;min-width:0">
         <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.SearchInput" placeholder="搜尋課程…" on-change="{{ setSearch }}" hint-size="100%,42px"></x-import>
       </div>
-      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" variant="toolbar" placeholder="全部狀態" options="{{ statusOpts }}" value="{{ status }}" on-change="{{ setStatus }}" hint-size="130px,42px"></x-import>
-      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" variant="toolbar" placeholder="全部難度" options="{{ levelOpts }}" value="{{ level }}" on-change="{{ setLevel }}" hint-size="120px,42px"></x-import>
-      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" variant="toolbar" placeholder="全部工具" options="{{ toolOpts }}" value="{{ tool }}" on-change="{{ setTool }}" hint-size="140px,42px"></x-import>
-      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" variant="toolbar" placeholder="全部技能" options="{{ skillOpts }}" value="{{ skill }}" on-change="{{ setSkill }}" hint-size="150px,42px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" variant="toolbar" placeholder="全部狀態" options="{{ statusOpts }}" value="{{ status }}" on-change="{{ setStatus }}" dc-props="{{ sel130 }}" hint-size="130px,42px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" variant="toolbar" placeholder="全部難度" options="{{ levelOpts }}" value="{{ level }}" on-change="{{ setLevel }}" dc-props="{{ sel120 }}" hint-size="120px,42px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" variant="toolbar" placeholder="全部工具" options="{{ toolOpts }}" value="{{ tool }}" on-change="{{ setTool }}" dc-props="{{ sel140 }}" hint-size="140px,42px"></x-import>
+      <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Select" variant="toolbar" placeholder="全部技能" options="{{ skillOpts }}" value="{{ skill }}" on-change="{{ setSkill }}" dc-props="{{ sel150 }}" hint-size="150px,42px"></x-import>
     </div>
     <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
@@ -66,7 +67,7 @@ class Component extends DCLogic {
   skills = [{ value: 's1', label: '文案寫作' }, { value: 's2', label: '圖像生成' }, { value: 's3', label: '程式開發' }, { value: 's4', label: '資料分析' }, { value: 's5', label: '簡報製作' }];
   seedCourses = [
     { id: 'c1', title: 'ChatGPT 文案寫作入門：從零開始學 AI 寫作', desc: '學習如何有效使用 ChatGPT 進行對話，掌握提示工程技巧，提升工作效率。', tool: 't1', skill: 's1', level: 'beginner', seed: 'chatgpt-writing', qs: 5, status: 'published' },
-    { id: 'c2', title: 'Midjourney 繪圖技巧：創作你的 AI 藝術作品', desc: '從基本指令到進階參數，完整教你用 Midjourney 生成專業級圖像。', tool: 't2', skill: 's2', level: 'intermediate', seed: 'midjourney-art', qs: 3, status: 'published' },
+    { id: 'c2', title: 'Midjourney 繪圖技巧：創作你的 AI 藝術作品', desc: '從基本指令到進階參數，完整教你用 Midjourney 生成專業級圖像。', tool: 't2', skill: 's2', level: 'intermediate', seed: 'midjourney-art', qs: 3, status: 'draft' },
     { id: 'c3', title: 'Cursor AI 開發：用 AI 加速寫程式', desc: '學習使用 AI 程式編輯器 Cursor 加快開發流程：用 AI 撰寫、除錯與重構程式碼。', tool: 't3', skill: 's3', level: 'beginner', seed: 'cursor-coding', qs: 2, status: 'published' },
     { id: 'c4', title: 'ChatGPT 進階：打造自動化工作流程', desc: '學習用 ChatGPT API 與自動化工具打造高效工作流程，涵蓋 GPT-4 API 串接與提示鏈。', tool: 't1', skill: 's1', level: 'advanced', seed: 'chatgpt-automation', qs: 4, status: 'published' },
     { id: 'c5', title: 'AI 資料分析：用 Claude 處理資料', desc: '學習用 Claude 分析 CSV 資料、產出報告與資料視覺化，適合行銷人員與分析師。', tool: 't4', skill: 's4', level: 'intermediate', seed: 'data-analysis', qs: 4, status: 'published' },
@@ -75,7 +76,7 @@ class Component extends DCLogic {
     { id: 'c8', title: 'Cursor 進階：TDD 與 AI 結對程式設計', desc: '用 Cursor 實踐測試驅動開發，學會讓 AI 撰寫測試、實作與重構，提升程式碼品質。', tool: 't3', skill: 's3', level: 'advanced', seed: 'tdd-programming', qs: 4, status: 'draft' },
   ];
   state = { toasts: [], courses: this.seedCourses, q: '', status: '', level: '', tool: '', skill: '', del: this.mp().showDeleteDialog ? 'c1' : null, deleting: false };
-  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1 && window.AIFA_COVER) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
   componentDidUpdate() { const v = !!this.mp().showDeleteDialog; if (v !== this._sd) { const first = this._sd === undefined; this._sd = v; if (!first) this.setState({ del: v ? 'c1' : null }); } }
   componentWillUnmount() { clearInterval(this._t); clearTimeout(this._d); }
   renderVals() {
@@ -104,7 +105,7 @@ class Component extends DCLogic {
       .map((c) => {
         const pub = c.status === 'published', arch = c.status === 'archived';
         return {
-          image: p.showThumbnails ? 'https://picsum.photos/seed/' + c.seed + '/640/360' : undefined,
+          image: (window.AIFA_COVER ? window.AIFA_COVER(c.seed) : undefined),
           title: c.title, description: c.desc, descriptionLines: 1,
           tags: [{ label: T[c.tool], tone: 'accent' }, { label: S[c.skill], tone: 'violet' }, { label: LV[c.level][0], tone: LV[c.level][1], strong: true }],
           style: arch ? { opacity: 0.7 } : undefined,
@@ -132,6 +133,7 @@ class Component extends DCLogic {
       nPublished: all.filter((c) => c.status === 'published').length,
       nDrafts: all.filter((c) => c.status === 'draft').length,
       nQuestions: all.reduce((n, c) => n + c.qs, 0),
+      sel130: { style: { width: 136 } }, sel120: { style: { width: 128 } }, sel140: { style: { width: 144 } }, sel150: { style: { width: 144 } },
       statusOpts: [{ value: 'published', label: '已發布' }, { value: 'draft', label: '草稿' }, { value: 'archived', label: '已封存' }],
       levelOpts: [{ value: 'beginner', label: '入門' }, { value: 'intermediate', label: '中級' }, { value: 'advanced', label: '進階' }],
       toolOpts: this.tools, skillOpts: this.skills,

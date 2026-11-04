@@ -22,7 +22,7 @@
 <div lang="zh-Hant-TW" data-screen-label="Login" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;box-sizing:border-box;background:var(--gradient-hero);font-family:var(--font-sans)">
   <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.AuthCard" brand="{{ brand }}" title="歡迎回來" subtitle="登入以記錄學習進度、獲得徽章" footer="{{ footer }}" hint-size="440px,390px">
     <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" variant="outline-strong" size="lg" full-width="{{ true }}" on-click="{{ signIn }}" hint-size="100%,48px">使用 Google 繼續</x-import>
-    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" variant="outline-strong" size="lg" full-width="{{ true }}" disabled="{{ true }}" hint-size="100%,48px">使用 Facebook 繼續 · 即將推出</x-import>
+    <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Button" variant="outline-strong" size="lg" full-width="{{ true }}" disabled="{{ true }}" badge="即將推出" hint-size="100%,48px">使用 Facebook 繼續</x-import>
   </x-import>
 </div>
 </x-dc>

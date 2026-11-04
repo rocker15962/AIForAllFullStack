@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/tokens/base.css">
 <link rel="stylesheet" href="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/styles.css">
 <script src="_ds/ai-for-all-neutral-ds-acd6b10e-70d1-4e99-a0bd-f103ea220046/_ds_bundle.js"></script>
+<script src="covers.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap">
 <style>:root{--font-sans:'DM Sans','Noto Sans TC',ui-sans-serif,system-ui,sans-serif}body{margin:0;background:#fff}a{color:var(--accent-link);text-decoration:none}a:hover{color:var(--accent-hover)}</style>
 </helmet>
@@ -42,7 +43,7 @@
             <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.Input" type="url" value="{{ f.url }}" on-change="{{ setUrl }}" placeholder="https://youtube.com/watch?v=..." hint-size="100%,40px"></x-import>
           </x-import>
           <sc-if value="{{ hasUrl }}" hint-placeholder-val="{{ true }}">
-            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.VideoFrame" title="影片預覽" hint-size="100%,351px"></x-import>
+            <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.VideoFrame" title="影片預覽" poster="{{ cover }}" hint-size="100%,351px"></x-import>
           </sc-if>
           <sc-if value="{{ noUrl }}" hint-placeholder-val="{{ false }}">
             <x-import component-from-global-scope="AIForAllNeutralDS_acd6b1.VideoFrame" tone="light" placeholder="輸入 YouTube 網址即可預覽影片" hint-size="100%,351px"></x-import>
@@ -171,12 +172,13 @@ class Component extends DCLogic {
     const isNew = props && props.mode === 'new';
     const qs = isNew ? [] : this.seedQs.map((q) => ({ ...q, opts: [...q.opts] }));
     const f = isNew ? { title: '', desc: '', url: '', tool: '', skill: '', level: 'beginner', creator: '', duration: '' } : { ...this.course };
+    const qi = Math.max(0, Math.min(Number(props && props.dialogQuestion) || 0, qs.length - 1));
     let d = { ...this.emptyDlg };
-    if (props && props.showQuestionDialog) d = isNew ? { ...this.emptyDlg, open: true } : { ...this.emptyDlg, open: true, editing: 0, type: qs[0].type, text: qs[0].text, opts: [...qs[0].opts], correct: qs[0].correct, expl: qs[0].expl };
+    if (props && props.showQuestionDialog) d = isNew ? { ...this.emptyDlg, open: true } : { ...this.emptyDlg, open: true, editing: qi, type: qs[qi].type, text: qs[qi].text, opts: [...qs[qi].opts], correct: qs[qi].correct, expl: qs[qi].expl, sample: qs[qi].sample || '' };
     return { f, qs, d, saving: null };
   }
   state = this.initial(this.mp());
-  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
+  componentDidMount() { this._t = setInterval(() => { if (window.AIForAllNeutralDS_acd6b1 && window.AIFA_COVER) { clearInterval(this._t); this.forceUpdate(); } }, 60); }
   componentDidUpdate() { const p = this.mp(); const v = (p.mode || 'edit') + '|' + !!p.showQuestionDialog; if (v !== this._ed) { const first = this._ed === undefined; this._ed = v; if (!first) this.setState(this.initial(p)); } }
   componentWillUnmount() { clearInterval(this._t); clearTimeout(this._s); }
   setF(k, v) { this.setState((s) => ({ f: { ...s.f, [k]: v } })); }
@@ -213,6 +215,7 @@ class Component extends DCLogic {
       onNav: (id) => { window.location.href = routes[id] + this.qs(); },
       navRight: E('UserMenu', { name: '系統管理員', email: 'admin@example.com', items: [{ label: '我的學習', onClick: go('MyLearning.dc.html') }, { label: '個人資料', onClick: go('Profile.dc.html') }], onSignOut: go('Login.dc.html'), signOutLabel: '登出' }),
       goBack: go(routes.courses),
+      cover: window.AIFA_COVER ? window.AIFA_COVER('chatgpt-writing') : undefined,
       pageTitle: isNew ? '新增課程' : '編輯課程',
       headerActions: h('div', { style: { display: 'flex', gap: 12 } },
         E('Button', { variant: 'outline', loading: s.saving === 'draft', disabled: !!s.saving, onClick: () => save('draft') }, '儲存草稿'),
