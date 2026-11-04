@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { DM_Sans, JetBrains_Mono, Noto_Sans_TC } from 'next/font/google'
+import { DM_Sans, JetBrains_Mono } from 'next/font/google'
 import { AuthProvider } from '@/contexts/auth-context'
 import { ToastProvider } from '@/components/shared'
 import { QueryProvider } from '@/lib/query-provider'
@@ -10,14 +10,6 @@ const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-dm-sans',
   weight: ['400', '500', '600', '700'],
-})
-
-// CJK font for Traditional Chinese text; it has no CJK subset to preload, so preloading is off
-const notoSansTC = Noto_Sans_TC({
-  variable: '--font-noto-sans-tc',
-  weight: ['400', '500', '700'],
-  display: 'swap',
-  preload: false,
 })
 
 const jetbrainsMono = JetBrains_Mono({
@@ -37,10 +29,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="zh-Hant-TW"
-      className={cn(dmSans.variable, notoSansTC.variable, jetbrainsMono.variable, 'font-sans')}
-    >
+    <html lang="zh-Hant-TW" className={cn(dmSans.variable, jetbrainsMono.variable, 'font-sans')}>
+      <head>
+        {/* Noto Sans TC loads at runtime: next/font/google would download its ~100 CJK
+            unicode-range slices at build time, and any one failed fetch breaks the build */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font -- pages-router rule; the root layout covers every route */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap"
+        />
+      </head>
       <body className="font-sans antialiased">
         <QueryProvider>
           <AuthProvider>
